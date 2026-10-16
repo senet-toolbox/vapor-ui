@@ -6,7 +6,7 @@ const Signal = Vapor.Signal;
 const Kit = Vapor.Kit;
 const println = Vapor.println;
 const logo = @embedFile("logo.svg");
-const Binded = Vapor.Binded;
+const Binded = Vapor.Element;
 const Row = Vapor.Row;
 const Text = Static.Text;
 const Link = Static.Link;
@@ -62,18 +62,18 @@ fn onLeave(_: *Vapor.Event) void {
 }
 
 pub fn render() void {
-    const path = Vapor.Kit.getWindowPath() orelse "/";
+    const path = Vapor.currentPath();
     setCurrentRoute(path);
     Row().style(&.{
         .size = .w(.percent(100)),
         .layout = .{ .x = .end, .y = .center },
         .child_gap = 32,
-    }).children({ 
+    }).children({
         if (getPrevPath()) |item| {
             Button(gotoPrevRoute)
                 .class("prev-btn")
                 .size(.hw(.px(128), .percent(50)))
-                .border(.simple(.palette(.border_color_light)))
+                .border(.thin(.palette(.border_color_light)))
                 .background(.transparent)
                 .cursor(.pointer)
                 .padding(.all(12))
@@ -100,9 +100,9 @@ pub fn render() void {
                     .end();
                 Center().style(&.{
                     .child_gap = 12,
-                }).children({ 
+                }).children({
                     Text(item.label)
-                        .baseStyle(&.{
+                        .style(&.{
                             .visual = .{
                                 .font_size = 18,
                                 .text_color = .palette(.text_color),
@@ -117,7 +117,7 @@ pub fn render() void {
             Button(gotoNextRoute)
                 .class("next-btn")
                 .size(.hw(.px(128), .percent(50)))
-                .border(.simple(.palette(.border_color_light)))
+                .border(.thin(.palette(.border_color_light)))
                 .background(.transparent)
                 .cursor(.pointer)
                 .padding(.all(12))
@@ -143,9 +143,9 @@ pub fn render() void {
                     .end();
                 Center().style(&.{
                     .child_gap = 12,
-                }).children({ 
+                }).children({
                     Text(item.label)
-                        .baseStyle(&.{
+                        .style(&.{
                             .visual = .{
                                 .font_size = 18,
                                 .text_color = .palette(.text_color),

@@ -12,6 +12,9 @@ const Icon = Vapor.Icon;
 const Button = Opaque.Button;
 const Item = Opaque.Item;
 const CodeBox = @import("../CodeBox.zig").CodeBox;
+// Rendered and shown as code: what you read is what runs.
+const BasicDialog = @import("examples/BasicDialog.zig");
+const CustomDialog = @import("examples/CustomDialog.zig");
 
 // ============================================================================
 // THEME
@@ -31,108 +34,6 @@ const Theme = struct {
 var hl_basic: SyntaxHighlighter = undefined;
 var hl_custom_render: SyntaxHighlighter = undefined;
 
-// ============================================================================
-// DIALOG INSTANCES
-// ============================================================================
-
-const Status = enum { pending, success, err };
-
-var basic_dialog: ComboBoxDialog(Status) = undefined;
-var basic_items = [_]Item(Status){
-    .{ .value = .pending, .label = "Pending" },
-    .{ .value = .success, .label = "Success" },
-    .{ .value = .err, .label = "Error" },
-};
-
-const ComponentType = enum { Basic, Comptime, Complex };
-const CustomDialog = ComboBoxDialog(ComponentType);
-var custom_dialog: CustomDialog = undefined;
-
-const custom_items = &.{
-    Item(ComponentType){
-        .value = .Basic,
-        .label = "Basic",
-        .icon = .hash,
-        .link = "/ui/button",
-        .description = "A basic dialog with a button",
-    },
-    Item(ComponentType){
-        .value = .Comptime,
-        .label = "Comptime",
-        .icon = .hash,
-        .link = "/ui/table",
-        .description = "A dialog with a table",
-    },
-    Item(ComponentType){
-        .value = .Complex,
-        .label = "Complex",
-        .icon = .hash,
-        .link = "/ui/chart",
-        .description = "A dialog with a chart",
-    },
-};
-
-// ============================================================================
-// CUSTOM ROW RENDERER
-// ============================================================================
-
-fn custom_row(combobox: *CustomDialog, item: *Item(ComponentType)) void {
-    const background_color: Vapor.Types.Color = if (item.is_selected) blk: {
-        break :blk .transparentizeHex(.palette(.tint), 0.3);
-    } else blk: {
-        break :blk .palette(.background);
-    };
-
-    const selected_border_color: Vapor.Types.Color = if (combobox.hovered_item == item) blk: {
-        break :blk .transparentizeHex(.palette(.tint), 0.2);
-    } else blk: {
-        break :blk .transparent;
-    };
-
-    Vapor.CtxButton(CustomDialog.selectItem, .{ combobox, item })
-        .direction(.column)
-        .width(.percent(100))
-        .background(background_color)
-        .layout(.left_center)
-        .padding(.tblr(6, 6, 6, 24))
-        .border(.sharp(.all(1), selected_border_color))
-        .children({
-        Row()
-            .width(.percent(100))
-            .layout(.left_center)
-            .spacing(8)
-            .children({
-            Text(item.label)
-                .fontFamily("Montserrat")
-                .font(18, 700, .transparentizeHex(.palette(.text_color), 0.7))
-                .end();
-        });
-        Vapor.Link(.{ .url = item.link.?, .aria_label = item.label })
-            .layout(.left_center)
-            .pointer()
-            .spacing(4)
-            .children({
-            if (item.icon) |icon| {
-                Icon(icon)
-                    .font(14, 300, .transparentizeHex(.palette(.text_color), 0.7))
-                    .end();
-            }
-            Text(item.label)
-                .font(14, 300, .palette(.text_color))
-                .fontFamily("Montserrat")
-                .end();
-        });
-        Text(item.description orelse "")
-            .font(12, 300, .palette(.text_color))
-            .fontFamily("Montserrat")
-            .end();
-    });
-}
-
-// ============================================================================
-// INIT
-// ============================================================================
-
 pub fn init() void {
     const allocator = Vapor.arena(.persist);
 
@@ -145,10 +46,9 @@ pub fn init() void {
     hl_custom_render.parse(@embedFile("examples/CustomDialog.zig")) catch unreachable;
 
     // Initialize dialogs
-    basic_dialog = .fromItems(&basic_items);
 
-    custom_dialog = .fromItems(custom_items);
-    custom_dialog.row_component = custom_row;
+    BasicDialog.init();
+    CustomDialog.init();
 
     Vapor.Page(.{ .src = @src() }, render, null);
 }
@@ -158,20 +58,20 @@ pub fn init() void {
 // ============================================================================
 
 fn sectionTitle(title: []const u8) void {
-    Text(title).font(24, 600, Theme.text).fontFamily("IBM Plex Mono,monospace").margin(.t(48)).end();
+    Text(title).font(24, 600, Theme.text).fontFamily("IBM Plex Mono,monospace").margin(.{ .top = 48 }).end();
 }
 
 fn sectionDesc(desc: []const u8) void {
-    Text(desc).font(14, 400, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.b(16)).end();
+    Text(desc).font(14, 400, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.{ .bottom = 16 }).end();
 }
 
 fn exampleLabel(label: []const u8) void {
-    Text(label).font(14, 500, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.t(24)).end();
+    Text(label).font(14, 500, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.{ .top = 24 }).end();
 }
 
 fn PreviewCard() Vapor.Builder(.pure) {
     return Stack()
-        .background(.transparentizeHex(.palette(.background), 0.5))
+        .background(.transparentize(.palette(.background), 0.5))
         .border(.round(.palette(.border_color_light), .all(12)))
         .width(.percent(100))
         .height(.px(160))
@@ -183,9 +83,9 @@ fn PreviewCard() Vapor.Builder(.pure) {
 
 fn CodeBlock(highlighter: *SyntaxHighlighter) void {
     Row()
-        .scroll(.scroll_y())
-        .size(.hw(.mobile_desktop(.fit, .px(512)), .mobile_desktop_percent(100, 100)))
-        .border(.simple(.palette(.text_color)))
+        .scroll(.scrollY())
+        .size(.hw(.mobileDesktop(.fit, .px(512)), .mobileDesktopPercent(100, 100)))
+        .border(.thin(.palette(.text_color)))
         .children({
         highlighter.render() catch unreachable;
     });
@@ -225,23 +125,14 @@ pub fn render() void {
             .width(.percent(50))
             .height(.percent(100))
             .spacing(12)
-            .padding(.bottom(120))
+            .padding(.{ .bottom = 120 })
             .children({
 
             // Basic
             exampleLabel("Basic Dialog");
             sectionDesc("A searchable dialog using default list item rendering.");
             PreviewCard().children({
-                Button(ComboBoxDialog(Status).open, .{&basic_dialog})
-                    .ariaLabel("open basic dialog")
-                    .padding(.xy(12, 8))
-                    .background(.palette(.tint))
-                    .layout(.center)
-                    .children({
-                    Text("open basic dialog").font(14, 300, .palette(.background)).fontFamily("Montserrat").end();
-                    Icon(.arrow_right).font(16, 500, .palette(.background)).end();
-                });
-                basic_dialog.render();
+                BasicDialog.render();
             });
             CodeBox(&hl_basic, "BasicDialog");
 
@@ -249,16 +140,7 @@ pub fn render() void {
             exampleLabel("Custom Rendering");
             sectionDesc("Overriding the row component to create complex, multi-line result items.");
             PreviewCard().children({
-                Button(CustomDialog.open, .{&custom_dialog})
-                    .ariaLabel("open custom dialog")
-                    .padding(.xy(12, 8))
-                    .background(.palette(.tint))
-                    .layout(.center)
-                    .children({
-                    Text("open custom dialog").font(14, 300, .palette(.background)).fontFamily("Montserrat").end();
-                    Icon(.arrow_right).font(16, 500, .palette(.background)).end();
-                });
-                custom_dialog.render();
+                CustomDialog.render();
             });
             CodeBox(&hl_custom_render, "CustomDialog");
 

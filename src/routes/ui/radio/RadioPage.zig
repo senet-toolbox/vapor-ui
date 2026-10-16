@@ -4,10 +4,9 @@ const Vapor = @import("vapor");
 const Text = Vapor.Text;
 const Row = Vapor.Row;
 const Stack = Vapor.Stack;
-const Opaque = @import("opaque-ui");
-const Radio = @import("../../../components/Radio.zig");
 const Vaporize = @import("vaporize");
 const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
+const BasicRadio = @import("examples/BasicRadio.zig");
 
 // ============================================================================
 // THEME
@@ -20,42 +19,15 @@ const Theme = struct {
     const code_bg = Vapor.Types.Color.hex("#1a1a1a");
 };
 
-// ============================================================================
-// SYNTAX HIGHLIGHTERS
-// ============================================================================
-
 var hl_basic: SyntaxHighlighter = undefined;
-var hl_custom_checkbox: SyntaxHighlighter = undefined;
-var hl_grouped: SyntaxHighlighter = undefined;
-var hl_detached: SyntaxHighlighter = undefined;
-
-// ============================================================================
-// SELECT INSTANCES
-// ============================================================================
-
-// ============================================================================
-// INIT
-// ============================================================================
 
 pub fn init() void {
-    const allocator = Vapor.arena(.persist);
-    Radio.new();
-
-    // Initialize syntax highlighters
-    hl_basic = SyntaxHighlighter.init(allocator);
+    hl_basic = SyntaxHighlighter.init(Vapor.arena(.persist));
     hl_basic.show_toolbar = true;
-    hl_basic.parse("Checkbox.render(\"test-checkbox\", checkboxToggle, .{})") catch unreachable;
+    hl_basic.parse(@embedFile("examples/BasicRadio.zig")) catch unreachable;
 
     Vapor.Page(.{ .src = @src() }, render, null);
 }
-
-// ============================================================================
-// HANDLERS
-// ============================================================================
-
-// ============================================================================
-// CUSTOM TRIGGER COMPONENTS
-// ============================================================================
 
 // ============================================================================
 // UI COMPONENTS
@@ -65,7 +37,7 @@ fn sectionTitle(title: []const u8) void {
     Text(title)
         .font(24, 600, Theme.text)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.t(48))
+        .margin(.{ .top = 48 })
         .end();
 }
 
@@ -73,7 +45,7 @@ fn sectionDesc(desc: []const u8) void {
     Text(desc)
         .font(14, 400, Theme.text_muted)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.b(16))
+        .margin(.{ .bottom = 16 })
         .end();
 }
 
@@ -81,13 +53,13 @@ fn exampleLabel(label: []const u8) void {
     Text(label)
         .font(14, 500, Theme.text_muted)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.t(24))
+        .margin(.{ .top = 24 })
         .end();
 }
 
 fn PreviewCard() Vapor.Builder(.pure) {
     return Stack()
-        .background(.transparentizeHex(.palette(.background), 0.5))
+        .background(.transparentize(.palette(.background), 0.5))
         .border(.round(.palette(.border_color_light), .all(12)))
         .width(.percent(100))
         .height(.px(160))
@@ -99,10 +71,10 @@ fn PreviewCard() Vapor.Builder(.pure) {
 
 fn CodeBlock(highlighter: *SyntaxHighlighter) void {
     Row()
-        .scroll(.scroll_y())
+        .scroll(.scrollY())
         .inlineStyle("max-height: 512px;", .{})
         .size(.w(.percent(100)))
-        .border(.simple(.palette(.text_color)))
+        .border(.thin(.palette(.text_color)))
         .children({
         highlighter.render() catch unreachable;
     });
@@ -121,7 +93,20 @@ fn customCheckboxToggle(active: bool) void {
 // RENDER
 // ============================================================================
 
-fn radioToggle() void {}
+fn codeSnippet(code: []const u8) void {
+    Row()
+        .width(.percent(100))
+        .padding(.all(16))
+        .background(Theme.code_bg)
+        .border(.round(Theme.border, .all(8)))
+        .children({
+        Text(code)
+            .font(14, 400, .hex("#e4e4e7"))
+            .fontFamily("IBM Plex Mono,monospace")
+            .whiteSpace(.pre)
+            .end();
+    });
+}
 
 pub fn render() void {
     Row()
@@ -136,14 +121,14 @@ pub fn render() void {
             .height(.px(512))
             .width(.percent(100))
             .children({
-            Text("checkbox-ui ⇒").style(&.{
+            Text("radio-ui ⇒").style(&.{
                 .visual = .font(12, 500, .hex("#6f6f6f")),
                 .font_family = "IBM Plex Mono,monospace",
             }).end();
-            Text("checkbox-ui")
+            Text("radio-ui")
                 .font(72, 700, .palette(.text_color))
                 .end();
-            Text("A collection of ready-to-use checkbox components built on top of Vapor, copy and paste into your apps.")
+            Text("Radio buttons for picking one option out of a group, with keyboard and screen reader support.")
                 .font(16, 300, .palette(.text_color))
                 .end();
         });
@@ -153,137 +138,34 @@ pub fn render() void {
             .width(.percent(50))
             .height(.percent(100))
             .spacing(12)
-            .padding(.bottom(120))
+            .padding(.{ .bottom = 120 })
             .children({
-
-            // ============================================================
-            // BASIC
-            // ============================================================
             exampleLabel("Basic");
-            sectionDesc("A simple checkbox with a Title and Content.");
-            // PreviewCard().children({
-            //     Checkbox.render("test-checkbox", checkboxToggle, .{});
-            // });
-            // CodeBlock(&hl_basic);
-
-            PreviewCard().children({
-                Radio.Group([]const u8, "default", radioToggle, .{})
-                    .children({
-                    Radio.Item("default", "Option 1");
-                    Radio.Item("comfortable", "Option 2");
-                });
+            sectionDesc("A group starts on its default value and reports each change.");
+            PreviewCard().height(.fit).children({
+                BasicRadio.render();
             });
+            CodeBlock(&hl_basic);
 
-            // exampleLabel("Custom");
-            // sectionDesc("A custom checkbox with a Title and Content.");
-            //     Checkbox.create("custom-v1-checkbox", customCheckboxToggle, .{})
-            //         .background(if (custom) .palette(.danger) else .palette(.background))
-            //         .children({
-            //         Vapor.Icon(.soundwave)
-            //             .font(16, 300, if (custom) .white else .palette(.text_color))
-            //             .end();
-            //     });
-            // });
-            // CodeBlock(&hl_basic);
-
-            // ============================================================
-            // API REFERENCE
-            // ============================================================
             sectionTitle("API Reference");
 
-            exampleLabel("Initialization");
-            sectionDesc("Two ways to create a Select:");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\// Flat list
-                    \\var checkbox = Select(MyEnum).fromItems(&.{ ... });
-                    \\
-                    \\// Grouped list
-                    \\var checkbox = Select(MyEnum).init("Placeholder", &.{
-                    \\    Select(MyEnum).Group{ .title = "Group", .items = &.{ ... } },
-                    \\});
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            exampleLabel("Radio.Group");
+            sectionDesc("Groups the items; the name labels the group for screen readers.");
+            codeSnippet(
+                \\Radio.Group(name: []const u8, default_value: []const u8, on_change, args)
+            );
 
-            exampleLabel("Item Structure");
-            sectionDesc("Each item requires a value and label. Icon is optional.");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\.{ .value = MyEnum.option, .label = "Option Label", .icon = .icon_name }
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
-
-            exampleLabel("Properties");
-            sectionDesc("Configure behavior after initialization.");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\checkbox.trigger = "Placeholder text";      // Custom placeholder
-                    \\checkbox.trigger_component = myFn;          // Custom trigger component
-                    \\checkbox.on_checkbox = handleSelect;          // Selection callback
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
-
-            exampleLabel("Render Methods");
-            sectionDesc("Choose how to render the component.");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\checkbox.render();          // Render trigger + dropdown together
-                    \\checkbox.renderTrigger();   // Render trigger only
-                    \\checkbox.renderSelect();    // Render dropdown only
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            exampleLabel("Radio.Item");
+            sectionDesc("One choice. Call it inside the group's children.");
+            codeSnippet(
+                \\Radio.Item(value: []const u8, label: []const u8)
+            );
 
             exampleLabel("Callback Signature");
-            sectionDesc("The on_checkbox callback receives the checkbox instance and checkboxed item.");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\fn handleSelect(sel: *Select(MyEnum), item: *Select(MyEnum).Item) void {
-                    \\    // item.value - the enum value
-                    \\    // item.label - the display string
-                    \\    // item.icon  - optional icon
-                    \\}
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            sectionDesc("Called with the group's args followed by the chosen value, only when the choice changes.");
+            codeSnippet(
+                \\fn onChange(value: []const u8) void { ... }
+            );
         });
     });
 }

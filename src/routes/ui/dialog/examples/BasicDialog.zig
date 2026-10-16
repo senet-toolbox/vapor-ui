@@ -26,7 +26,7 @@ pub fn render() void {
     Button(Dialog.open, .{&basic_dialog})
         .ariaLabel("open basic dialog")
         .padding(.xy(12, 8))
-        .background(.transparentizeHex(.palette(.tint), 0.7))
+        .background(.palette(.tint))
         .layout(.center)
         .children({
         Text("open basic dialog")

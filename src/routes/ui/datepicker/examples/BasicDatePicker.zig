@@ -6,7 +6,6 @@ var basic_picker: DatePicker = undefined;
 
 pub fn init() void {
     basic_picker.init();
-    Vapor.Page(.{ .src = @src() }, render, null);
 }
 
 pub fn render() void {

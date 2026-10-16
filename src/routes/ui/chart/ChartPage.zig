@@ -170,6 +170,15 @@ pub fn init() void {
     chart.legend(.{ .position = .top_right, .direction = .row });
     chart.build() catch unreachable;
 
+    pie_chart = Chart.init(Vapor.arena(.persist), .{
+        .height = 400,
+        .width = @intFromFloat(Vapor.lib.browser_width * 0.6),
+        .palette = .{ .colors = &.{ "#3b82f6", "#8b5cf6", "#f59e0b", "#10b981" } },
+    });
+    pie_chart.addSeries(.pie, "Traffic", &data_pie, .{}) catch unreachable;
+    pie_chart.legend(.{ .position = .top_right, .direction = .row });
+    pie_chart.build() catch unreachable;
+
     area_chart = Chart.init(Vapor.arena(.persist), .{
         .height = 400,
         .width = @intFromFloat(Vapor.lib.browser_width * 0.6),
@@ -262,7 +271,9 @@ pub fn render() void {
                 2 => {
                     Row()
                         .width(.percent(100))
-                        .children({});
+                        .children({
+                        pie_chart.render();
+                    });
                 },
                 3 => {
                     Row()

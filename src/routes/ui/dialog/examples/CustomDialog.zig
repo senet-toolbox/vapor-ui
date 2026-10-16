@@ -38,23 +38,23 @@ const custom_items = &.{
 
 fn custom_row(combobox: *CustomDialog, item: *Item(ComponentType)) void {
     const background_color: Vapor.Types.Color = if (item.is_selected) blk: {
-        break :blk .transparentizeHex(.palette(.tint), 0.3);
+        break :blk .transparentize(.palette(.tint), 0.3);
     } else blk: {
         break :blk .palette(.background);
     };
 
     const selected_border_color: Vapor.Types.Color = if (combobox.hovered_item == item) blk: {
-        break :blk .transparentizeHex(.palette(.tint), 0.2);
+        break :blk .transparentize(.palette(.tint), 0.2);
     } else blk: {
         break :blk .transparent;
     };
-    Vapor.CtxButton(CustomDialog.selectItem, .{ combobox, item })
+    Vapor.Button(CustomDialog.selectItem, .{ combobox, item })
         .direction(.column)
         .width(.percent(100))
         // .height(.px(44))
         .background(background_color)
         .layout(.left_center)
-        .padding(.tblr(6, 6, 6, 24))
+        .padding(.{ .top = 6, .bottom = 6, .left = 6, .right = 24 })
         .border(.sharp(.all(1), selected_border_color))
         .children({
         Row()
@@ -64,7 +64,7 @@ fn custom_row(combobox: *CustomDialog, item: *Item(ComponentType)) void {
             .children({
             Text(item.label)
                 .fontFamily("Montserrat")
-                .font(18, 700, .transparentizeHex(.palette(.text_color), 0.7))
+                .font(18, 700, .transparentize(.palette(.text_color), 0.7))
                 .end();
         });
         Vapor.Link(.{ .url = item.link.?, .aria_label = item.label })
@@ -74,7 +74,7 @@ fn custom_row(combobox: *CustomDialog, item: *Item(ComponentType)) void {
             .children({
             if (item.icon) |icon| {
                 Icon(icon)
-                    .font(14, 300, .transparentizeHex(.palette(.text_color), 0.7))
+                    .font(14, 300, .transparentize(.palette(.text_color), 0.7))
                     .end();
             }
             Text(item.label)
@@ -96,12 +96,12 @@ pub fn init() void {
 
 pub fn render() void {
     Button(CustomDialog.open, .{&custom_dialog})
-        .ariaLabel("open basic dialog")
+        .ariaLabel("open custom dialog")
         .padding(.xy(12, 8))
-        .background(.transparentizeHex(.palette(.tint), 0.7))
+        .background(.palette(.tint))
         .layout(.center)
         .children({
-        Text("open basic dialog")
+        Text("open custom dialog")
             .font(14, 300, .palette(.background))
             .fontFamily("Montserrat")
             .end();

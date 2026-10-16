@@ -13,8 +13,6 @@ pub fn init() void {
     event_picker.on_month_select = onMonthSelect;
     event_picker.on_next_month = onNextMonth;
     event_picker.on_prev_month = onPrevMonth;
-
-    Vapor.Page(.{ .src = @src() }, render, null);
 }
 
 // ============================================================================

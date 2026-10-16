@@ -8,7 +8,7 @@ const Text = Vapor.Text;
 const TextField = Vapor.TextField;
 const Label = Vapor.Label;
 const TextFmt = Vapor.TextFmt;
-const ButtonCtx = Vapor.CtxButton;
+const ButtonCtx = Vapor.Button;
 
 const Theme = @import("theme");
 
@@ -860,7 +860,7 @@ pub fn View() void {
                             .children({
                             Button(addSuccessToast, .{})
                                 .ariaLabel("Success Toast")
-                                .background(.transparentizeHex(.palette(.tint), 0.7))
+                                .background(.transparentize(.palette(.tint), 0.7))
                                 .border(.round(.palette(.tint), .all(12)))
                                 .children({
                                 Text("Success")
@@ -876,7 +876,7 @@ pub fn View() void {
                     Vapor.Stack()
                         .width(.percent(8))
                         .layout(.top_center)
-                        .padding(.tb(8, 8))
+                        .padding(.vertical(8))
                         .border(.round(.palette(.border_color_light), .all(12)))
                         .background(.palette(.background))
                         .spacing(8)
@@ -992,7 +992,7 @@ pub fn View() void {
                     Button(Sheet.open, .{&sheet})
                         .ariaLabel("Open Sheet")
                         .width(.px(200))
-                        .background(.transparentizeHex(.palette(.tint), 0.7))
+                        .background(.transparentize(.palette(.tint), 0.7))
                         .border(.round(.palette(.tint), .all(12)))
                         .children({
                         Text("Open Drawer")
@@ -1049,7 +1049,7 @@ pub fn View() void {
                         .width(.percent(100))
                         .height(.percent(100))
                         .outline(.none, null)
-                        .border(.solid(.tblr(1, 3, 1, 1), .palette(.border_color_light), .all(6)))
+                        .border(.solid(.{ .top = 1, .bottom = 3, .left = 1, .right = 1 }, .palette(.border_color_light), .all(6)))
                         .background(.palette(.background))
                         .padding(.all(8))
                         .font(16, 300, .palette(.text_color))

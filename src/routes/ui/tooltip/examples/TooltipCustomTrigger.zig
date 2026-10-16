@@ -25,7 +25,7 @@ fn TooltipTrigger(title: []const u8) void {
     });
 }
 
-fn render() void {
+pub fn render() void {
     Tooltip.create(.{ .content = "This is a custom trigger tooltip" })
         .Trigger(TooltipTrigger, .{"Custom Tooltip"})
         .end();

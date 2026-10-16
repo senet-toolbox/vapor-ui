@@ -9,6 +9,9 @@ const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
 const Icon = Vapor.Icon;
 const Button = Opaque.Button;
 const DatePicker = Opaque.DatePicker;
+// Rendered and shown as code: what you read is what runs.
+const BasicDatePicker = @import("examples/BasicDatePicker.zig");
+const EventDatePicker = @import("examples/EventDatePicker.zig");
 const DateTime = Vapor.DateTime;
 const CodeBox = @import("../CodeBox.zig").CodeBox;
 
@@ -30,13 +33,6 @@ const Theme = struct {
 var hl_basic: SyntaxHighlighter = undefined;
 var hl_events: SyntaxHighlighter = undefined;
 
-// ============================================================================
-// DATEPICKER INSTANCES
-// ============================================================================
-
-var basic_picker: DatePicker = undefined;
-var event_picker: DatePicker = undefined;
-
 pub fn init() void {
     const allocator = Vapor.arena(.persist);
 
@@ -47,41 +43,10 @@ pub fn init() void {
     hl_events = SyntaxHighlighter.init(allocator);
     hl_events.parse(@embedFile("examples/EventDatePicker.zig")) catch unreachable;
 
-    // Instance 1: Basic (Defaults only)
-    basic_picker.init();
-
-    // Instance 2: Event Driven (Your specific logic)
-    event_picker.start_date = DateTime.fromMonth(8, 1991);
-    event_picker.init();
-    event_picker.on_date_select = onDateSelect;
-    event_picker.on_year_select = onYearSelect;
-    event_picker.on_month_select = onMonthSelect;
-    event_picker.on_next_month = onNextMonth;
-    event_picker.on_prev_month = onPrevMonth;
+    BasicDatePicker.init();
+    EventDatePicker.init();
 
     Vapor.Page(.{ .src = @src() }, render, null);
-}
-
-// ============================================================================
-// CALLBACKS
-// ============================================================================
-
-fn onDateSelect(_: *DatePicker, date: DateTime) void {
-    const format = date.formatDate(Vapor.arena(.frame)) catch unreachable;
-    Vapor.alert("Date selected: {s}", .{format});
-}
-
-fn onYearSelect(year: i32) void {
-    Vapor.alert("Year selected: {d}", .{year});
-}
-fn onMonthSelect(month: i32) void {
-    Vapor.alert("Month selected: {d}", .{month});
-}
-fn onNextMonth() void {
-    Vapor.alert("Next Month", .{});
-}
-fn onPrevMonth() void {
-    Vapor.alert("Prev Month", .{});
 }
 
 // ============================================================================
@@ -89,22 +54,22 @@ fn onPrevMonth() void {
 // ============================================================================
 
 fn sectionDesc(desc: []const u8) void {
-    Text(desc).font(14, 400, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.b(8)).end();
+    Text(desc).font(14, 400, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.{ .bottom = 8 }).end();
 }
 
 fn exampleLabel(label: []const u8) void {
-    Text(label).font(14, 500, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.t(8)).end();
+    Text(label).font(14, 500, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.{ .top = 8 }).end();
 }
 
 fn CodeBlock(highlighter: *SyntaxHighlighter) void {
-    Row().scroll(.scroll_y()).size(.hw(.fit, .percent(100))).border(.simple(Theme.border)).children({
+    Row().scroll(.scrollY()).size(.hw(.fit, .percent(100))).border(.thin(Theme.border)).children({
         highlighter.render() catch unreachable;
     });
 }
 
 fn PreviewCard() Vapor.Builder(.pure) {
     return Stack()
-        .background(.transparentizeHex(.palette(.background), 0.5))
+        .background(.transparentize(.palette(.background), 0.5))
         .border(.round(.palette(.border_color_light), .all(12)))
         .width(.percent(100))
         .padding(.all(24))
@@ -147,7 +112,7 @@ fn render() void {
         Stack()
             .width(.percent(50))
             .spacing(32)
-            .padding(.bottom(120))
+            .padding(.{ .bottom = 120 })
             .children({
 
             // EXAMPLE 1: BASIC
@@ -158,7 +123,7 @@ fn render() void {
                 sectionDesc("Default calendar view with no external dependencies or callbacks.");
 
                 PreviewCard().children({
-                    basic_picker.render();
+                    BasicDatePicker.render();
                 });
                 CodeBox(&hl_basic, "Basic DatePicker");
             });
@@ -171,13 +136,13 @@ fn render() void {
                 sectionDesc("Hook into specific lifecycle events like year changes or month navigation.");
 
                 PreviewCard().children({
-                    event_picker.render();
+                    EventDatePicker.render();
                 });
                 CodeBox(&hl_events, "Event-Driven Selection");
             });
 
             // API REFERENCE
-            Text("API Reference").font(24, 600, Theme.text).fontFamily("IBM Plex Mono,monospace").margin(.t(48)).end();
+            Text("API Reference").font(24, 600, Theme.text).fontFamily("IBM Plex Mono,monospace").margin(.{ .top = 48 }).end();
 
             exampleLabel("Event Callbacks");
             sectionDesc("DatePicker exposes optional function pointers for fine-grained control.");

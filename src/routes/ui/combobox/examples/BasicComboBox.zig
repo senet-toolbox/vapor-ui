@@ -16,10 +16,8 @@ pub fn init() void {
         .{ .value = Status.err, .label = "Error" },
     });
     combobox.trigger = "Status";
-
-    Vapor.Page(.{ .src = @src() }, render, null);
 }
 
-fn render() void {
+pub fn render() void {
     combobox.render();
 }

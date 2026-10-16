@@ -42,7 +42,7 @@ fn section_title(title: []const u8) void {
     Text(title)
         .font(24, 600, Theme.text)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.t(32))
+        .margin(.{ .top = 32 })
         .end();
 }
 
@@ -50,7 +50,7 @@ fn section_description(desc: []const u8) void {
     Text(desc)
         .font(14, 400, Theme.text_muted)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.b(16))
+        .margin(.{ .bottom = 16 })
         .end();
 }
 
@@ -68,7 +68,7 @@ pub fn init() void {
 
 fn Card() Vapor.Builder(.pure) {
     return Stack()
-        .background(.transparentizeHex(.palette(.background), 0.5))
+        .background(.transparentize(.palette(.background), 0.5))
         .border(.round(.palette(.border_color_light), .all(12)))
         .width(.percent(100))
         .height(.px(160))
@@ -115,7 +115,7 @@ pub fn render() void {
             Text("Displays a command-palette or a component that looks like a command-palette.")
                 .font(16, 400, Theme.text_muted)
                 .fontFamily("IBM Plex Mono,monospace")
-                .margin(.b(24))
+                .margin(.{ .bottom = 24 })
                 .end();
 
             // Preview Section
@@ -148,7 +148,7 @@ pub fn render() void {
             section_title("Usage");
             section_description("Import and use the Button component in your code.");
 
-            code_snippet("const Button = @import(\"components/Button.zig\").Button;");
+            code_snippet("const Button = @import(\"opaque-ui\").Button;");
 
             // Examples Section
             section_title("Examples");
@@ -157,7 +157,7 @@ pub fn render() void {
             Text("Primary")
                 .font(18, 500, Theme.text)
                 .fontFamily("IBM Plex Mono,monospace")
-                .margin(.t(16))
+                .margin(.{ .top = 16 })
                 .end();
 
             code_snippet(
@@ -172,7 +172,7 @@ pub fn render() void {
             Text("Secondary")
                 .font(18, 500, Theme.text)
                 .fontFamily("IBM Plex Mono,monospace")
-                .margin(.t(16))
+                .margin(.{ .top = 16 })
                 .end();
 
             code_snippet(
@@ -188,7 +188,7 @@ pub fn render() void {
             Text("With Icon")
                 .font(18, 500, Theme.text)
                 .fontFamily("IBM Plex Mono,monospace")
-                .margin(.t(16))
+                .margin(.{ .top = 16 })
                 .end();
 
             code_snippet(

@@ -35,7 +35,7 @@ fn handleSelect(_: *Select(NavItem), item: *Select(NavItem).Item) void {
 
 fn triggerButton(_: *Select(NavItem)) void {
     Row()
-        .padding(.tblr(8, 8, 10, 10))
+        .padding(.xy(10, 8))
         .layout(.x_between_center)
         .spacing(8)
         .width(.fit)
@@ -43,14 +43,14 @@ fn triggerButton(_: *Select(NavItem)) void {
         .border(.round(.palette(.border_color_light), .all(12)))
         .background(.palette(.tint))
         .duration(100)
-        .newShadow(Vapor.Types.NewShadow.init()
-            .inset(0, -2, .transparentizeHex(.black, 0.3))
-            .drop(0, 1, 3, .transparentizeHex(.black, 0.1)))
+        .shadow(Vapor.Types.NewShadow.init()
+            .inset(0, -2, .transparentize(.black, 0.3))
+            .drop(0, 1, 3, .transparentize(.black, 0.1)))
         .hover(.{
             .transform = .scaleDecimal(1.01),
             .new_shadow = Vapor.Types.NewShadow.init()
-                .inset(0, -2, .transparentizeHex(.black, 0))
-                .drop(0, 1, 3, .transparentizeHex(.black, 0)),
+                .inset(0, -2, .transparentize(.black, 0))
+                .drop(0, 1, 3, .transparentize(.black, 0)),
         })
         .children({
         Text("Open Menu →")

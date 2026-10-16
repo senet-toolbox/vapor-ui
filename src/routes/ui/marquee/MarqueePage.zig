@@ -9,6 +9,12 @@ const Vaporize = @import("vaporize");
 const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
 const Page = Vapor.Page;
 const CodeBox = @import("../CodeBox.zig").CodeBox;
+// Rendered and shown as code: what you read is what runs.
+const MarqueeLeft = @import("examples/MarqueeLeft.zig");
+const MarqueeRight = @import("examples/MarqueeRight.zig");
+const MarqueeUp = @import("examples/MarqueeUp.zig");
+const MarqueeDown = @import("examples/MarqueeDown.zig");
+const MarqueeDualLane = @import("examples/MarqueeDualLane.zig");
 
 // ============================================================================
 // THEME
@@ -41,50 +47,6 @@ var hl_dual_lane: SyntaxHighlighter = undefined;
 var hl_install: SyntaxHighlighter = undefined;
 var hl_item_type: SyntaxHighlighter = undefined;
 var hl_fields: SyntaxHighlighter = undefined;
-
-// ============================================================================
-// SLIDE DATA
-// ============================================================================
-
-const slides_h = [_]Marquee.MarqueeItem{
-    .{ .title = "Slide One", .subtitle = "Scroll left", .color = .hex("#3b82f6") },
-    .{ .title = "Slide Two", .subtitle = "Scroll left", .color = .hex("#8b5cf6") },
-    .{ .title = "Slide Three", .subtitle = "Scroll left", .color = .hex("#ec4899") },
-    .{ .title = "Slide Four", .subtitle = "Scroll left", .color = .hex("#f97316") },
-    .{ .title = "Slide Five", .subtitle = "Scroll left", .color = .hex("#10b981") },
-    .{ .title = "Slide Six", .subtitle = "Scroll left", .color = .hex("#f97316") },
-    .{ .title = "Slide Seven", .subtitle = "Scroll left", .color = .hex("#10b981") },
-};
-
-const slides_r = [_]Marquee.MarqueeItem{
-    .{ .title = "Slide One", .subtitle = "Scroll right", .color = .hex("#14b8a6") },
-    .{ .title = "Slide Two", .subtitle = "Scroll right", .color = .hex("#f59e0b") },
-    .{ .title = "Slide Three", .subtitle = "Scroll right", .color = .hex("#ef4444") },
-    .{ .title = "Slide Four", .subtitle = "Scroll right", .color = .hex("#06b6d4") },
-    .{ .title = "Slide Five", .subtitle = "Scroll right", .color = .hex("#84cc16") },
-    .{ .title = "Slide Six", .subtitle = "Scroll right", .color = .hex("#f97316") },
-    .{ .title = "Slide Seven", .subtitle = "Scroll right", .color = .hex("#10b981") },
-};
-
-const slides_v = [_]Marquee.MarqueeItem{
-    .{ .title = "Card One", .subtitle = "Scroll up", .color = .hex("#ef4444") },
-    .{ .title = "Card Two", .subtitle = "Scroll up", .color = .hex("#f59e0b") },
-    .{ .title = "Card Three", .subtitle = "Scroll up", .color = .hex("#06b6d4") },
-    .{ .title = "Card Four", .subtitle = "Scroll up", .color = .hex("#84cc16") },
-    .{ .title = "Card Five", .subtitle = "Scroll up", .color = .hex("#a855f7") },
-    .{ .title = "Card Six", .subtitle = "Scroll up", .color = .hex("#f97316") },
-    .{ .title = "Card Seven", .subtitle = "Scroll up", .color = .hex("#10b981") },
-};
-
-const slides_d = [_]Marquee.MarqueeItem{
-    .{ .title = "Card One", .subtitle = "Scroll down", .color = .hex("#6366f1") },
-    .{ .title = "Card Two", .subtitle = "Scroll down", .color = .hex("#0ea5e9") },
-    .{ .title = "Card Three", .subtitle = "Scroll down", .color = .hex("#d946ef") },
-    .{ .title = "Card Four", .subtitle = "Scroll down", .color = .hex("#f43f5e") },
-    .{ .title = "Card Five", .subtitle = "Scroll down", .color = .hex("#22c55e") },
-    .{ .title = "Card Six", .subtitle = "Scroll down", .color = .hex("#f97316") },
-    .{ .title = "Card Seven", .subtitle = "Scroll down", .color = .hex("#10b981") },
-};
 
 // ============================================================================
 // INIT
@@ -161,7 +123,7 @@ fn sectionTitle(title: []const u8) void {
     Text(title)
         .font(24, 600, Theme.text)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.t(48))
+        .margin(.{ .top = 48 })
         .end();
 }
 
@@ -169,7 +131,7 @@ fn sectionDesc(desc: []const u8) void {
     Text(desc)
         .font(14, 400, Theme.text_muted)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.b(16))
+        .margin(.{ .bottom = 16 })
         .end();
 }
 
@@ -177,13 +139,13 @@ fn exampleLabel(label: []const u8) void {
     Text(label)
         .font(14, 500, Theme.text_muted)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.t(24))
+        .margin(.{ .top = 24 })
         .end();
 }
 
 fn PreviewCard() Vapor.Builder(.pure) {
     return Stack()
-        .background(.transparentizeHex(.palette(.background), 0.5))
+        .background(.transparentize(.palette(.background), 0.5))
         .border(.round(.palette(.border_color_light), .all(12)))
         .width(.percent(100))
         .padding(.all(32))
@@ -224,7 +186,7 @@ pub fn render() void {
         Stack()
             .width(.px(800))
             .spacing(12)
-            .padding(.bottom(120))
+            .padding(.{ .bottom = 120 })
             .children({
             Text("Marquee")
                 .font(36, 700, Theme.text)
@@ -233,7 +195,7 @@ pub fn render() void {
             Text("Auto-motion marquee supporting all four scroll directions with variable speed input. Items loop seamlessly with zero layout shift.")
                 .font(16, 400, Theme.text_muted)
                 .fontFamily("IBM Plex Mono,monospace")
-                .margin(.b(24))
+                .margin(.{ .bottom = 24 })
                 .end();
 
             // ================================================================
@@ -246,65 +208,17 @@ pub fn render() void {
             exampleLabel("Left (default)");
             sectionDesc("Slides advance to the left continuously. This is the default behavior when no direction is specified.");
             PreviewCard().children({
-                Marquee.render(.{
-                    .direction = .left,
-                    .speed_ms = 10000,
-                }).children({
-                    for (slides_h) |slide| {
-                        Row()
-                            .width(.px(220))
-                            .height(.px(64))
-                            .layout(.center)
-                            .spacing(6)
-                            .background(.palette(.background))
-                            .fontFamily("IBM Plex Mono,monospace")
-                            .border(.simple(.palette(.border_color_light)))
-                            .children({
-                            Text("// CUSTOM")
-                                .fontSize(10)
-                                .fontWeight(900)
-                                .fontStyle(.italic)
-                                .end();
-                            Text(slide.title)
-                                .fontSize(10)
-                                .fontColor(.transparentize(.palette(.text), 0.5))
-                                .end();
-                        });
-                    }
-                });
+                MarqueeLeft.example();
             });
+
             CodeBox(&hl_left, "MarqueeLeft");
 
             exampleLabel("Right");
             sectionDesc("Slides advance to the right. Useful for paired lanes scrolling in opposite directions.");
             PreviewCard().children({
-                Marquee.render(.{
-                    .direction = .right,
-                    .speed_ms = 10000,
-                }).children({
-                    for (slides_h) |slide| {
-                        Row()
-                            .width(.px(220))
-                            .height(.px(64))
-                            .layout(.center)
-                            .spacing(6)
-                            .background(.palette(.background))
-                            .fontFamily("IBM Plex Mono,monospace")
-                            .border(.simple(.palette(.border_color_light)))
-                            .children({
-                            Text("// CUSTOM")
-                                .fontSize(10)
-                                .fontWeight(900)
-                                .fontStyle(.italic)
-                                .end();
-                            Text(slide.title)
-                                .fontSize(10)
-                                .fontColor(.transparentize(.palette(.text), 0.5))
-                                .end();
-                        });
-                    }
-                });
+                MarqueeRight.example();
             });
+
             CodeBox(&hl_right, "MarqueeRight");
 
             exampleLabel("Up");
@@ -312,33 +226,9 @@ pub fn render() void {
             PreviewCard()
                 .height(.px(512))
                 .children({
-                Marquee.render(.{
-                    .speed_ms = 4000,
-                    .direction = .up,
-                }).children({
-                    for (slides_v) |slide| {
-                        Row()
-                            .width(.px(220))
-                            .height(.px(64))
-                            .layout(.center)
-                            .spacing(6)
-                            .background(.palette(.background))
-                            .fontFamily("IBM Plex Mono,monospace")
-                            .border(.simple(.palette(.border_color_light)))
-                            .children({
-                            Text("// Up")
-                                .fontSize(10)
-                                .fontWeight(900)
-                                .fontStyle(.italic)
-                                .end();
-                            Text(slide.title)
-                                .fontSize(10)
-                                .fontColor(.transparentize(.palette(.text), 0.5))
-                                .end();
-                        });
-                    }
-                });
+                MarqueeUp.example();
             });
+
             CodeBox(&hl_up, "MarqueeUp");
 
             exampleLabel("Down");
@@ -346,33 +236,9 @@ pub fn render() void {
             PreviewCard()
                 .height(.px(512))
                 .children({
-                Marquee.render(.{
-                    .direction = .down,
-                    .speed_ms = 4000,
-                }).children({
-                    for (slides_v) |slide| {
-                        Row()
-                            .width(.px(220))
-                            .height(.px(64))
-                            .layout(.center)
-                            .spacing(6)
-                            .background(.palette(.background))
-                            .fontFamily("IBM Plex Mono,monospace")
-                            .border(.simple(.palette(.border_color_light)))
-                            .children({
-                            Text("// Up")
-                                .fontSize(10)
-                                .fontWeight(900)
-                                .fontStyle(.italic)
-                                .end();
-                            Text(slide.title)
-                                .fontSize(10)
-                                .fontColor(.transparentize(.palette(.text), 0.5))
-                                .end();
-                        });
-                    }
-                });
+                MarqueeDown.example();
             });
+
             CodeBox(&hl_down, "MarqueeDown");
 
             // ================================================================
@@ -382,63 +248,9 @@ pub fn render() void {
             sectionTitle("Dual Lane");
             sectionDesc("Two marquees stacked in opposite directions create a layered, parallax-like feel — common in marketing pages and logo walls.");
             PreviewCard().children({
-                Stack()
-                    .width(.percent(100))
-                    .direction(.column)
-                    .spacing(12)
-                    .children({
-                    Marquee.render(.{
-                        .direction = .right,
-                        .speed_ms = 4000,
-                    }).children({
-                        for (slides_v) |slide| {
-                            Row()
-                                .width(.px(220))
-                                .height(.px(64))
-                                .layout(.center)
-                                .spacing(6)
-                                .background(slide.color)
-                                .radius(.all(8))
-                                .children({
-                                Text("// Up")
-                                    .fontSize(10)
-                                    .fontWeight(900)
-                                    .fontStyle(.italic)
-                                    .end();
-                                Text(slide.title)
-                                    .fontSize(10)
-                                    .fontColor(.transparentize(.palette(.text), 0.5))
-                                    .end();
-                            });
-                        }
-                    });
-                    Marquee.render(.{
-                        .direction = .left,
-                        .speed_ms = 4000,
-                    }).children({
-                        for (slides_r) |slide| {
-                            Row()
-                                .width(.px(220))
-                                .height(.px(64))
-                                .layout(.center)
-                                .spacing(6)
-                                .background(slide.color)
-                                .radius(.all(8))
-                                .children({
-                                Text("// Up")
-                                    .fontSize(10)
-                                    .fontWeight(900)
-                                    .fontStyle(.italic)
-                                    .end();
-                                Text(slide.title)
-                                    .fontSize(10)
-                                    .fontColor(.transparentize(.palette(.text), 0.5))
-                                    .end();
-                            });
-                        }
-                    });
-                });
+                MarqueeDualLane.example();
             });
+
             CodeBox(&hl_dual_lane, "MarqueeDualLane");
 
             // ================================================================
@@ -451,4 +263,3 @@ pub fn render() void {
         });
     });
 }
-

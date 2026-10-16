@@ -19,22 +19,15 @@ const MyTable = Table(Transaction, &.{
 }, .{});
 
 var table: MyTable = undefined;
+var data: Vapor.Array(Transaction) = undefined;
 
 pub fn init() void {
-    // Generate large dataset (100+ rows)
-    var data = Vapor.array(Transaction, .persist);
-    for (0..100) |i| {
-        data.append(.{
-            .id = i,
-            .status = if (i % 3 == 0) .pending else if (i % 3 == 1) .success else .err,
-            .email = "user@example.com",
-            .amount = @intCast((i + 1) * 100),
-        }) catch unreachable;
-    }
+    data = Vapor.array(Transaction, .persist);
+    sample(&data, 100);
 
     table.init(data.items);
     table.display_mode = .virtual; // Enable virtualized rendering
-    table.visible_row_count = 20; // Rows visible in viewport
+    table.per_page = 20; // Rows visible in the viewport
 }
 
 pub fn render() void {
@@ -44,4 +37,18 @@ pub fn render() void {
         .children({
         table.render();
     });
+}
+
+/// `count` rows of made-up transactions.
+fn sample(rows: *Vapor.Array(Transaction), count: usize) void {
+    const statuses = [_]Status{ .pending, .paid, .declined };
+    const emails = [_][]const u8{ "john@example.com", "jane@example.com", "alice@example.com", "bob@example.com", "mary@example.com" };
+    for (0..count) |i| {
+        rows.append(.{
+            .id = i,
+            .status = statuses[i % statuses.len],
+            .email = emails[i % emails.len],
+            .amount = @intCast((i + 1) * 100),
+        }) catch unreachable;
+    }
 }

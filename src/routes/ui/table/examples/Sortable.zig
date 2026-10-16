@@ -24,11 +24,7 @@ var data: Vapor.Array(Transaction) = undefined;
 
 pub fn init() void {
     data = Vapor.array(Transaction, .persist);
-    data.appendSlice(&.{
-        .{ .id = 0, .status = .pending, .email = "john@example.com", .amount = 100 },
-        .{ .id = 1, .status = .paid, .email = "jane@example.com", .amount = 200 },
-        .{ .id = 2, .status = .declined, .email = "alice@example.com", .amount = 300 },
-    }) catch unreachable;
+    sample(&data, 10);
 
     table.init(data.items);
 }
@@ -42,4 +38,18 @@ pub fn render() void {
         .children({
         table.render();
     });
+}
+
+/// `count` rows of made-up transactions.
+fn sample(rows: *Vapor.Array(Transaction), count: usize) void {
+    const statuses = [_]Status{ .pending, .paid, .declined };
+    const emails = [_][]const u8{ "john@example.com", "jane@example.com", "alice@example.com", "bob@example.com", "mary@example.com" };
+    for (0..count) |i| {
+        rows.append(.{
+            .id = i,
+            .status = statuses[i % statuses.len],
+            .email = emails[i % emails.len],
+            .amount = @intCast((i + 1) * 100),
+        }) catch unreachable;
+    }
 }

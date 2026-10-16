@@ -11,6 +11,9 @@ const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
 const Tooltip = Opaque.Tooltip;
 const Icon = Vapor.Icon;
 const CodeBox = @import("../CodeBox.zig").CodeBox;
+// Rendered and shown as code: what you read is what runs.
+const TooltipCustomTrigger = @import("examples/TooltipCustomTrigger.zig");
+const TooltipCustom = @import("examples/TooltipCustom.zig");
 
 // ============================================================================
 // THEME
@@ -31,10 +34,6 @@ var hl_basic: SyntaxHighlighter = undefined;
 var hl_custom_tooltip: SyntaxHighlighter = undefined;
 var hl_grouped: SyntaxHighlighter = undefined;
 var hl_detached: SyntaxHighlighter = undefined;
-
-// ============================================================================
-// SELECT INSTANCES
-// ============================================================================
 
 // ============================================================================
 // INIT
@@ -60,102 +59,6 @@ pub fn init() void {
 }
 
 // ============================================================================
-// HANDLERS
-// ============================================================================
-
-// ============================================================================
-// CUSTOM TRIGGER COMPONENTS
-// ============================================================================
-
-fn TooltipTrigger(title: []const u8) void {
-    Row()
-        .width(.fit)
-        .padding(.xy(12, 8))
-        .cursor(.pointer)
-        .background(.palette(.background))
-        .hover(.{
-            .background = .palette(.tint),
-            .text_color = .palette(.background),
-        })
-        .font(14, 300, .palette(.text_color))
-        .duration(200)
-        .border(.round(.transparent, .all(4)))
-        .layout(.center)
-        .children({
-        Text(title)
-            .font(14, 300, null)
-            .end();
-    });
-}
-
-fn TooltipContent(title: []const u8, label: []const u8, due: Vapor.DateTime) void {
-    Row()
-        .width(.px(280))
-        .width(.px(280))
-        .padding(.all(16))
-        .border(.round(.palette(.border_color_light), .all(12)))
-        .direction(.column)
-        .spacing(12)
-        .children({
-        // Header with title and priority badge
-        Row()
-            .layout(.x_between_center)
-            .children({
-            Text(title)
-                .font(14, 600, Theme.text)
-                .fontFamily("Montserrat")
-                .width(.px(180))
-                .ellipsis(.dot)
-                .end();
-            Row()
-                .padding(.xy(8, 4))
-                .children({
-                Text(label)
-                    .font(10, 500, .palette(.tint))
-                    .fontFamily("Montserrat")
-                    .end();
-            });
-        });
-
-        // Divider
-        Row()
-            .width(.percent(100))
-            .height(.px(1))
-            .background(.palette(.border_color_light))
-            .children({});
-
-        // Details section
-        Stack()
-            .width(.percent(100))
-            .spacing(8)
-            .children({
-            // Due date
-            Row()
-                .width(.percent(100))
-                .layout(.x_between_center)
-                .children({
-                Row()
-                    .layout(.left_center)
-                    .spacing(6)
-                    .children({
-                    Icon(.calendar)
-                        .font(12, 400, .palette(.text_color))
-                        .end();
-                    Text("Due date")
-                        .font(12, 400, .palette(.text_color))
-                        .fontFamily("Montserrat")
-                        .end();
-                });
-                Text(due.formatDate(Vapor.arena(.frame)) catch "")
-                    .font(12, 500, .palette(.text_color))
-                    .fontFamily("Montserrat")
-                    .end();
-            });
-        });
-    });
-}
-
-// ============================================================================
 // UI COMPONENTS
 // ============================================================================
 
@@ -163,7 +66,7 @@ fn sectionTitle(title: []const u8) void {
     Text(title)
         .font(24, 600, Theme.text)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.t(48))
+        .margin(.{ .top = 48 })
         .end();
 }
 
@@ -171,7 +74,7 @@ fn sectionDesc(desc: []const u8) void {
     Text(desc)
         .font(14, 400, Theme.text_muted)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.b(16))
+        .margin(.{ .bottom = 16 })
         .end();
 }
 
@@ -179,13 +82,13 @@ fn exampleLabel(label: []const u8) void {
     Text(label)
         .font(14, 500, Theme.text_muted)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.t(24))
+        .margin(.{ .top = 24 })
         .end();
 }
 
 fn PreviewCard() Vapor.Builder(.pure) {
     return Stack()
-        .background(.transparentizeHex(.palette(.background), 0.5))
+        .background(.transparentize(.palette(.background), 0.5))
         .border(.round(.palette(.border_color_light), .all(12)))
         .width(.percent(100))
         .height(.px(160))
@@ -229,7 +132,7 @@ pub fn render() void {
             .width(.percent(50))
             .height(.percent(100))
             .spacing(12)
-            .padding(.bottom(120))
+            .padding(.{ .bottom = 120 })
             .children({
 
             // ============================================================
@@ -248,9 +151,7 @@ pub fn render() void {
             exampleLabel("With a Custom Trigger");
             sectionDesc("Tooltips can be triggered by a custom component.");
             PreviewCard().children({
-                Tooltip.create(.{ .content = "This is a custom trigger tooltip" })
-                    .Trigger(TooltipTrigger, .{"Custom Tooltip"})
-                    .end();
+                TooltipCustomTrigger.render();
             });
             CodeBox(&hl_custom_tooltip, "TooltipTrigger");
 
@@ -260,10 +161,7 @@ pub fn render() void {
             exampleLabel("Custom Content and Custom Trigger");
             sectionDesc("A Tooltip can have custom content and a custom trigger.");
             PreviewCard().children({
-                Tooltip.create(.{ .background = .palette(.background), .stroke_color = .palette(.border_color_light) })
-                    .Trigger(TooltipTrigger, .{"Custom Tooltip with Custom Content"})
-                    .Component(TooltipContent, .{ "CUSTOM", "Priority", Vapor.DateTime.now() })
-                    .end();
+                TooltipCustom.render();
             });
             CodeBox(&hl_grouped, "TooltipContent");
 
@@ -272,99 +170,45 @@ pub fn render() void {
             // ============================================================
             sectionTitle("API Reference");
 
-            exampleLabel("Initialization");
-            sectionDesc("Two ways to create a Select:");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\// Flat list
-                    \\var tooltip = Select(MyEnum).fromItems(&.{ ... });
-                    \\
-                    \\// Grouped list
-                    \\var tooltip = Select(MyEnum).init("Placeholder", &.{
-                    \\    Select(MyEnum).Group{ .title = "Group", .items = &.{ ... } },
-                    \\});
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            exampleLabel("Setup");
+            sectionDesc("Render the tooltip layer once, in your layout; every tooltip shows there.");
+            apiSnippet(
+                \\Opaque.TooltipLayer();
+            );
 
-            exampleLabel("Item Structure");
-            sectionDesc("Each item requires a value and label. Icon is optional.");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\.{ .value = MyEnum.option, .label = "Option Label", .icon = .icon_name }
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            exampleLabel("Tooltip.simple");
+            sectionDesc("A text trigger with a text tooltip above it.");
+            apiSnippet(
+                \\Tooltip.simple(trigger_text, tooltip_text);
+                \\Tooltip.simpleWithPosition(trigger_text, tooltip_text, .bottom);
+            );
 
-            exampleLabel("Properties");
-            sectionDesc("Configure behavior after initialization.");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\tooltip.trigger = "Placeholder text";      // Custom placeholder
-                    \\tooltip.trigger_component = myFn;          // Custom trigger component
-                    \\tooltip.on_tooltip = handleSelect;          // Selection callback
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            exampleLabel("Tooltip.create");
+            sectionDesc("Your own trigger, and optionally your own content.");
+            apiSnippet(
+                \\Tooltip.create(.{ .content = "Text", .position = .top })
+                \\    .Trigger(myTrigger, .{args})
+                \\    .Component(myContent, .{args}) // optional
+                \\    .end();
+            );
 
-            exampleLabel("Render Methods");
-            sectionDesc("Choose how to render the component.");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\tooltip.render();          // Render trigger + dropdown together
-                    \\tooltip.renderTrigger();   // Render trigger only
-                    \\tooltip.renderSelect();    // Render dropdown only
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
-
-            exampleLabel("Callback Signature");
-            sectionDesc("The on_tooltip callback receives the tooltip instance and tooltiped item.");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\fn handleSelect(sel: *Select(MyEnum), item: *Select(MyEnum).Item) void {
-                    \\    // item.value - the enum value
-                    \\    // item.label - the display string
-                    \\    // item.icon  - optional icon
-                    \\}
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            exampleLabel("Behaviour");
+            sectionDesc("Shows after a short hover or on keyboard focus; hides on leave, blur or Escape. The popup has role=tooltip.");
         });
+    });
+}
+
+fn apiSnippet(code: []const u8) void {
+    Row()
+        .width(.percent(100))
+        .padding(.all(16))
+        .background(Theme.code_bg)
+        .border(.round(Theme.border, .all(8)))
+        .children({
+        Text(code)
+            .font(14, 400, .hex("#e4e4e7"))
+            .fontFamily("IBM Plex Mono,monospace")
+            .whiteSpace(.pre)
+            .end();
     });
 }

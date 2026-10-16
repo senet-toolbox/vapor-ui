@@ -60,7 +60,7 @@ fn TooltipContent(title: []const u8, label: []const u8, due: Vapor.DateTime) voi
         Row()
             .width(.percent(100))
             .height(.px(1))
-            .background(.{ .color = .palette(.border_color_light) })
+            .background(.palette(.border_color_light))
             .children({});
 
         // Details section
@@ -94,7 +94,7 @@ fn TooltipContent(title: []const u8, label: []const u8, due: Vapor.DateTime) voi
     });
 }
 
-fn render() void {
+pub fn render() void {
     Tooltip.create(.{ .background = .palette(.background), .stroke_color = .palette(.border_color_light) })
         .Trigger(TooltipTrigger, .{"Custom Tooltip with Custom Content"})
         .Component(TooltipContent, .{ "CUSTOM", "Priority", Vapor.DateTime.now() })

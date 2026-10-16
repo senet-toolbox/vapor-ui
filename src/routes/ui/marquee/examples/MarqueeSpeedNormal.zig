@@ -1,13 +1,15 @@
+const Vapor = @import("vapor");
+const Row = Vapor.Row;
+const Text = Vapor.Text;
 const Marquee = @import("opaque-ui").Marquee;
 
 // Standard pace — what most marquees should feel like.
 pub fn example(items: []const Marquee.MarqueeItem) void {
     Marquee.render(.{
-        .items = items,
         .direction = .left,
         .speed_ms = 10000,
     }).children({
-        for (slides) |slide| {
+        for (items) |slide| {
             Row()
                 .width(.px(220))
                 .height(.px(64))
@@ -15,14 +17,13 @@ pub fn example(items: []const Marquee.MarqueeItem) void {
                 .spacing(6)
                 .background(.palette(.background))
                 .fontFamily("IBM Plex Mono,monospace")
-                .border(.simple(.palette(.border_color_light)))
+                .border(.thin(.palette(.border_color_light)))
                 .children({
                 Text(slide.title)
                     .fontSize(10)
-                    .fontColor(.transparentize(.palette(.text), 0.5))
+                    .textColor(.transparentize(.palette(.text), 0.5))
                     .end();
             });
         }
     });
 }
-

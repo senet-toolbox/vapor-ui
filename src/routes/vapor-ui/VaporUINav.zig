@@ -53,7 +53,7 @@ pub var menu_items = [_]MenuItem{
     MenuItem{ .value = "/ui/progress", .label = "Progress Bar/Circle", .icon = .arrow_right, .link = "/ui/progress" },
 };
 
-var nav: Vapor.Binded = .{};
+var nav: Vapor.Element = .{};
 
 pub fn init() void {
     combobox_dialog = .fromItems(&menu_items);
@@ -64,7 +64,7 @@ pub fn init() void {
     // OverlayManager.register(.keydown, navigateByNum, &nav);
 }
 
-fn navigateByNum(_: *Vapor.Binded, _: *Vapor.Event) void {
+fn navigateByNum(_: *Vapor.Element, _: *Vapor.Event) void {
     // evt.preventDefault();
     Vapor.print("navigateByNum", .{});
     // const key = evt.key();
@@ -190,7 +190,7 @@ fn openDialog() void {
 }
 
 fn navigate(url: []const u8) void {
-    Kit.navigate(url);
+    Vapor.navigate(url);
     menu = !menu;
     // Vapor.cycle();
 }
@@ -228,8 +228,8 @@ pub fn clickEvent(_: *[]const u8, evt: *Vapor.Event) void {
 }
 
 pub fn goto(url: []const u8) void {
-    Vapor.Kit.navigate(url);
-    Vapor.Kit.scrollTo(0, 0);
+    Vapor.navigate(url);
+    Vapor.scrollTo(0, 0);
     const uuid = Vapor.fmtln("menu-{s}", .{url});
     Vapor.scrollIntoView(uuid, .{ .block = .start });
 }
@@ -238,9 +238,9 @@ var mounted: bool = false;
 var current_menu_item: ?MenuItem = null;
 fn mount() void {
     mounted = true;
-    Vapor.Kit.scrollTo(0, 0);
+    Vapor.scrollTo(0, 0);
     // this runs after the vaporize is mounter
-    const current_path = Vapor.Kit.getWindowPath() orelse "/vapor-ui";
+    const current_path = Vapor.currentPath();
     current_menu_item = null;
     for (menu_items) |item| {
         if (std.mem.eql(u8, current_path, item.value)) {
@@ -268,8 +268,8 @@ fn mount() void {
 }
 
 fn handlePopState() void {
-    const current_path = Vapor.Kit.getWindowPath() orelse "/vapor-ui";
-    Vapor.Kit.scrollTo(0, 0);
+    const current_path = Vapor.currentPath();
+    Vapor.scrollTo(0, 0);
     const uuid = Vapor.fmtln("menu-{s}", .{current_path});
     Vapor.scrollIntoView(uuid, .{ .block = .start });
 }
@@ -277,7 +277,7 @@ fn handlePopState() void {
 const theme_svg = @embedFile("nightswitch.svg");
 
 pub fn render() void {
-    const current_path = Vapor.Kit.getWindowPath() orelse "/vapor-ui";
+    const current_path = Vapor.currentPath();
     Vapor.onMount(mount, .{});
     if (Vapor.isDesktop()) {
         Row().id("nav").style(&.{
@@ -332,15 +332,15 @@ pub fn render() void {
             }).children({
                 Row()
                     .width(.percent(70))
-                    .margin(.r(12))
+                    .margin(.{ .right = 12 })
                     .children({
                     command_palette.render();
                 });
                 RedirectLink(.{ .url = "https://github.com/vic-Rokx/vapor", .aria_label = "redirect link to tether github repo" })
                     .class("nav-item")
-                    .size(.hw_px(36, 36))
+                    .size(.hwPx(36, 36))
                     .layout(.center)
-                    .background(.transparentizeHex(.black, 0.8))
+                    .background(.transparentize(.black, 0.8))
                     .border(.round(.black, .all(8)))
                     .pointer()
                     .hover(.{
@@ -356,9 +356,9 @@ pub fn render() void {
                 });
                 RedirectLink(.{ .url = "https://github.com/vic-Rokx/vapor", .aria_label = "redirect link to discord" })
                     .class("nav-item")
-                    .size(.hw_px(36, 36))
+                    .size(.hwPx(36, 36))
                     .layout(.center)
-                    .background(.transparentizeHex(.black, 0.8))
+                    .background(.transparentize(.black, 0.8))
                     .border(.round(.black, .all(8)))
                     .pointer()
                     .hover(.{
@@ -387,7 +387,7 @@ pub fn render() void {
                     })
                     .children({
                     Vapor.Svg(.{ .override = true, .svg = theme_svg })
-                        .size(.hw_px(56, 56))
+                        .size(.hwPx(56, 56))
                         // .class("nav-item-icon")
                         .inheritHover(&.{.text_color})
                         .font(18, 700, .white)
@@ -403,15 +403,15 @@ pub fn render() void {
         if (!std.mem.eql(u8, current_path, "/") and !std.mem.eql(u8, current_path, "/ui/components") and !std.mem.eql(u8, current_path, "/ui/templates")) {
             Row().style(&.{
                 .position = .{ .type = .fixed, .top = .px(60), .left = .percent(2), .z_index = 999 },
-                .size = .hw(.percent(100), .mobile_desktop_percent(100, 14)),
+                .size = .hw(.percent(100), .mobileDesktopPercent(100, 14)),
             }).children({
                 List().style(&.{
                     .list_style = .none,
                     .direction = .column,
-                    .padding = .tblr(16, 64, 8, 8),
+                    .padding = .{ .top = 16, .bottom = 64, .left = 8, .right = 8 },
                     .child_gap = 12,
                     .size = .hw(.percent(95), .percent(100)),
-                    .scroll = .scroll_y(),
+                    .scroll = .scrollY(),
                     .show_scrollbar = false,
                     .layout = .{},
                 }).children({
@@ -428,11 +428,11 @@ pub fn render() void {
                             .id(uuid)
                             .border(.sharp(.all(1), .transparent))
                             // .inlineStyle("{s}", .{inline_style})
-                            .background(if (active) .transparentizeHex(.palette(.tint), 0.1) else .transparent)
+                            .background(if (active) .transparentize(.palette(.tint), 0.1) else .transparent)
                             .size(.hw(.fit, .percent(100)))
-                            .hoverBackground(if (active) .transparentizeHex(.palette(.tint), 0.1) else .palette(.highlight_color))
-                            .border(.r(1, if (active) .palette(.tint) else .transparent))
-                            .layer(if (active) .dot(0.5, 6, .transparentizeHex(.palette(.tint), 0.3)) else null)
+                            .hoverBackground(if (active) .transparentize(.palette(.tint), 0.1) else .palette(.highlight_color))
+                            .border(.right(1, if (active) .palette(.tint) else .transparent))
+                            .layer(if (active) .dot(0.5, 6, .transparentize(.palette(.tint), 0.3)) else null)
                             .children({
                             Link(.{ .url = item.value, .aria_label = Vapor.fmtln("navigate to {s}", .{item.value}) })
                                 .ariaLabel(Vapor.fmtln("navigate to {s}", .{item.value}))
@@ -445,7 +445,7 @@ pub fn render() void {
                                     .size = .w(.percent(100)),
                                     .layout = .left_center,
                                     .child_gap = 12,
-                                    .padding = .tblr(10, 10, 8, 8),
+                                    .padding = .xy(8, 10),
                                 })
                                 .children({
                                 // Icon(item.icon).style(&.{

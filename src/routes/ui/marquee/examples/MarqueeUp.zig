@@ -1,3 +1,6 @@
+const Vapor = @import("vapor");
+const Row = Vapor.Row;
+const Text = Vapor.Text;
 const Marquee = @import("opaque-ui").Marquee;
 
 const cards = [_]Marquee.MarqueeItem{
@@ -8,7 +11,6 @@ const cards = [_]Marquee.MarqueeItem{
 
 pub fn example() void {
     Marquee.render(.{
-        .items = &cards,
         .direction = .up,
         .speed_ms = 10000,
     }).children({
@@ -20,14 +22,13 @@ pub fn example() void {
                 .spacing(6)
                 .background(.palette(.background))
                 .fontFamily("IBM Plex Mono,monospace")
-                .border(.simple(.palette(.border_color_light)))
+                .border(.thin(.palette(.border_color_light)))
                 .children({
                 Text(slide.title)
                     .fontSize(10)
-                    .fontColor(.transparentize(.palette(.text), 0.5))
+                    .textColor(.transparentize(.palette(.text), 0.5))
                     .end();
             });
         }
     });
 }
-

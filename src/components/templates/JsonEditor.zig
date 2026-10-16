@@ -34,8 +34,8 @@ editor_padding_top: f32 = 12,
 editor_padding_left: f32 = 12,
 
 hover_tooltip: HoverTooltip = .{},
-editor_container: Vapor.Binded = .{},
-text_area: Vapor.Binded = .{},
+editor_container: Vapor.Element = .{},
+text_area: Vapor.Element = .{},
 new_cursor_pos: usize = 0,
 var last_time: i64 = 0;
 
@@ -273,7 +273,7 @@ fn onKeyUp(self: *JsonEditor, evt: *Vapor.Event) void {
 
 const HoverTooltip = struct {
     visible: bool = false,
-    binded: Vapor.Binded = .{},
+    binded: Vapor.Element = .{},
     x: f32 = 0,
     y: f32 = 0,
     token_text: []const u8 = "",
@@ -764,7 +764,7 @@ fn replaceText(self: *JsonEditor, start: usize, end: usize, replacement: []const
     self.recompile();
 }
 
-var binded_highlighter: Vapor.Binded = .{};
+var binded_highlighter: Vapor.Element = .{};
 
 var copied: bool = false;
 fn copy(self: *JsonEditor) void {
@@ -787,7 +787,7 @@ fn onDrag(draggable: *Vapor.Draggable, _: *Vapor.Event) void {
 // Render
 // ============================================================================
 
-var container: Vapor.Binded = .{};
+var container: Vapor.Element = .{};
 
 fn onMount(self: *JsonEditor) void {
     const sh = self.text_area.scrollHeight();
@@ -816,8 +816,8 @@ pub fn render(self: *JsonEditor) void {
             });
             Vapor.Button(copy, .{self})
                 .ariaLabel("copy-json-button")
-                .fontColor(.palette(.disabled))
-                .size(.px(22))
+                .textColor(.palette(.disabled))
+                .size(.squarePx(22))
                 .background(.transparent)
                 .duration(100)
                 .pointer()
@@ -849,7 +849,7 @@ pub fn render(self: *JsonEditor) void {
                 .layout(.center)
                 .spacing(16)
                 .background(.hex("#282828"))
-                .scroll(.scroll_y()) // ← THE ONLY scroller
+                .scroll(.scrollY()) // ← THE ONLY scroller
                 .children({
                 // Layer 1: Syntax highlighted background
                 Row()
@@ -868,6 +868,7 @@ pub fn render(self: *JsonEditor) void {
                     TextArea()
                         .onMount(onMount, .{self})
                         .ref(&self.text_area)
+                        .ariaLabel("JSON body")
                         .background(.transparent)
                         .val(&self.text)
                         .width(.percent(100))
@@ -875,17 +876,17 @@ pub fn render(self: *JsonEditor) void {
                         .outline(.none, null)
                         .border(.none)
                         .resize(.none)
-                        .border(.simple(.transparent))
+                        .border(.thin(.transparent))
                         // no height: 100% — set height dynamically (see below)
                         .textDecoration(.none)
-                        .whitespace(.pre)
-                        .padding(.tblr(11, 0, 47, 0))
+                        .whiteSpace(.pre)
+                        .padding(.{ .top = 11, .left = 47 })
                         .fontFamily("DM Mono, monospace")
                         .caret(.{ .type = .line, .color = .hex("#00AAFF") })
                         .textDecoration(.none)
                         .fontSize(15)
                         .fontWeight(400)
-                        .fontColor(.transparent)
+                        .textColor(.transparent)
                         .onEvent(.input, onChange, .{self})
                         .onEvent(.keydown, onKeyDown, .{self})
                         .onEvent(.keyup, onKeyUp, .{self})
@@ -927,7 +928,7 @@ fn renderHoverTooltip(self: *JsonEditor) void {
                     .spacing(6)
                     .children({
                     Row()
-                        .size(.square_px(6))
+                        .size(.squarePx(6))
                         .radius(.all(3))
                         .background(.hex("#f44747"))
                         .children({});

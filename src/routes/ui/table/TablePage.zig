@@ -9,6 +9,12 @@ const Table = Opaque.Table;
 const Vaporize = @import("vaporize");
 const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
 const CodeBox = @import("../CodeBox.zig").CodeBox;
+// Rendered and shown as code: what you read is what runs.
+const BasicTable = @import("examples/BasicTable.zig");
+const WithActions = @import("examples/WithActions.zig");
+const Filterable = @import("examples/Filterable.zig");
+const Sortable = @import("examples/Sortable.zig");
+const Virtual = @import("examples/Virtual.zig");
 
 // ============================================================================
 // THEME
@@ -30,103 +36,6 @@ var hl_with_actions: SyntaxHighlighter = undefined;
 var hl_filterable: SyntaxHighlighter = undefined;
 var hl_sortable: SyntaxHighlighter = undefined;
 var hl_virtual: SyntaxHighlighter = undefined;
-
-// ============================================================================
-// DATA TYPES
-// ============================================================================
-
-const Status = enum { pending, success, err };
-
-const Transaction = struct {
-    id: usize,
-    status: Status,
-    email: []const u8,
-    amount: u32,
-};
-
-const User = struct {
-    id: usize,
-    name: []const u8,
-    role: Role,
-    department: []const u8,
-};
-
-const Role = enum { admin, editor, viewer };
-
-// ============================================================================
-// TABLE INSTANCES
-// ============================================================================
-
-const BasicTable = Table(Transaction, &.{
-    .{ .title = "Status", .key = "status" },
-    .{ .title = "Email", .key = "email" },
-    .{ .title = "Amount", .key = "amount" },
-}, .{});
-var basic_table: BasicTable = undefined;
-
-const ActionsTable = Table(Transaction, &.{
-    .{ .title = "Status", .key = "status" },
-    .{ .title = "Email", .key = "email" },
-    .{ .title = "Amount", .key = "amount" },
-}, .{
-    .actions = &.{
-        .{ .label = "View", .icon = .eye },
-        .{ .label = "Edit", .icon = .pencil },
-        .{ .label = "Delete", .icon = .trash },
-    },
-});
-var actions_table: ActionsTable = undefined;
-
-const FilterableTable = Table(Transaction, &.{
-    .{ .title = "Status", .key = "status", .filter = true },
-    .{ .title = "Email", .key = "email", .search = true },
-    .{ .title = "Amount", .key = "amount" },
-}, .{});
-var filterable_table: FilterableTable = undefined;
-
-const SortableTable = Table(Transaction, &.{
-    .{ .title = "Status", .key = "status", .sort = .asc },
-    .{ .title = "Email", .key = "email", .sort = .asc },
-    .{ .title = "Amount", .key = "amount", .sort = .desc },
-}, .{});
-var sortable_table: SortableTable = undefined;
-
-const VirtualTable = Table(Transaction, &.{
-    .{ .title = "Status", .key = "status" },
-    .{ .title = "Email", .key = "email" },
-    .{ .title = "Amount", .key = "amount" },
-}, .{});
-var virtual_table: VirtualTable = undefined;
-
-// ============================================================================
-// SAMPLE DATA
-// ============================================================================
-
-var basic_data: Vapor.Array(Transaction) = undefined;
-var actions_data: Vapor.Array(Transaction) = undefined;
-var filterable_data: Vapor.Array(Transaction) = undefined;
-var sortable_data: Vapor.Array(Transaction) = undefined;
-var virtual_data: Vapor.Array(Transaction) = undefined;
-
-fn generateSampleData(arr: *Vapor.Array(Transaction), count: usize) void {
-    const statuses = [_]Status{ .pending, .success, .err };
-    const emails = [_][]const u8{
-        "john@example.com",
-        "jane@example.com",
-        "alice@example.com",
-        "bob@example.com",
-        "mary@example.com",
-    };
-
-    for (0..count) |i| {
-        arr.append(.{
-            .id = i,
-            .status = statuses[i % 3],
-            .email = emails[i % 5],
-            .amount = @intCast((i + 1) * 100),
-        }) catch unreachable;
-    }
-}
 
 // ============================================================================
 // INIT
@@ -156,53 +65,13 @@ pub fn init() void {
     hl_virtual.show_toolbar = true;
     hl_virtual.parse(@embedFile("examples/Virtual.zig")) catch unreachable;
 
-    // Initialize data arrays
-    basic_data = Vapor.array(Transaction, .persist);
-    actions_data = Vapor.array(Transaction, .persist);
-    filterable_data = Vapor.array(Transaction, .persist);
-    sortable_data = Vapor.array(Transaction, .persist);
-    virtual_data = Vapor.array(Transaction, .persist);
-
-    // Generate sample data
-    generateSampleData(&basic_data, 5);
-    generateSampleData(&actions_data, 5);
-    generateSampleData(&filterable_data, 15);
-    generateSampleData(&sortable_data, 10);
-    generateSampleData(&virtual_data, 100);
-
-    // Initialize tables
-    basic_table.init(basic_data.items);
-
-    actions_table.init(actions_data.items);
-
-    filterable_table.init(filterable_data.items);
-
-    sortable_table.init(sortable_data.items);
-
-    virtual_table.init(virtual_data.items);
-    virtual_table.display_mode = .virtual;
+    BasicTable.init();
+    WithActions.init();
+    Filterable.init();
+    Sortable.init();
+    Virtual.init();
 
     Vapor.Page(.{ .src = @src() }, render, null);
-}
-
-// ============================================================================
-// HANDLERS
-// ============================================================================
-
-fn handleSelect(item: *Transaction) void {
-    Vapor.alert("Selected: {s} - ${d}", .{ item.email, item.amount });
-}
-
-fn handleView(item: *Transaction) void {
-    Vapor.alert("Viewing: {s}", .{item.email});
-}
-
-fn handleEdit(item: *Transaction) void {
-    Vapor.alert("Editing: {s}", .{item.email});
-}
-
-fn handleDelete(item: *Transaction) void {
-    Vapor.alert("Deleting: {s}", .{item.email});
 }
 
 // ============================================================================
@@ -213,7 +82,7 @@ fn sectionTitle(title: []const u8) void {
     Text(title)
         .font(24, 600, Theme.text)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.t(48))
+        .margin(.{ .top = 48 })
         .end();
 }
 
@@ -221,7 +90,7 @@ fn sectionDesc(desc: []const u8) void {
     Text(desc)
         .font(14, 400, Theme.text_muted)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.b(16))
+        .margin(.{ .bottom = 16 })
         .end();
 }
 
@@ -229,20 +98,20 @@ fn exampleLabel(label: []const u8) void {
     Text(label)
         .font(14, 500, Theme.text_muted)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.t(24))
+        .margin(.{ .top = 24 })
         .end();
 }
 
 fn PreviewCard() Vapor.Builder(.pure) {
     return Stack()
-        .background(.transparentizeHex(.palette(.background), 0.5))
+        .background(.transparentize(.palette(.background), 0.5))
         .border(.round(.palette(.border_color_light), .all(12)))
         .width(.percent(100))
         .height(.px(400))
         .padding(.all(24))
         .direction(.column)
         .layout(.top_center)
-        .scroll(.scroll_y());
+        .scroll(.scrollY());
 }
 
 // ============================================================================
@@ -279,7 +148,7 @@ pub fn render() void {
             .width(.percent(50))
             .height(.percent(100))
             .spacing(12)
-            .padding(.bottom(120))
+            .padding(.{ .bottom = 120 })
             .children({
 
             // ============================================================
@@ -288,7 +157,7 @@ pub fn render() void {
             exampleLabel("Basic");
             sectionDesc("A simple table with columns and data. Each row requires an 'id' field.");
             PreviewCard().children({
-                basic_table.render();
+                BasicTable.render();
             });
             CodeBox(&hl_basic, "BasicTable");
 
@@ -298,7 +167,7 @@ pub fn render() void {
             exampleLabel("With Actions");
             sectionDesc("Add row-level actions with icons using the config.actions parameter.");
             PreviewCard().children({
-                actions_table.render();
+                WithActions.render();
             });
             CodeBox(&hl_with_actions, "WithActions");
 
@@ -308,7 +177,7 @@ pub fn render() void {
             exampleLabel("Filterable");
             sectionDesc("Enable text search and enum filtering on columns with .search and .filter.");
             PreviewCard().children({
-                filterable_table.render();
+                Filterable.render();
             });
             CodeBox(&hl_filterable, "Filterable");
 
@@ -318,7 +187,7 @@ pub fn render() void {
             exampleLabel("Sortable");
             sectionDesc("Add sorting to columns with .sort = .asc or .sort = .desc.");
             PreviewCard().children({
-                sortable_table.render();
+                Sortable.render();
             });
             CodeBox(&hl_sortable, "Sortable");
 
@@ -328,7 +197,7 @@ pub fn render() void {
             exampleLabel("Virtual Scrolling");
             sectionDesc("For large datasets, use display_mode = .virtual for performant rendering.");
             PreviewCard().children({
-                virtual_table.render();
+                Virtual.render();
             });
             CodeBox(&hl_virtual, "Virtual");
 

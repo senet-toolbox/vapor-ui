@@ -71,6 +71,7 @@ fn generateHtml(
             .{ .name = "config", .module = config_module },
             .{ .name = "vaporize", .module = vaporize_module },
             .{ .name = "opaque-ui", .module = opaque_ui_module },
+            .{ .name = "keystone", .module = vapor_dep.module("keystone") },
             .{ .name = "build_options", .module = build_options_module },
         },
     });
@@ -167,6 +168,7 @@ pub fn build(b: *std.Build) void {
             .{ .name = "config", .module = config_module },
             .{ .name = "vaporize", .module = vaporize_module },
             .{ .name = "opaque-ui", .module = opaque_ui_module },
+            .{ .name = "keystone", .module = vapor_dep.module("keystone") },
             .{ .name = "build_options", .module = build_options_module },
         },
     });
@@ -192,6 +194,43 @@ pub fn build(b: *std.Build) void {
     exe.rdynamic = true;
 
     b.installArtifact(exe);
+    b.getInstallStep().dependOn(&b.addInstallBinFile(vapor_dep.namedLazyPath("runtime"), "bundle.min.js").step);
+    b.getInstallStep().dependOn(&b.addInstallBinFile(vapor_dep.namedLazyPath("runtime-browser"), "browser.min.js").step);
+
+    // ---------------------
+    //  Check step
+    // ---------------------
+    // Compiles every example the pages show as code (src/check_examples.zig).
+    const check_obj = b.addObject(.{
+        .name = "check-examples",
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("src/check_examples.zig"),
+            .target = wasm_target,
+            .optimize = optimize,
+            .imports = &.{
+                .{ .name = "vapor", .module = vapor_module },
+                .{ .name = "theme", .module = theme_module },
+                .{ .name = "config", .module = config_module },
+                .{ .name = "vaporize", .module = vaporize_module },
+                .{ .name = "opaque-ui", .module = opaque_ui_module },
+            },
+        }),
+    });
+    const check_step = b.step("check", "Compile every example the pages show");
+    check_step.dependOn(&check_obj.step);
+
+    // ---------------------
+    //  Interaction tests
+    // ---------------------
+    // Builds the site, then drives every component page in headless Chrome
+    // (tests/run.mjs; needs Node >= 22 and Chrome). Pass a name to run only
+    // the tests whose name contains it: zig build test-ui -- slider
+    const run_ui_tests = b.addSystemCommand(&.{ "node", "tests/run.mjs" });
+    run_ui_tests.step.dependOn(b.getInstallStep());
+    run_ui_tests.has_side_effects = true;
+    if (b.args) |args| run_ui_tests.addArgs(args);
+    const test_ui_step = b.step("test-ui", "Run the component interaction tests in headless Chrome");
+    test_ui_step.dependOn(&run_ui_tests.step);
 
     // ---------------------
     //  Run step

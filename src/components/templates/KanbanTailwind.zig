@@ -63,7 +63,7 @@ pub const TaskPriority = enum {
         };
     }
 
-    pub fn icon(self: TaskPriority) Vapor.IconType {
+    pub fn icon(self: TaskPriority) Vapor.IconTokens {
         return switch (self) {
             .low => .flag,
             .medium => .flag_fill,
@@ -100,7 +100,7 @@ pub const TaskStatus = enum {
         };
     }
 
-    pub fn icon(self: TaskStatus) Vapor.IconType {
+    pub fn icon(self: TaskStatus) Vapor.IconTokens {
         return switch (self) {
             .backlog => .inbox,
             .todo => .circle,
@@ -899,7 +899,7 @@ pub const Kanban = struct {
                     Row()
                         .class("h-6 flex items-center justify-center bg-transparent cursor-pointer gap-2")
                         .children({
-                    TextFmt("{d}%", .{task.percent})
+                        TextFmt("{d}%", .{task.percent})
                             .class("font-[Montserrat] text-xs font-normal")
                             .end();
                         if (task.progress) |*progress| {
@@ -1392,7 +1392,7 @@ fn makeTask(
     };
 }
 
-fn renderNavButton(label_text: []const u8, nav_icon: Vapor.IconType, is_active: bool) void {
+fn renderNavButton(label_text: []const u8, nav_icon: Vapor.IconTokens, is_active: bool) void {
     Row()
         .class(
             if (is_active)

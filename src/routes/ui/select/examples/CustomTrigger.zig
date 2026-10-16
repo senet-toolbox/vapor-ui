@@ -15,6 +15,7 @@ pub fn init() void {
         .{ .value = 4, .label = "Item 5" },
     });
     select.trigger_component = triggerButton;
+    select.trigger_label = "More actions"; // an icon alone has no name
     select.on_select = handleSelect;
 }
 

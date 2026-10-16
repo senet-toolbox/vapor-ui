@@ -4,11 +4,8 @@ const Row = Vapor.Row;
 const Stack = Vapor.Stack;
 const Opaque = @import("opaque-ui");
 const Alert = Opaque.Alert;
-const Vaporize = @import("vaporize");
-const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
 const Icon = Vapor.Icon;
 const Button = Opaque.Button;
-const Page = Vapor.Page;
 
 var alert: Alert = undefined;
 
@@ -17,7 +14,7 @@ pub fn init() void {
     alert = .init(alertContent);
 }
 
-fn render() void {
+pub fn render() void {
     Button(Alert.open, .{&alert})
         .ariaLabel("open alert")
         .padding(.xy(12, 8))

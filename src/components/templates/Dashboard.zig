@@ -11,13 +11,13 @@ const TextFmt = Vapor.TextFmt;
 const TextField = Vapor.TextField;
 const TextArea = Vapor.TextArea;
 const Animation = Vapor.Animation;
-const ButtonCtx = Vapor.CtxButton;
+const ButtonCtx = Vapor.Button;
 const toggleTheme = @import("../../routes/vapor-ui/VaporUINav.zig").toggleTheme;
 const Opaque = @import("opaque-ui");
 
 // Import UI Components
-const Button = @import("../../components/Button.zig").Button;
-const SideBar = @import("../../components/SideBar.zig");
+const Button = Opaque.Button;
+const SideBar = Opaque.SideBar;
 
 const Dashboard = @This();
 
@@ -97,7 +97,7 @@ pub fn color(self: EventType) Vapor.Types.Color {
     };
 }
 
-pub fn icon(self: EventType) Vapor.IconType {
+pub fn icon(self: EventType) Vapor.IconTokens {
     return switch (self) {
         .pageview => .eye,
         .click => .cursor,
@@ -146,7 +146,7 @@ const NavItem = enum {
         };
     }
 
-    pub fn icon(self: NavItem) Vapor.IconType {
+    pub fn icon(self: NavItem) Vapor.IconTokens {
         return switch (self) {
             .dashboard => .grid_3x3,
             .transactions => .credit_card,
@@ -262,12 +262,7 @@ const TransactionsTable = Table(Transaction, &transaction_columns, .{
     //     .{ .label = "Refund", .on_action = handleRefundTransaction, .icon = .arrow_counterclockwise },
     //     .{ .label = "Delete", .on_action = handleDeleteTransaction, .icon = .trash },
     // },
-    .default_style = .{
-        .background = .palette(.background),
-        .text_color = .palette(.text),
-        .border_color = .palette(.border_color_light),
-        .icon_color = .palette(.icon_color)
-    },
+    .default_style = .{ .background = .palette(.background), .text_color = .palette(.text), .border_color = .palette(.border_color_light), .icon_color = .palette(.icon_color) },
 });
 
 // Select options
@@ -674,7 +669,7 @@ fn renderNavigation() void {
             Text("MENU")
                 .font(10, 600, Theme.text_muted)
                 .fontFamily("IBM Plex Mono,monospace")
-                .margin(.b(8))
+                .margin(.{ .bottom = 8 })
                 .end();
 
             for (std.enums.values(NavItem)) |nav_item| {
@@ -724,15 +719,15 @@ fn renderNavButton(item: NavItem) void {
     ButtonCtx(selectNav, .{item})
         .width(.percent(100))
         .padding(.xy(14, 4))
-        .background(if (is_active) .transparentizeHex(.palette(.tint), 0.1) else .transparent)
-        .border(.r(1, if (is_active) .palette(.tint) else .transparent))
-        .layer(if (is_active) .dot(0.5, 6, .transparentizeHex(.palette(.tint), 0.3)) else null)
+        .background(if (is_active) .transparentize(.palette(.tint), 0.1) else .transparent)
+        .border(.right(1, if (is_active) .palette(.tint) else .transparent))
+        .layer(if (is_active) .dot(0.5, 6, .transparentize(.palette(.tint), 0.3)) else null)
         .layout(.left_center)
         .spacing(12)
         .pointer()
         .duration(150)
         .hover(.{
-            .background = if (is_active) .transparentizeHex(.palette(.tint), 0.1) else .palette(.highlight_color),
+            .background = if (is_active) .transparentize(.palette(.tint), 0.1) else .palette(.highlight_color),
         })
         .children({
         Row()
@@ -820,6 +815,7 @@ fn renderHeader() void {
                 .pos(.relative)
                 .children({
                 Button(toggleDatePicker, .{})
+                    .ariaLabel("Pick dates")
                     .width(.px(40))
                     .height(.px(40))
                     .layout(.center)
@@ -843,6 +839,7 @@ fn renderHeader() void {
 
             // Refresh button
             Button(toggleLiveMode, .{})
+                .ariaLabel("Toggle live updates")
                 .width(.px(40))
                 .height(.px(40))
                 .layout(.center)
@@ -862,7 +859,7 @@ fn renderMetricCard(
     comptime value: []const u8,
     comptime change: []const u8,
     comptime is_positive: bool,
-    _: Vapor.IconType,
+    _: Vapor.IconTokens,
 ) void {
     Row()
         .width(.percent(25))
@@ -893,7 +890,7 @@ fn renderMetricCard(
                 .children({
                 Row()
                     .padding(.xy(6, 3))
-                    .background(.transparentizeHex(if (is_positive) Theme.success else Theme.err, 0.5))
+                    .background(.transparentize(if (is_positive) Theme.success else Theme.err, 0.5))
                     .border(.round(if (is_positive) Theme.success else Theme.err, .all(4)))
                     .layout(.center)
                     .spacing(4)
@@ -921,7 +918,7 @@ fn renderDashboardView() void {
         .height(.percent(100))
         .padding(.all(28))
         .spacing(28)
-        .scroll(.scroll_y())
+        .scroll(.scrollY())
         .children({
         Row()
             .width(.percent(100))
@@ -1128,7 +1125,7 @@ fn renderTransactionsView() void {
         // Table
         Row()
             .width(.percent(100))
-            .layer(.grid(14, 1, .transparentizeHex(.black, 0.05)))
+            .layer(.grid(14, 1, .transparentize(.black, 0.05)))
             .children({
             transactions_table.render();
         });
@@ -1225,6 +1222,7 @@ fn renderDetailSheetContent(_: *Sheet) void {
                     .fontFamily("IBM Plex Mono,monospace")
                     .end();
                 Button(closeDetailSheet, .{})
+                    .ariaLabel("Close details")
                     .width(.px(36))
                     .height(.px(36))
                     .layout(.center)

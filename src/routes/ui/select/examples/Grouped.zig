@@ -5,15 +5,37 @@ const Select = Opaque.Select;
 
 const TimeZone = enum {
     // North America
-    est, cst, mst, pst, akst, hst,
+    est,
+    cst,
+    mst,
+    pst,
+    akst,
+    hst,
     // Europe & Africa
-    gmt, cet, eet, west, cat, eat,
+    gmt,
+    cet,
+    eet,
+    west,
+    cat,
+    eat,
     // Asia
-    msk, ist, cst_china, jst, kst, wita,
+    msk,
+    ist,
+    cst_china,
+    jst,
+    kst,
+    wita,
     // Australia & Pacific
-    awst, acst, aest, nzst, fjt,
+    awst,
+    acst,
+    aest,
+    nzst,
+    fjt,
     // South America
-    art, bot, brt, clt,
+    art,
+    bot,
+    brt,
+    clt,
     // Universal
     utc,
 };

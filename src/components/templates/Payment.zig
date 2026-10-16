@@ -112,9 +112,9 @@ fn PricingCard(plan: *const PricingPlan) void {
         .spacing(12)
         .layout(.top_left)
         .background(if (is_highlighted)
-            .transparentizeHex(.palette(.tint), 0.6)
+            .transparentize(.palette(.tint), 0.6)
         else
-            .transparentizeHex(.palette(.background), 0.5))
+            .transparentize(.palette(.background), 0.5))
         .border(.sharp(
             .all(1),
             if (is_highlighted) .palette(.tint) else .palette(.border_color_light),
@@ -124,10 +124,10 @@ fn PricingCard(plan: *const PricingPlan) void {
             .transform = .translate(0, -8, .px),
             .border = .round(if (is_highlighted) .palette(.tint) else .palette(.border_color_light), .all(16)),
             .new_shadow = Vapor.Types.NewShadow.init()
-                .inset(0, -2, .transparentizeHex(.black, 0.3))
-                .drop(0, 1, 3, .transparentizeHex(.black, 0.1)),
+                .inset(0, -2, .transparentize(.black, 0.3))
+                .drop(0, 1, 3, .transparentize(.black, 0.1)),
         })
-        .onEventCtx(.pointerenter, onHoverTier, .{plan.tier})
+        .onEvent(.pointerenter, onHoverTier, .{plan.tier})
         .onLeave(onLeaveTier, .{})
         .children({
         // Badge for highlighted plan
@@ -142,7 +142,7 @@ fn PricingCard(plan: *const PricingPlan) void {
                     .width(.percent(40))
                     .layout(.center)
                     .background(.palette(.tint))
-                    .border(.simple(.palette(.tint)))
+                    .border(.thin(.palette(.tint)))
                     .children({
                     Text("Most Popular")
                         .font(16, 200, .palette(.background))
@@ -211,11 +211,11 @@ fn PricingCard(plan: *const PricingPlan) void {
         // CTA Button
         Row()
             .width(.percent(100))
-            .padding(.tb(16, 0))
+            .padding(.{ .top = 16 })
             .layout(.center)
             .children({
             Button(onSelectPlan, .{plan.tier})
-                .shadow(Vapor.Types.NewShadow.insetGlow(0, 2, 4, .transparentize(.black, 0.1)))
+                .shadow(Vapor.Types.Shadow.init().dropSpread(0, 2, 4, 2, .transparentize(.black, 0.1)))
                 .size(.hw(.px(42), .percent(80)))
                 .layout(.center)
                 .background(if (is_highlighted)
@@ -303,4 +303,3 @@ pub fn render() void {
 pub fn init() void {
     // Initialize any required state
 }
-

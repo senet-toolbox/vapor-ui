@@ -4,6 +4,7 @@ const Stack = Vapor.Stack;
 const Text = Vapor.Text;
 const Icon = Vapor.Icon;
 const Accordion = @import("opaque-ui").Accordion;
+const Button = @import("opaque-ui").Button;
 
 var items = [_]Accordion.AccordionItem{
     .{
@@ -26,13 +27,12 @@ pub fn render() void {
 }
 
 fn CustomTrigger(item: *Accordion.AccordionItem) void {
-    Stack()
-        .direction(.row)
+    Row()
         .spacing(12)
         .layout(.left_center)
         .children({
         // Dynamic Icon based on title
-        Icon(.settings)
+        Icon(.gear)
             .font(18, 300, .palette(.tint))
             .end();
 

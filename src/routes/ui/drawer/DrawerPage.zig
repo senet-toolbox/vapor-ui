@@ -11,6 +11,8 @@ const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
 const Icon = Vapor.Icon;
 const Button = Opaque.Button;
 const CodeBox = @import("../CodeBox.zig").CodeBox;
+// Rendered and shown as code: what you read is what runs.
+const BasicDrawer = @import("examples/BasicDrawer.zig");
 
 // ============================================================================
 // THEME & MOCK DATA
@@ -61,7 +63,6 @@ var selected_transaction: ?Transaction = .{
 // DRAWER INSTANCES
 // ============================================================================
 
-var bottom_drawer: Drawer = undefined;
 var right_drawer: Drawer = undefined;
 var left_drawer: Drawer = undefined;
 var top_drawer: Drawer = undefined;
@@ -75,8 +76,7 @@ pub fn init() void {
     hl_basic.parse(@embedFile("examples/BasicDrawer.zig")) catch unreachable;
     hl_basic.show_toolbar = true;
 
-    bottom_drawer = .init(.bottom);
-    bottom_drawer.content = renderBasicContent;
+    BasicDrawer.init();
 
     right_drawer = .init(.right);
     right_drawer.content = renderDetailSheetContent;
@@ -127,6 +127,7 @@ fn renderDetailSheetContent(_: *Drawer) void {
                     .fontFamily("IBM Plex Mono,monospace")
                     .end();
                 Button(Drawer.close, .{&right_drawer})
+                    .ariaLabel("Close details")
                     .width(.px(36))
                     .height(.px(36))
                     .layout(.center)
@@ -143,7 +144,7 @@ fn renderDetailSheetContent(_: *Drawer) void {
                 .direction(.column)
                 .spacing(8)
                 .layout(.center)
-                .background(.transparentizeHex(Theme.text, 0.05))
+                .background(.transparentize(Theme.text, 0.05))
                 .border(.round(Theme.border, .all(12)))
                 .children({
                 Text("Total Amount").font(12, 500, Theme.text_muted).end();
@@ -198,18 +199,18 @@ fn renderDetailRow(label: []const u8, value: []const u8) void {
 // ============================================================================
 
 fn sectionDesc(desc: []const u8) void {
-    Text(desc).font(14, 400, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.b(16)).end();
+    Text(desc).font(14, 400, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.{ .bottom = 16 }).end();
 }
 
 fn exampleLabel(label: []const u8) void {
-    Text(label).font(14, 500, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.t(24)).end();
+    Text(label).font(14, 500, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.{ .top = 24 }).end();
 }
 
 fn CodeBlock(highlighter: *SyntaxHighlighter) void {
     Row()
-        .scroll(.scroll_y())
-        .size(.hw(.mobile_desktop(.fit, .px(400)), .mobile_desktop_percent(100, 100)))
-        .border(.simple(.palette(.text_color)))
+        .scroll(.scrollY())
+        .size(.hw(.mobileDesktop(.fit, .px(400)), .mobileDesktopPercent(100, 100)))
+        .border(.thin(.palette(.text_color)))
         .children({
         highlighter.render() catch unreachable;
     });
@@ -217,7 +218,7 @@ fn CodeBlock(highlighter: *SyntaxHighlighter) void {
 
 fn PreviewCard() Vapor.Builder(.pure) {
     return Stack()
-        .background(.transparentizeHex(.palette(.background), 0.5))
+        .background(.transparentize(.palette(.background), 0.5))
         .border(.round(.palette(.border_color_light), .all(12)))
         .width(.percent(100))
         .padding(.all(24))
@@ -258,14 +259,14 @@ fn render() void {
             .width(.percent(50))
             .height(.percent(100))
             .spacing(12)
-            .padding(.bottom(120))
+            .padding(.{ .bottom = 120 })
             .children({
 
             // Basic
             exampleLabel("Open Bottom Drawer");
             sectionDesc("Open a drawer from any Button or Click event.");
             PreviewCard().children({
-                posBtn("Open Bottom", &bottom_drawer);
+                BasicDrawer.render();
             });
             CodeBox(&hl_basic, "BasicDrawer");
 
@@ -294,7 +295,6 @@ fn render() void {
         });
     });
 
-    bottom_drawer.render();
     right_drawer.render();
     left_drawer.render();
     top_drawer.render();
@@ -309,4 +309,3 @@ fn posBtn(label: []const u8, drawer: *Drawer) void {
         Text(label).font(14, 500, .palette(.background)).end();
     });
 }
-

@@ -64,7 +64,7 @@ pub const TaskPriority = enum {
         };
     }
 
-    pub fn icon(self: TaskPriority) Vapor.IconType {
+    pub fn icon(self: TaskPriority) Vapor.IconTokens {
         return switch (self) {
             .low => .flag,
             .medium => .flag_fill,
@@ -101,7 +101,7 @@ pub const TaskStatus = enum {
         };
     }
 
-    pub fn icon(self: TaskStatus) Vapor.IconType {
+    pub fn icon(self: TaskStatus) Vapor.IconTokens {
         return switch (self) {
             .backlog => .inbox,
             .todo => .circle,
@@ -694,7 +694,7 @@ pub const Kanban = struct {
                 Text("VIEWS")
                     .font(10, 600, Theme.text_muted)
                     .fontFamily("Montserrat")
-                    .margin(.b(8))
+                    .margin(.{ .bottom = 8 })
                     .end();
 
                 renderNavButton("Board", .kanban, true);
@@ -711,7 +711,7 @@ pub const Kanban = struct {
                 Text("STATISTICS")
                     .font(10, 600, Theme.text_muted)
                     .fontFamily("Montserrat")
-                    .margin(.b(8))
+                    .margin(.{ .bottom = 8 })
                     .end();
 
                 renderStatRow("Total Tasks", self.totalTaskCount());
@@ -835,6 +835,7 @@ pub const Kanban = struct {
                 });
 
                 Button(handleRefresh, .{self})
+                    .ariaLabel("Refresh")
                     .width(.px(40))
                     .height(.px(40))
                     .layout(.center)
@@ -891,7 +892,7 @@ pub const Kanban = struct {
             .padding(.all(28))
             .layout(.top_left)
             .spacing(20)
-            .scroll(.scroll_x())
+            .scroll(.scrollX())
             .children({
             for (std.enums.values(TaskStatus)) |status| {
                 if (status == .done and !self.show_completed) continue;
@@ -936,6 +937,7 @@ pub const Kanban = struct {
                 });
 
                 Vapor.Button(addTaskToColumn, .{ self, status })
+                    .ariaLabel("Add task")
                     .layout(.center)
                     .duration(100)
                     .textColor(Theme.text_muted)
@@ -953,7 +955,7 @@ pub const Kanban = struct {
                 .width(.percent(100))
                 .height(.grow)
                 .spacing(10)
-                .scroll(.scroll_y());
+                .scroll(.scrollY());
             surface.render(renderTaskCardTrampoline, .{self});
         });
     }
@@ -964,7 +966,7 @@ pub const Kanban = struct {
             .layout(.y_between)
             .inlineStyle("user-select: none;", .{})
             .width(.percent(100))
-            .padding(.top(14))
+            .padding(.{ .top = 14 })
             .animationEnter("kanban-card-enter")
             .border(.round(
                 if (state.is_dragging) .transparentize(.palette(.tint), 0.3) else .palette(.border_color_light),
@@ -1080,6 +1082,7 @@ pub const Kanban = struct {
 
                     // View
                     Vapor.Button(handleViewTask, .{ self, task })
+                        .ariaLabel("View task")
                         .width(.px(24))
                         .height(.px(24))
                         .layout(.center)
@@ -1096,6 +1099,7 @@ pub const Kanban = struct {
                     // Move left
                     if (canMoveLeft(task.status)) {
                         Vapor.Button(moveTaskLeft, .{ self, task })
+                            .ariaLabel("Move task left")
                             .width(.px(24))
                             .height(.px(24))
                             .layout(.center)
@@ -1113,6 +1117,7 @@ pub const Kanban = struct {
                     // Move right
                     if (canMoveRight(task.status)) {
                         Vapor.Button(moveTaskRight, .{ self, task })
+                            .ariaLabel("Move task right")
                             .width(.px(24))
                             .height(.px(24))
                             .layout(.center)
@@ -1129,6 +1134,7 @@ pub const Kanban = struct {
 
                     // Delete
                     Vapor.Button(deleteTaskFromCollection, .{ self, task })
+                        .ariaLabel("Delete task")
                         .width(.px(24))
                         .height(.px(24))
                         .layout(.center)
@@ -1169,7 +1175,7 @@ pub const Kanban = struct {
                     .end();
                 Row()
                     .padding(.xy(8, 4))
-                    .background(.transparentizeHex(task.priority.color(), 0.2))
+                    .background(.transparentize(task.priority.color(), 0.2))
                     .border(.round(task.priority.color(), .all(6)))
                     .children({
                     Text(task.priority.label())
@@ -1294,6 +1300,7 @@ pub const Kanban = struct {
                     .fontFamily("Montserrat")
                     .end();
                 Vapor.Button(closeAddModal, .{self})
+                    .ariaLabel("Close")
                     .width(.px(36))
                     .height(.px(36))
                     .layout(.center)
@@ -1344,7 +1351,7 @@ pub const Kanban = struct {
                             .width(.percent(100))
                             .height(.percent(100))
                             .outline(.none, null)
-                            .border(.solid(.tblr(1, 3, 1, 1), .palette(.border_color_light), .all(6)))
+                            .border(.solid(.{ .top = 1, .bottom = 3, .left = 1, .right = 1 }, .palette(.border_color_light), .all(6)))
                             .padding(.all(8))
                             .font(16, 300, .palette(.text_color))
                             .fontFamily("IBM Plex Sans,monospace")
@@ -1431,7 +1438,7 @@ pub const Kanban = struct {
             Row()
                 .layout(.right_center)
                 .spacing(12)
-                .margin(.t(8))
+                .margin(.{ .top = 8 })
                 .children({
                 Button(closeAddModal, .{self})
                     .background(.palette(.text_color))
@@ -1473,6 +1480,7 @@ pub const Kanban = struct {
                         .fontFamily("Montserrat")
                         .end();
                     Button(closeDetailSheet, .{self})
+                        .ariaLabel("Close details")
                         .width(.px(36))
                         .height(.px(36))
                         .layout(.center)
@@ -1501,7 +1509,7 @@ pub const Kanban = struct {
                         .children({
                         Row()
                             .padding(.xy(10, 6))
-                            .background(.transparentizeHex(task.status.color(), 0.2))
+                            .background(.transparentize(task.status.color(), 0.2))
                             .border(.round(task.status.color(), .all(6)))
                             .children({
                             Text(task.status.label())
@@ -1511,7 +1519,7 @@ pub const Kanban = struct {
                         });
                         Row()
                             .padding(.xy(10, 6))
-                            .background(.transparentizeHex(task.priority.color(), 0.2))
+                            .background(.transparentize(task.priority.color(), 0.2))
                             .border(.round(task.priority.color(), .all(6)))
                             .children({
                             Text(task.priority.label())
@@ -1671,19 +1679,19 @@ fn makeTask(
     };
 }
 
-fn renderNavButton(label_text: []const u8, nav_icon: Vapor.IconType, is_active: bool) void {
+fn renderNavButton(label_text: []const u8, nav_icon: Vapor.IconTokens, is_active: bool) void {
     Row()
         .width(.percent(100))
         .padding(.xy(14, 4))
-        .background(if (is_active) .transparentizeHex(.palette(.tint), 0.1) else .transparent)
-        .border(.r(1, if (is_active) .palette(.tint) else .transparent))
-        .layer(if (is_active) .dot(0.5, 6, .transparentizeHex(.palette(.tint), 0.3)) else null)
+        .background(if (is_active) .transparentize(.palette(.tint), 0.1) else .transparent)
+        .border(.right(1, if (is_active) .palette(.tint) else .transparent))
+        .layer(if (is_active) .dot(0.5, 6, .transparentize(.palette(.tint), 0.3)) else null)
         .layout(.left_center)
         .spacing(12)
         .pointer()
         .duration(150)
         .hover(.{
-            .background = if (is_active) .transparentizeHex(.palette(.tint), 0.1) else .palette(.highlight_color),
+            .background = if (is_active) .transparentize(.palette(.tint), 0.1) else .palette(.highlight_color),
         })
         .children({
         Row()
@@ -1820,7 +1828,7 @@ fn renderDragOverlay(task: ?*Task, delta_x: f32, delta_y: f32) void {
                     .end();
                 Row()
                     .padding(.xy(6, 3))
-                    .background(.transparentizeHex(t.priority.color(), 0.2))
+                    .background(.transparentize(t.priority.color(), 0.2))
                     .border(.round(t.priority.color(), .all(4)))
                     .children({
                     Text(t.priority.label())
@@ -1839,7 +1847,7 @@ fn renderDragOverlay(task: ?*Task, delta_x: f32, delta_y: f32) void {
 
             Row()
                 .padding(.xy(8, 4))
-                .background(.transparentizeHex(t.status.color(), 0.15))
+                .background(.transparentize(t.status.color(), 0.15))
                 .border(.round(t.status.color(), .all(6)))
                 .children({
                 Text(t.status.label())

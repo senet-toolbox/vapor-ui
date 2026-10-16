@@ -7,6 +7,8 @@ const Icon = Vapor.Icon;
 const Opaque = @import("opaque-ui");
 const Button = Opaque.Button;
 const ComboBox = Opaque.ComboBox;
+// Rendered and shown as code: what you read is what runs.
+const BasicComboBox = @import("examples/BasicComboBox.zig");
 const Vaporize = @import("vaporize");
 const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
 const CodeBox = @import("../CodeBox.zig").CodeBox;
@@ -45,7 +47,7 @@ fn section_title(title: []const u8) void {
     Text(title)
         .font(24, 600, Theme.text)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.t(32))
+        .margin(.{ .top = 32 })
         .end();
 }
 
@@ -53,7 +55,7 @@ fn section_description(desc: []const u8) void {
     Text(desc)
         .font(14, 400, Theme.text_muted)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.b(16))
+        .margin(.{ .bottom = 16 })
         .end();
 }
 
@@ -61,13 +63,6 @@ fn section_description(desc: []const u8) void {
 // MAIN RENDER
 // ============================================================================
 
-const Status = enum {
-    pending,
-    success,
-    err,
-};
-
-var combobox: ComboBox(Status) = undefined;
 var hl_basic: SyntaxHighlighter = undefined;
 pub fn init() void {
     const allocator = Vapor.arena(.persist);
@@ -78,19 +73,14 @@ pub fn init() void {
     hl_basic.show_cpy_btn = true;
     hl_basic.parse(@embedFile("examples/BasicComboBox.zig")) catch unreachable;
 
-    combobox = .fromItems(&.{
-        .{ .value = Status.pending, .label = "Pending" },
-        .{ .value = Status.success, .label = "Success" },
-        .{ .value = Status.err, .label = "Error" },
-    });
-    combobox.trigger = "Status";
+    BasicComboBox.init();
 
     Vapor.Page(.{ .src = @src() }, render, null);
 }
 
 fn Card() Vapor.Builder(.pure) {
     return Stack()
-        .background(.transparentizeHex(.palette(.background), 0.5))
+        .background(.transparentize(.palette(.background), 0.5))
         .border(.round(.palette(.border_color_light), .all(12)))
         .width(.percent(100))
         .height(.px(160))
@@ -108,7 +98,7 @@ fn sectionTitle(title: []const u8) void {
     Text(title)
         .font(24, 600, Theme.text)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.t(48))
+        .margin(.{ .top = 48 })
         .end();
 }
 
@@ -116,7 +106,7 @@ fn sectionDesc(desc: []const u8) void {
     Text(desc)
         .font(14, 400, Theme.text_muted)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.b(16))
+        .margin(.{ .bottom = 16 })
         .end();
 }
 
@@ -124,13 +114,13 @@ fn exampleLabel(label: []const u8) void {
     Text(label)
         .font(14, 500, Theme.text_muted)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.t(24))
+        .margin(.{ .top = 24 })
         .end();
 }
 
 fn PreviewCard() Vapor.Builder(.pure) {
     return Stack()
-        .background(.transparentizeHex(.palette(.background), 0.5))
+        .background(.transparentize(.palette(.background), 0.5))
         .border(.round(.palette(.border_color_light), .all(12)))
         .width(.percent(100))
         .height(.px(160))
@@ -174,30 +164,18 @@ fn render() void {
             .width(.percent(50))
             .height(.percent(100))
             .spacing(12)
-            .padding(.bottom(120))
+            .padding(.{ .bottom = 120 })
             .children({
 
             // ============================================================
             // BASIC
             // ============================================================
             exampleLabel("Basic");
-            sectionDesc("A simple combobox with the default string type.");
+            sectionDesc("Pick any number of options; type to filter them.");
             PreviewCard().children({
-                combobox.render();
+                BasicComboBox.render();
             });
             CodeBox(&hl_basic, "BasicComboBox");
-
-            // ============================================================
-            // BASIC
-            // ============================================================
-            exampleLabel("Email and Password");
-            sectionDesc("A Email and Password combobox with specific combobox types.");
-            PreviewCard().children({});
-
-            // Field.render(.{ .label = "Password", .value = .{ .password = &password }, .trans_label = true });
-            // Field.render(.{ .label = "Phone Number", .value = .{ .number = &phonenumber }, .trans_label = true });
-            // Field.render(.{ .label = "Card Number", .value = .{ .number = &cardnumber }, .trans_label = true });
-            // Field.render(.{ .label = "Card Number", .value = .{ .number = &cardnumber }, .trans_label = true });
         });
     });
 }

@@ -54,7 +54,7 @@ fn sectionTitle(title: []const u8) void {
     Text(title)
         .font(24, 600, Theme.text)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.t(48))
+        .margin(.{ .top = 48 })
         .end();
 }
 
@@ -62,13 +62,13 @@ fn sectionDesc(desc: []const u8) void {
     Text(desc)
         .font(14, 400, Theme.text_muted)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.b(16))
+        .margin(.{ .bottom = 16 })
         .end();
 }
 
 fn exampleLabel(label: []const u8) void {
     Text(label)
-        .margin(.t(128))
+        .margin(.{ .top = 128 })
         .font(14, 500, Theme.text_muted)
         .fontFamily("IBM Plex Mono,monospace")
         .end();
@@ -76,7 +76,7 @@ fn exampleLabel(label: []const u8) void {
 
 fn PreviewCard() Vapor.Builder(.pure) {
     return Stack()
-        .background(.transparentizeHex(.palette(.background), 0.5))
+        .background(.transparentize(.palette(.background), 0.5))
         .border(.round(.palette(.border_color_light), .all(12)))
         .width(.percent(100))
         .height(.px(160))
@@ -88,9 +88,9 @@ fn PreviewCard() Vapor.Builder(.pure) {
 
 fn CodeBlock(highlighter: *SyntaxHighlighter) void {
     Row()
-        .scroll(.scroll_y())
-        .size(.hw(.mobile_desktop(.fit, .px(512)), .mobile_desktop_percent(100, 100)))
-        .border(.simple(.palette(.text_color)))
+        .scroll(.scrollY())
+        .size(.hw(.mobileDesktop(.fit, .px(512)), .mobileDesktopPercent(100, 100)))
+        .border(.thin(.palette(.text_color)))
         .children({
         highlighter.render() catch unreachable;
     });
@@ -139,7 +139,7 @@ fn render() void {
             .width(.percent(90))
             .height(.percent(100))
             .spacing(12)
-            .padding(.bottom(120))
+            .padding(.{ .bottom = 120 })
             .children({
             exampleLabel("Template Ecommerce");
             sectionDesc("A simple ecommerce template with cart, login, and checkout.");

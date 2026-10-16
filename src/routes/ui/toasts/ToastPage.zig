@@ -39,15 +39,15 @@ var prev_position: Toast.StackPosition = .top_right;
 
 pub fn init() void {
     // Configure toast styles
-    Toast.success_background = .transparentizeHex(.hex("#22c55e"), 0.8);
+    Toast.success_background = .transparentize(.hex("#22c55e"), 0.8);
     Toast.success_blur = 12;
     // Toast.success_text_color = .white;
 
-    Toast.err_background = .transparentizeHex(.hex("#ef4444"), 0.8);
+    Toast.err_background = .transparentize(.hex("#ef4444"), 0.8);
     Toast.err_blur = 12;
     // Toast.err_text_color = .white;
 
-    Toast.warning_background = .transparentizeHex(.hex("#f59e0b"), 0.8);
+    Toast.warning_background = .transparentize(.hex("#f59e0b"), 0.8);
     Toast.warning_blur = 12;
     // Toast.warning_text_color = .white;
 
@@ -63,22 +63,22 @@ pub fn init() void {
 // ============================================================================
 
 fn sectionTitle(title: []const u8) void {
-    Text(title).font(24, 600, Theme.text).margin(.t(48)).end();
+    Text(title).font(24, 600, Theme.text).margin(.{ .top = 48 }).end();
 }
 
 fn sectionDesc(desc: []const u8) void {
-    Text(desc).font(14, 400, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.b(16)).end();
+    Text(desc).font(14, 400, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.{ .bottom = 16 }).end();
 }
 
 fn exampleLabel(label: []const u8) void {
-    Text(label).font(14, 500, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.t(24)).end();
+    Text(label).font(14, 500, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.{ .top = 24 }).end();
 }
 
 fn CodeBlock(highlighter: *SyntaxHighlighter) void {
     Row()
-        .scroll(.scroll_y())
-        .size(.hw(.mobile_desktop(.fit, .px(400)), .mobile_desktop_percent(100, 100)))
-        .border(.simple(.palette(.text_color)))
+        .scroll(.scrollY())
+        .size(.hw(.mobileDesktop(.fit, .px(400)), .mobileDesktopPercent(100, 100)))
+        .border(.thin(.palette(.text_color)))
         .children({
         highlighter.render() catch unreachable;
     });
@@ -86,7 +86,7 @@ fn CodeBlock(highlighter: *SyntaxHighlighter) void {
 
 fn PreviewCard() Vapor.Builder(.pure) {
     return Stack()
-        .background(.transparentizeHex(.palette(.background), 0.5))
+        .background(.transparentize(.palette(.background), 0.5))
         .border(.round(.palette(.border_color_light), .all(12)))
         .width(.percent(100))
         .padding(.all(24))
@@ -131,7 +131,7 @@ fn render() void {
             .width(.percent(50))
             .height(.percent(100))
             .spacing(12)
-            .padding(.bottom(120))
+            .padding(.{ .bottom = 120 })
             .children({
             sectionTitle("Toast Usage");
             sectionDesc("⚠️ Only call renderStack() once in your app, or layouts, Toasts are a global component.");

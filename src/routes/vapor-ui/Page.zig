@@ -13,7 +13,7 @@ const Row = Vapor.Row;
 const Center = Vapor.Center;
 const Stack = Vapor.Stack;
 const Login = @import("../../components/templates/Login.zig");
-const KeyStone = Vapor.KeyStone;
+const KeyStone = @import("keystone");
 const Payment = @import("../../components/templates/Payment.zig");
 const Stripe = @import("../../components/templates/Stripe.zig");
 const Todolist = @import("Todolist.zig").TodoList;
@@ -102,40 +102,39 @@ pub fn init() void {
         .easing(.easeIn)
         .fill(.forwards).build();
 
-    // KanbanShared.initShared(); // call once
-    // board_a.init();
-    // Kanban_old.init();
+    KanbanShared.initShared(); // call once
+    board_a.init();
 
-    // CarouselPage.init();
-    // MarqueePage.init();
-    // Ecommerce.init();
-    // Templates.init();
+    CarouselPage.init();
+    MarqueePage.init();
+    Ecommerce.init();
+    Templates.init();
 
     Payment.init();
-    // ApiClient.init();
-    // AccordionPage.init();
-    // AlertPage.init();
-    // ChartPage.init();
-    // ComboBoxPage.init();
-    // SelectPage.init();
-    // DatePickerPage.init();
-    // DrawerPage.init();
-    // DialogPage.init();
-    // TablePage.init();
-    // ButtonPage.init();
-    // CommandPalettePage.init();
-    // TextFieldPage.init();
-    // ToolTipPage.init();
-    // SwitchPage.init();
-    // ProgressPage.init();
-    // ToastPage.init();
-    // SideBarPage.init();
-    // SliderPage.init();
-    // ComponentsPage.init();
+    ApiClient.init();
+    AccordionPage.init();
+    AlertPage.init();
+    ChartPage.init();
+    ComboBoxPage.init();
+    SelectPage.init();
+    DatePickerPage.init();
+    DrawerPage.init();
+    DialogPage.init();
+    TablePage.init();
+    ButtonPage.init();
+    CommandPalettePage.init();
+    TextFieldPage.init();
+    ToolTipPage.init();
+    SwitchPage.init();
+    ProgressPage.init();
+    ToastPage.init();
+    SideBarPage.init();
+    SliderPage.init();
+    ComponentsPage.init();
 }
 
 fn layout(page: *const fn () void) void {
-    const current_path = Vapor.Kit.getWindowPath() orelse "/";
+    const current_path = Vapor.currentPath();
     VaporUINav.render();
     Vapor.Spacer(60).end();
     page();
@@ -143,7 +142,7 @@ fn layout(page: *const fn () void) void {
         Row()
             .width(.percent(100))
             .layout(.top_center)
-            .padding(.bottom(32))
+            .padding(.{ .bottom = 32 })
             .children({
             Row()
                 .width(.percent(50))
@@ -215,40 +214,40 @@ pub fn render() void {
                 .onClick(setTab)
                 .render();
             switch (index) {
-                // 0 => {
-                //     Row()
-                //         .a11y(.tabPanel("Components")) // Add this - references the tab button
-                //         .id("tabpanel-Components")
-                //         .size(.full)
-                //         .children({
-                //         View();
-                //     });
-                // },
-                // 1 => {
-                //     Templates.render();
-                // },
-                // 2 => {
-                //     board_a.render();
-                // },
-                // 3 => {
-                //     Row()
-                //         .width(.percent(100))
-                //         .layout(.center)
-                //         .children({
-                //         Row()
-                //             .direction(.column)
-                //             .width(.percent(50))
-                //             .children({
-                //             login.render();
-                //         });
-                //     });
-                // },
+                0 => {
+                    Row()
+                        .a11y(.tabPanel("Components")) // Add this - references the tab button
+                        .id("tabpanel-Components")
+                        .size(.full)
+                        .children({
+                        View();
+                    });
+                },
+                1 => {
+                    Templates.render();
+                },
+                2 => {
+                    board_a.render();
+                },
+                3 => {
+                    Row()
+                        .width(.percent(100))
+                        .layout(.center)
+                        .children({
+                        Row()
+                            .direction(.column)
+                            .width(.percent(50))
+                            .children({
+                            login.render();
+                        });
+                    });
+                },
                 4 => {
                     Payment.render();
                 },
-                // 5 => {
-                //     Chat.render();
-                // },
+                5 => {
+                    Chat.render();
+                },
 
                 else => {},
             }

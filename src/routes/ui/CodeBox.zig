@@ -42,7 +42,7 @@ pub fn CodeBox(code: *SyntaxHighlighter, title: []const u8) void {
             }
             Center().width(.percent(100))
                 .height(.expand)
-                .scroll(.scroll_y())
+                .scroll(.scrollY())
                 .border(.round(.hex("#383735"), .all(6)))
                 .background(.hex("#282828"))
                 .children({

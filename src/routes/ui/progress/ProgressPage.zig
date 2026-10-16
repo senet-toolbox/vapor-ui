@@ -35,10 +35,6 @@ var hl_bar_animated: SyntaxHighlighter = undefined;
 var hl_circle_label: SyntaxHighlighter = undefined;
 
 // ============================================================================
-// SELECT INSTANCES
-// ============================================================================
-
-// ============================================================================
 // INIT
 // ============================================================================
 
@@ -174,14 +170,6 @@ pub fn init() void {
 }
 
 // ============================================================================
-// HANDLERS
-// ============================================================================
-
-// ============================================================================
-// CUSTOM TRIGGER COMPONENTS
-// ============================================================================
-
-// ============================================================================
 // UI COMPONENTS
 // ============================================================================
 
@@ -189,7 +177,7 @@ fn sectionTitle(title: []const u8) void {
     Text(title)
         .font(24, 600, Theme.text)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.t(48))
+        .margin(.{ .top = 48 })
         .end();
 }
 
@@ -197,7 +185,7 @@ fn sectionDesc(desc: []const u8) void {
     Text(desc)
         .font(14, 400, Theme.text_muted)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.b(16))
+        .margin(.{ .bottom = 16 })
         .end();
 }
 
@@ -205,13 +193,13 @@ fn exampleLabel(label: []const u8) void {
     Text(label)
         .font(14, 500, Theme.text_muted)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.t(24))
+        .margin(.{ .top = 24 })
         .end();
 }
 
 fn PreviewCard() Vapor.Builder(.pure) {
     return Row()
-        .background(.transparentizeHex(.palette(.background), 0.5))
+        .background(.transparentize(.palette(.background), 0.5))
         .border(.round(.palette(.border_color_light), .all(12)))
         .width(.percent(100))
         .height(.px(160))
@@ -223,17 +211,18 @@ fn PreviewCard() Vapor.Builder(.pure) {
 
 fn CodeBlock(highlighter: *SyntaxHighlighter) void {
     Row()
-        .scroll(.scroll_y())
+        .scroll(.scrollY())
         .inlineStyle("max-height: 512px;", .{})
         .size(.w(.percent(100)))
-        .border(.simple(.palette(.text_color)))
+        .border(.thin(.palette(.text_color)))
         .children({
         highlighter.render() catch unreachable;
     });
 }
 
 fn startAnimation() void {
-    // progressBarToggle();
+    // Run it again from the start once it has finished.
+    if (bar_with_label.progress >= 1) bar_with_label.updateProgress(0);
     Vapor.lib.loopInterval("progress-bar-toggle", 60, progressBarToggle, .{});
 }
 
@@ -287,7 +276,7 @@ pub fn render() void {
             .width(.percent(50))
             .height(.percent(100))
             .spacing(12)
-            .padding(.bottom(120))
+            .padding(.{ .bottom = 120 })
             .children({
 
             // ============================================================
@@ -469,4 +458,3 @@ pub fn render() void {
         });
     });
 }
-

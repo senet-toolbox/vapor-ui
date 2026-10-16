@@ -8,7 +8,6 @@ const Opaque = @import("opaque-ui");
 const Button = Opaque.Button;
 const CodeBox = @import("../CodeBox.zig").CodeBox;
 
-
 // ============================================================================
 // THEME
 // ============================================================================
@@ -43,7 +42,7 @@ fn section_title(title: []const u8) void {
     Text(title)
         .font(24, 600, Theme.text)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.t(32))
+        .margin(.{ .top = 32 })
         .end();
 }
 
@@ -51,7 +50,7 @@ fn section_description(desc: []const u8) void {
     Text(desc)
         .font(14, 400, Theme.text_muted)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.b(16))
+        .margin(.{ .bottom = 16 })
         .end();
 }
 
@@ -65,7 +64,7 @@ pub fn init() void {
 
 fn Card() Vapor.Builder(.pure) {
     return Stack()
-        .background(.transparentizeHex(.palette(.background), 0.5))
+        .background(.transparentize(.palette(.background), 0.5))
         .border(.round(.palette(.border_color_light), .all(12)))
         .width(.percent(100))
         .height(.px(160))
@@ -74,6 +73,8 @@ fn Card() Vapor.Builder(.pure) {
         .layout(.center)
         .spacing(16);
 }
+
+fn waiting() void {}
 
 pub fn render() void {
     Row()
@@ -112,7 +113,7 @@ pub fn render() void {
             Text("Displays a button or a component that looks like a button.")
                 .font(16, 400, Theme.text_muted)
                 .fontFamily("IBM Plex Mono,monospace")
-                .margin(.b(24))
+                .margin(.{ .bottom = 24 })
                 .end();
 
             // Preview Section
@@ -219,6 +220,8 @@ pub fn render() void {
                 .end();
             Card().children({
                 Button(std.log.info, .{ "Icon button clicked", .{} })
+                    // An icon alone needs a name for screen readers.
+                    .ariaLabel("Next")
                     .background(.transparent)
                     .border(.round(.palette(.border_color_light), .all(8)))
                     .children({
@@ -234,7 +237,10 @@ pub fn render() void {
                 .fontFamily("IBM Plex Mono,monospace")
                 .end();
             Card().children({
-                Button(std.log.info, .{ "Loading button clicked", .{} })
+                // While it waits, it does nothing and says so.
+                Button(waiting, .{})
+                    .a11y(Vapor.Accessibility.init().setDisabled(true).setBusy(true))
+                    .cursor(.default)
                     .background(.palette(.tint))
                     .children({
                     Icon(.arrow_clockwise)
@@ -256,7 +262,7 @@ pub fn render() void {
             section_title("Usage");
             section_description("Import and use the Button component in your code.");
 
-            code_snippet("const Button = @import(\"components/Button.zig\").Button;");
+            code_snippet("const Button = @import(\"opaque-ui\").Button;");
 
             // Examples Section
             section_title("Examples");
@@ -265,7 +271,7 @@ pub fn render() void {
             Text("Primary")
                 .font(18, 500, Theme.text)
                 .fontFamily("IBM Plex Mono,monospace")
-                .margin(.t(16))
+                .margin(.{ .top = 16 })
                 .end();
 
             code_snippet(
@@ -280,7 +286,7 @@ pub fn render() void {
             Text("Secondary")
                 .font(18, 500, Theme.text)
                 .fontFamily("IBM Plex Mono,monospace")
-                .margin(.t(16))
+                .margin(.{ .top = 16 })
                 .end();
 
             code_snippet(
@@ -296,7 +302,7 @@ pub fn render() void {
             Text("With Icon")
                 .font(18, 500, Theme.text)
                 .fontFamily("IBM Plex Mono,monospace")
-                .margin(.t(16))
+                .margin(.{ .top = 16 })
                 .end();
 
             code_snippet(

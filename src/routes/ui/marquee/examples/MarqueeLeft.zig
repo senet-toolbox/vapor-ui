@@ -10,14 +10,14 @@ const slides = [_]Marquee.MarqueeItem{
 };
 
 pub fn example() void {
-    Marquee.render(.{ .items = &slides, .direction = .left, .speed_ms = 10000 }).children({
+    Marquee.render(.{ .direction = .left, .speed_ms = 10000 }).children({
         for (slides) |slide| {
             Row().width(.px(220)).height(.px(64))
                 .layout(.center).spacing(6)
                 .background(.palette(.background)).fontFamily("IBM Plex Mono,monospace")
-                .border(.simple(.palette(.border_color_light)))
+                .border(.thin(.palette(.border_color_light)))
                 .children({
-                Text(slide.title).fontSize(10).fontColor(.transparentize(.palette(.text), 0.5)).end();
+                Text(slide.title).fontSize(10).textColor(.transparentize(.palette(.text), 0.5)).end();
             });
         }
     });

@@ -9,21 +9,13 @@ const Accordion = @import("opaque-ui").Accordion;
 var items = [_]Accordion.AccordionItem{
     .{
         .title = "Product Information",
-        .description =
-        \\Our flagship product combines cutting-edge technology with 
-        \\sleek design. Built with premium materials, it offers 
-        \\unparalleled performance and reliability.
-        ,
+        .description = "Our flagship product combines cutting-edge technology with sleek design. Built with premium materials, it offers unparalleled performance and reliability.",
         .trigger = AccordionTrigger,
         .content = AccordionContent,
     },
     .{
         .title = "Return Policy",
-        .description =
-        \\We stand behind our products with a 30-day return policy. 
-        \\If you're not satisfied, simply return the item in its 
-        \\original condition for a full refund.
-        ,
+        .description = "We stand behind our products with a 30-day return policy. If you're not satisfied, simply return the item in its original condition for a full refund.",
         .trigger = AccordionTrigger,
         .content = AccordionContent,
     },

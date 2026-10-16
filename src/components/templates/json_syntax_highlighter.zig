@@ -922,7 +922,7 @@ pub const JSONHighlighter = struct {
                         Row()
                             .padding(.all(8))
                             .layout(.center)
-                            .background(.transparentizeHex(.black, 0.2))
+                            .background(.transparentize(.black, 0.2))
                             .children({
                             Vapor.Svg(.{ .svg = svg_bug }).style(&.{
                                 .size = .{ .height = .px(16), .width = .px(16) },
@@ -970,7 +970,7 @@ pub const JSONHighlighter = struct {
             })
                 .children({
                 Vapor.Stack()
-                    .size(.percent(100))
+                    .size(.squarePercent(100))
                     .pos(.relative)
                     .children({
                     try highlighter.renderOptimized();
@@ -991,8 +991,8 @@ pub const JSONHighlighter = struct {
             }).children({
                 Button(copy, .{highlighter})
                     .ariaLabel("copy-json-button")
-                    .fontColor(.palette(.disabled))
-                    .size(.px(22))
+                    .textColor(.palette(.disabled))
+                    .size(.squarePx(22))
                     .background(.transparent)
                     .duration(100)
                     .hoverText(.white)
@@ -1039,7 +1039,7 @@ pub const JSONHighlighter = struct {
                     .size = .h(.px(22.5)),
                     .visual = .{ .white_space = .pre },
                     .layout = .left_center,
-                    .padding = .left(12),
+                    .padding = .{ .left = 12 },
                     .font_family = "DM Mono, monospace",
                 }).children({
                     for (line_spans) |span| {

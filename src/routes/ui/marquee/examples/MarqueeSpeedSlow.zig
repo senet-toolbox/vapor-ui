@@ -1,9 +1,11 @@
+const Vapor = @import("vapor");
+const Row = Vapor.Row;
+const Text = Vapor.Text;
 const Marquee = @import("opaque-ui").Marquee;
 
 // Slow, ambient motion — calming background pace.
 pub fn example(items: []const Marquee.MarqueeItem) void {
     Marquee.render(.{
-        .items = items,
         .direction = .left,
         .speed_ms = 20000,
     }).children({
@@ -15,14 +17,13 @@ pub fn example(items: []const Marquee.MarqueeItem) void {
                 .spacing(6)
                 .background(.palette(.background))
                 .fontFamily("IBM Plex Mono,monospace")
-                .border(.simple(.palette(.border_color_light)))
+                .border(.thin(.palette(.border_color_light)))
                 .children({
                 Text(slide.title)
                     .fontSize(10)
-                    .fontColor(.transparentize(.palette(.text), 0.5))
+                    .textColor(.transparentize(.palette(.text), 0.5))
                     .end();
             });
         }
     });
 }
-

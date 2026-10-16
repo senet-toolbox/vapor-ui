@@ -11,9 +11,9 @@ const Link = Vapor.Link;
 const Image = Vapor.Image;
 const List = Vapor.List;
 const ListItem = Vapor.ListItem;
-const CtxButton = Vapor.CtxButton;
+const CtxButton = Vapor.Button;
 const RedirectLink = Vapor.RedirectLink;
-const ButtonCtx = Vapor.CtxButton;
+const ButtonCtx = Vapor.Button;
 const UiNav = @import("../../vapor-ui/VaporUINav.zig");
 
 pub fn init() void {

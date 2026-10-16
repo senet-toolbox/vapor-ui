@@ -11,6 +11,10 @@ const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
 const Icon = Vapor.Icon;
 const Button = Opaque.Button;
 const CodeBox = @import("../CodeBox.zig").CodeBox;
+// The page shows these files' code and renders them, so the code you read
+// is the code that runs.
+const BasicAccordion = @import("examples/BasicAccordion.zig");
+const CustomAccordion = @import("examples/CustomAccordion.zig");
 
 // ============================================================================
 // THEME
@@ -32,47 +36,6 @@ var hl_basic: SyntaxHighlighter = undefined;
 var hl_custom_render: SyntaxHighlighter = undefined;
 var hl_api: SyntaxHighlighter = undefined;
 
-// ============================================================================
-// ACCORDION INSTANCES
-// ============================================================================
-
-var basic_accordion: Accordion = undefined;
-var custom_accordion: Accordion = undefined;
-
-// ============================================================================
-// INIT
-// ============================================================================
-
-var basic_items = [_]Accordion.AccordionItem{
-    .{
-        .title = "Product Information",
-        .description = "Our flagship product combines cutting-edge technology with sleek design.",
-        .trigger = DefaultTrigger,
-        .content = DefaultContent,
-    },
-    .{
-        .title = "Return Policy",
-        .description = "We stand behind our products with a comprehensive 30-day return policy.",
-        .trigger = DefaultTrigger,
-        .content = DefaultContent,
-    },
-};
-
-var custom_items = [_]Accordion.AccordionItem{
-    .{
-        .title = "Security Settings",
-        .description = "Manage your two-factor authentication and password recovery options.",
-        .trigger = CustomTrigger,
-        .content = CustomContentAccount,
-    },
-    .{
-        .title = "Notification Preferences",
-        .description = "Choose which alerts you want to receive via email and push notifications.",
-        .trigger = CustomTrigger,
-        .content = CustomContentEmail,
-    },
-};
-
 pub fn init() void {
     const allocator = Vapor.arena(.persist);
 
@@ -85,112 +48,7 @@ pub fn init() void {
     hl_custom_render.show_toolbar = true;
     hl_custom_render.parse(@embedFile("examples/CustomAccordion.zig")) catch unreachable;
 
-    // Initialize basic accordion
-    basic_accordion = .init(&basic_items);
-
-    // Initialize custom accordion with specific components
-    custom_accordion = .init(&custom_items);
-
     Vapor.Page(.{ .src = @src() }, render, null);
-}
-
-// ============================================================================
-// COMPONENT RENDERS
-// ============================================================================
-
-fn DefaultTrigger(item: *Accordion.AccordionItem) void {
-    Text(item.title)
-        .fontFamily("Montserrat")
-        .font(16, 500, Theme.text)
-        .end();
-}
-
-fn DefaultContent(item: *Accordion.AccordionItem) void {
-    Text(item.description)
-        .font(14, 300, Theme.text_muted)
-        .end();
-}
-
-fn CustomTrigger(item: *Accordion.AccordionItem) void {
-    Row()
-        .direction(.row)
-        .spacing(12)
-        .layout(.left_center)
-        .children({
-        // Dynamic Icon based on title
-        Icon(.sliders2_vertical)
-            .font(18, 300, .palette(.text_color))
-            .end();
-
-        Text(item.title)
-            .fontFamily("Montserrat")
-            .font(16, 600, .palette(.text_color))
-            .end();
-    });
-}
-
-fn CustomContentAccount(item: *Accordion.AccordionItem) void {
-    Stack()
-        .width(.percent(100))
-        .spacing(16)
-        .children({
-        Text("Configure your account settings.")
-            .font(16, 300, .palette(.text_color))
-            .end();
-        Text(item.description)
-            .font(16, 400, .palette(.text_color))
-            .end();
-        Button(Vapor.alert, .{ "{s}", .{"Opening Settings..."} })
-            .padding(.xy(12, 8))
-            .ariaLabel("Alert Opening Settings")
-            .background(.palette(.tint))
-            .children({
-            Text("Open Account Settings")
-                .font(14, 300, .palette(.background))
-                .fontFamily("Montserrat")
-                .end();
-        });
-    });
-}
-
-fn CustomContentEmail(item: *Accordion.AccordionItem) void {
-    Stack()
-        .width(.percent(100))
-        .spacing(16)
-        .children({
-        Text("Configure your communication settings.")
-            .font(16, 300, .palette(.text_color))
-            .end();
-        Text(item.description)
-            .font(16, 400, .palette(.text_color))
-            .end();
-        Row()
-            .width(.percent(100))
-            .layout(.right_center)
-            .spacing(16)
-            .children({
-            Button(Vapor.alert, .{ "{s}", .{"Opening Settings..."} })
-                .padding(.xy(12, 8))
-                .ariaLabel("Email Opening Settings")
-                .background(.palette(.tint))
-                .children({
-                Text("Email Settings")
-                    .font(14, 300, .palette(.background))
-                    .fontFamily("Montserrat")
-                    .end();
-            });
-            Button(Vapor.alert, .{ "{s}", .{"Opening Settings..."} })
-                .padding(.xy(12, 8))
-                .ariaLabel("Notification Opening Settings")
-                .background(.palette(.text_color))
-                .children({
-                Text("Notification Settings")
-                    .font(14, 300, .palette(.background))
-                    .fontFamily("Montserrat")
-                    .end();
-            });
-        });
-    });
 }
 
 // ============================================================================
@@ -201,7 +59,7 @@ fn sectionTitle(title: []const u8) void {
     Text(title)
         .font(24, 600, Theme.text)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.t(48))
+        .margin(.{ .top = 48 })
         .end();
 }
 
@@ -209,7 +67,7 @@ fn sectionDesc(desc: []const u8) void {
     Text(desc)
         .font(14, 400, Theme.text_muted)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.b(16))
+        .margin(.{ .bottom = 16 })
         .end();
 }
 
@@ -217,13 +75,13 @@ fn exampleLabel(label: []const u8) void {
     Text(label)
         .font(14, 500, Theme.text_muted)
         .fontFamily("IBM Plex Mono,monospace")
-        .margin(.t(24))
+        .margin(.{ .top = 24 })
         .end();
 }
 
 fn PreviewCard() Vapor.Builder(.pure) {
     return Stack()
-        .background(.transparentizeHex(.palette(.background), 0.5))
+        .background(.transparentize(.palette(.background), 0.5))
         .border(.round(.palette(.border_color_light), .all(12)))
         .width(.percent(100))
         .padding(.all(24))
@@ -265,14 +123,14 @@ pub fn render() void {
             .width(.percent(50))
             .height(.percent(100))
             .spacing(12)
-            .padding(.bottom(120))
+            .padding(.{ .bottom = 120 })
             .children({
 
             // Basic
             exampleLabel("Basic Accordion");
             sectionDesc("Standard list of collapsible items using default typography.");
             PreviewCard().children({
-                basic_accordion.render();
+                BasicAccordion.render();
             });
             CodeBox(&hl_basic, "BasicAccordion");
 
@@ -280,7 +138,7 @@ pub fn render() void {
             exampleLabel("Custom Rendering");
             sectionDesc("Using function pointers to override how headers and content panels are rendered.");
             PreviewCard().children({
-                custom_accordion.render();
+                CustomAccordion.render();
             });
             CodeBox(&hl_custom_render, "CustomAccordion");
 

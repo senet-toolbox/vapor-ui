@@ -16,7 +16,6 @@ pub export fn init() void {
     Opaque.initAnimations();
     Opaque.OverlayManager.init();
     initView();
-    Vapor.Kit.init();
 
     Vapor.setGlobalStyleVariables(.{ // Adds 11kb
         .themes = &.{
