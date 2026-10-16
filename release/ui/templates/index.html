@@ -1,0 +1,2281 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>Vapor UI</title>
+  <meta charset="utf-8" />
+  <meta name="google-site-verification" content="12aR_338F0VaglKbfvPLczdZV_Ej6AVx9Ef7M4ULfLU" />
+  <meta name="description" content="Senet Application" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
+  <link rel="preload" href="/zig-out/bin/vapor.wasm" as="fetch" type="application/wasm" crossorigin />
+
+  <!-- Preconnect stays the same -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Montserrat:wght@400;700&display=swap"
+    rel="stylesheet" media="print" onload="this.media = 'all'" />
+
+  <link rel="preload" href="/assets/css/bootstrap-icons.css" as="style" onload="
+        this.onload = null;
+        this.rel = 'stylesheet';
+      " />
+  <script type="module" src="/bundle.min.js"></script>
+  <!-- <script type="module" src="/web/wasi_obj.js"></script> -->
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Montserrat;
+      font-optical-sizing: auto;
+      height: 100dvh;
+      width: 100%;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      background-color: rgba(var(--background));
+      color: rgb(var(--text_color));
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+      scrollbar-width: none;
+      /* Firefox */
+      -ms-overflow-style: none;
+      /* IE/Edge */
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-scrollbar: display: none;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      /* Chrome, Safari, Opera */
+      margin: 0;
+    }
+
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    textarea {
+      line-height: 1.5;
+      font-size-adjust: 0.5;
+    }
+
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    div {
+      min-width: 0;
+    }
+
+    button p {
+      font-family: inherit;
+    }
+
+    button {
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
+      color: inherit;
+    }
+
+    input[type="file"]::file-selector-button {
+      background: transparent;
+      color: transparent;
+      border: none;
+    }
+
+
+    input:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0 1000px transparent inset;
+      -webkit-text-fill-color: inherit;
+      caret-color: inherit;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+
+    .reload-indicator {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      background: #1a1a1a;
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 6px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      font-family: system-ui, sans-serif;
+      font-size: 14px;
+      z-index: 99999;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .reload-indicator.visible {
+      display: flex;
+    }
+
+    .reload-spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid #333;
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+
+
+    /* The gear disc - moves DOWN and LEFT when switched ON */
+    #gearDisc {
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* The star disc - moves UP and RIGHT when switched ON */
+    #starDisc {
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+  </style>
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="/static/style_variables.css" /></head>
+
+<body>
+  <div id="reload-indicator" class="reload-indicator">
+    <div class="reload-spinner"></div>
+    <span>Reloading... <span id="reload-timer">0.0</span>s</span>
+  </div>
+  <main id="contents" style="display: contents"><div  id="Hook_R6olM-gk" data-vp="">
+<div  id="nav" data-vp="" class="lay_07qwZ pos_SdsMW2 mapa_obiMi2 vis_z9VOY3 ">
+<div  id="Flex_LhOqU1-gk" data-vp="" class="lay_afHcj1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<button  id="CtxB_EC2N9-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_lMev51 "aria-label="navigate home page of tether">
+<div  id="Flex_LSeAd2-gk" data-vp="" class="lay_OUCAc1 pos_e8wtf3 mapa_3GodU4 vis_bDheb3 intr_m5kAX3 ">
+<div  id="Grap_BXhHA1-gk" data-vp="" class="lay_j73IP1 pos_e8wtf3 mapa_CrkEb2 vis_48Djm2 intr_ZSRqZ3 ">
+</div>
+</div>
+</button>
+<ul  id="List_e5niL1-gk" data-vp="" class="lay_te7oH4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<li  id="List_YZf1t2-gk" data-vp="" class="lay_uFdNT pos_e8wtf3 mapa_CrkEb2 vis_86ALb3 intr_QHgsW2 "">
+<a  id="Link_51p24-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 " href="/ui/components">
+<p  id="Text_Mfz7e3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_DArr03 ">[1] = Components</p>
+</a>
+</li>
+<li  id="List_v5M0J2-gk" data-vp="" class="lay_uFdNT pos_e8wtf3 mapa_CrkEb2 vis_86ALb3 intr_QHgsW2 "">
+<a  id="Link_zx8GW-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 " href="/ui/templates">
+<p  id="Text_UJZp42-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_DArr03 ">[2] = Templates</p>
+</a>
+</li>
+<li  id="List_goMKo2-gk" data-vp="" class="lay_uFdNT pos_e8wtf3 mapa_CrkEb2 vis_86ALb3 intr_QHgsW2 "">
+<a  id="Link_1dSpn3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 " href="/ui/auth">
+<p  id="Text_X3Rma3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_DArr03 ">[3] = Authentication</p>
+</a>
+</li>
+<li  id="List_a1PNM2-gk" data-vp="" class="lay_uFdNT pos_e8wtf3 mapa_CrkEb2 vis_86ALb3 intr_QHgsW2 "">
+<a  id="Link_ZtHZf2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 " href="/ui/payment">
+<p  id="Text_LHS1T-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_DArr03 ">[4] = Payments</p>
+</a>
+</li>
+</ul>
+</div>
+<div  id="Flex_jP6WG1-gk" data-vp="" class="lay_9ec1Z3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_1CrMz2-gk" data-vp="" class="lay_8oAQm2 pos_e8wtf3 mapa_jarwO1 vis_SWFkJ2 ">
+<div  id="Flex_9p6X74-gk" data-vp="" class="lay_oSHHV pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Hook_YsbAJ4-gk" data-vp="">
+<div  id="Flex_ADuMF3-gk" data-vp="" class="lay_W59ox3 pos_e8wtf3 mapa_CrkEb2 vis_LEK6H2 intr_hdyuO4 ">
+<button  id="CtxB_EKN9J1-gk" data-vp="" class="lay_seAbC1 pos_t0s233 mapa_ZJR9B1 vis_HckNn ">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"   id="Svg_hi9BJ4-gk" data-vp="" class="lay_9Tg063 pos_e8wtf3 mapa_CrkEb2 vis_QQM7K4 ">
+<path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>
+</svg>
+<p  id="Text_yJ9PL3-gk" data-vp="" style="transform: translateY(0%) scale(1);" class="lay_jXzf62 pos_v368w mapa_sgnwh vis_mBjuO ">Search</p>
+<div  id="Flex_Ej0yc2-gk" data-vp="" class="lay_hULZR2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<i  id="Icon_ieCGP1-gk" data-vp="" class="bi bi-command lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_Nz32V ">
+</i>
+<p  id="Text_PPnDw3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_Nz32V ">K</p>
+</div>
+</button>
+</div>
+</div>
+</div>
+</div>
+<a  id="Redi_vV9Gn-gk" data-vp="" class="nav-item" href="https://github.com/vic-Rokx/vapor">
+<i  id="Icon_V21rR4-gk" data-vp="" class="bi bi-github nav-item-icon">
+</i>
+</a>
+<a  id="Redi_MFh9x2-gk" data-vp="" class="nav-item" href="https://github.com/vic-Rokx/vapor">
+<i  id="Icon_iqX6P4-gk" data-vp="" class="bi bi-discord nav-item-icon">
+</i>
+</a>
+<button  id="CtxB_V4o0S3-gk" data-vp="" class="lay_OG6Dc2 pos_e8wtf3 mapa_CrkEb2 vis_gyebf intr_bNDVL4 "aria-label="toggle theme">
+    <svg viewBox="0 0 89 55" fill="none" xmlns="http://www.w3.org/2000/svg"   id="Svg_SFEHK2-gk" data-vp="" class="lay_cpmKG1 pos_e8wtf3 mapa_CrkEb2 vis_jBfnf1 ">
+
+      
+      <!-- BACKGROUND: Top switch base (black/white one on top-right) -->
+      <path d="M60.2615 51.003L82.7781 38.003C86.2457 36.001 87.9795 33.3771 87.9796 30.7531V27.7531C87.9796 25.1291 86.2458 22.5051 82.7782 20.503C75.8429 16.499 64.5987 16.499 57.6634 20.503L35.1468 33.503C31.6791 35.5051 29.9453 38.1291 29.9453 40.7531V43.7531C29.9453 46.3771 31.6791 49.001 35.1467 51.003C42.082 55.0071 53.3262 55.0071 60.2615 51.003Z" fill="black"/>
+      <path d="M87.9796 27.7531C87.9796 25.1291 86.2458 22.5051 82.7782 20.503C75.8429 16.499 64.5987 16.499 57.6634 20.503L35.1468 33.503C31.6791 35.5051 29.9453 38.1291 29.9453 40.7531M87.9796 27.7531C87.9796 30.3771 86.2458 33.001 82.7782 35.003L60.2615 48.003C53.3263 52.0071 42.082 52.0071 35.1468 48.003C31.6792 46.001 29.9453 43.3771 29.9453 40.7531M87.9796 27.7531V30.7531C87.9795 33.3771 86.2457 36.001 82.7781 38.003L60.2615 51.003C53.3262 55.0071 42.082 55.0071 35.1467 51.003C31.6791 49.001 29.9453 46.3771 29.9453 43.7531V40.7531" fill="rgba(var(--tint))"/>
+      <path d="M87.9796 27.7531C87.9796 25.1291 86.2458 22.5051 82.7782 20.503C75.8429 16.499 64.5987 16.499 57.6634 20.503L35.1468 33.503C31.6791 35.5051 29.9453 38.1291 29.9453 40.7531M87.9796 27.7531C87.9796 30.3771 86.2458 33.001 82.7782 35.003L60.2615 48.003C53.3263 52.0071 42.082 52.0071 35.1468 48.003C31.6792 46.001 29.9453 43.3771 29.9453 40.7531M87.9796 27.7531V30.7531C87.9795 33.3771 86.2457 36.001 82.7781 38.003L60.2615 51.003C53.3262 55.0071 42.082 55.0071 35.1467 51.003C31.6791 49.001 29.9453 46.3771 29.9453 43.7531V40.7531" stroke="rgba(var(--background))"/>
+
+      <!-- BACKGROUND: Bottom switch base (black one with stars on bottom-left) -->
+      <path d="M53.3328 21.003L30.8161 34.003C23.8809 38.0071 12.6367 38.0071 5.7014 34.003C2.2413 32.0053 0.5075 29.3883 0.5 26.77V23.7531C0.5 21.2918 2.0255 18.8305 5.0765 16.8824C6.4961 14.7104 9.48 12.9814 13.235 12.1535L28.2181 3.50302C35.1533 -0.501005 46.3976 -0.501005 53.3328 3.50302C56.8005 5.50512 58.5343 8.12911 58.5343 10.7531V13.7531C58.5342 16.3771 56.8004 19.001 53.3328 21.003Z" fill="black"/>
+      <path d="M0.5 23.7531C0.5 21.1291 2.2338 18.5051 5.7015 16.503L28.2181 3.50302C35.1534 -0.501005 46.3976 -0.501005 53.3328 3.50302C56.8005 5.50512 58.5343 8.12911 58.5343 10.7531M0.5 23.7531C0.5 26.3771 2.2339 29.001 5.7015 31.003C12.6367 35.0071 23.8809 35.0071 30.8162 31.003L53.3329 18.003C56.8005 16.001 58.5343 13.3771 58.5343 10.7531M0.5 23.7531V26.77C0.5075 29.3883 2.2413 32.0053 5.7014 34.003C12.6367 38.0071 23.8809 38.0071 30.8162 34.003L53.3328 21.003C56.8004 19.001 58.5343 16.3771 58.5343 13.7531V10.7531" stroke="white"/>
+
+      <!-- MOVABLE: Gear disc (starts top-right, slides DOWN-LEFT when ON) -->
+      <g id="gearDisc">
+        <path d="M70.2217 16.1211C73.7616 16.1212 77.2745 16.902 79.9307 18.4355C82.5898 19.9708 83.8057 21.9134 83.8057 23.7529V26.7529C83.8056 28.5923 82.5895 30.5342 79.9307 32.0693C77.2745 33.6029 73.7616 34.3847 70.2217 34.3848C66.6816 34.3848 63.168 33.6029 60.5117 32.0693C57.853 30.5342 56.6368 28.5923 56.6367 26.7529V23.7393C56.6427 21.9039 57.8592 19.9671 60.5117 18.4355C63.168 16.902 66.6816 16.1211 70.2217 16.1211Z" fill="rgba(var(--tint))" stroke="rgba(var(--tint))"/>
+        <path d="M56.1367 23.7377C56.13 25.8238 57.5051 27.9111 60.2619 29.5028C65.7623 32.6785 74.6802 32.6785 80.1805 29.5028C82.9307 27.915 84.3058 25.8339 84.3058 23.7528M56.1367 23.7377C56.1434 21.6616 57.5184 19.5868 60.2619 18.0028C65.7623 14.8272 74.6802 14.8272 80.1805 18.0028C82.9307 19.5906 84.3058 21.6717 84.3058 23.7528M56.1367 23.7377V26.7528C56.1367 28.8339 57.5118 30.915 60.262 32.5028C65.7623 35.6784 74.6802 35.6784 80.1805 32.5028C82.9307 30.915 84.3058 28.8339 84.3058 26.7528V23.7528" stroke="rgba(var(--background))"/>
+        <path d="M63.7219 20L65.454 21M70.217 18.4492V19.8634M76.7122 20L74.9801 21M79.4026 23.75H76.9531M74.9807 26.5L76.7127 27.5M70.217 27.6406V29.0548M65.4533 26.5L63.7213 27.5M63.4807 23.75H61.0312M72.3821 22.5C73.5779 23.1904 73.5779 24.3096 72.3821 25C71.1864 25.6904 69.2477 25.6904 68.052 25C66.8563 24.3096 66.8563 23.1904 68.052 22.5C69.2477 21.8096 71.1864 21.8096 72.3821 22.5Z" stroke="rgba(var(--background))" stroke-linecap="round"/>
+      </g>
+
+      <!-- MOVABLE: Star disc (starts bottom-left, slides UP-RIGHT when ON) -->
+      <g id="starDisc">
+        <path d="M4.17188 22.7529C4.17188 27.2439 10.4778 30.8846 18.2565 30.8846C26.0352 30.8846 32.3411 27.2439 32.3411 22.7529V19.7529C32.3411 15.2618 26.0352 11.6211 18.2566 11.6211C10.4779 11.6211 4.17197 15.2618 4.17197 19.7529L4.17188 22.7529Z" fill="black"/>
+        <path d="M18.6951 15.1616L18.8714 14.4492L19.0477 15.1616C19.1247 15.4727 19.5481 15.7172 20.0869 15.7616L21.3209 15.8634L20.0869 15.9652C19.5481 16.0096 19.1247 16.254 19.0477 16.5652L18.8714 17.2776L18.6951 16.5652C18.6182 16.254 18.1948 16.0096 17.6559 15.9652L16.4219 15.8634L17.6559 15.7616C18.1948 15.7172 18.6182 15.4727 18.6951 15.1616Z" fill="black"/>
+        <path d="M23.5513 17.9579L23.7698 16.5703L23.9883 17.9579C24.0397 18.2843 24.4728 18.5479 25.0348 18.5942L26.2193 18.6919L25.0348 18.7896C24.4728 18.8359 24.0397 19.0992 23.9883 19.4256L23.7698 20.8132L23.5513 19.4253C23.4999 19.0989 23.0668 18.8356 22.5048 18.7893L21.3203 18.6916L22.5048 18.5939C23.0668 18.5476 23.4999 18.2843 23.5513 17.9579Z" fill="black"/>
+        <path d="M32.3411 19.7529C32.3409 24.2438 26.0351 27.8846 18.2566 27.8846C10.4779 27.8846 4.17197 24.2439 4.17197 19.7529M32.3411 19.7529C32.3411 15.2618 26.0352 11.6211 18.2566 11.6211C10.4779 11.6211 4.17197 15.2618 4.17197 19.7529M32.3411 19.7529V22.7529C32.3411 27.2439 26.0352 30.8846 18.2565 30.8846C10.4778 30.8846 4.17188 27.2439 4.17188 22.7529L4.17197 19.7529M18.256 25.0559C13.1829 25.0559 9.07037 22.6815 9.07037 19.7526C9.07037 17.7426 11.0071 15.9938 13.8618 15.0943C13.1495 15.8479 12.7446 16.7123 12.7446 17.6312C12.7446 20.5602 16.8571 22.9345 21.9302 22.9345C23.5219 22.9345 25.0191 22.7008 26.3243 22.2895C24.7663 23.9377 21.7373 25.0559 18.256 25.0559ZM18.8683 14.4493L18.692 15.1617C18.6151 15.4728 18.1917 15.7173 17.6528 15.7617L16.4188 15.8635L17.6528 15.9653C18.1917 16.0097 18.6151 16.2541 18.692 16.5653L18.8683 17.2777L19.0446 16.5653C19.1216 16.2541 19.545 16.0097 20.0838 15.9653L21.3178 15.8635L20.0838 15.7617C19.545 15.7173 19.1216 15.4728 19.0446 15.1617L18.8683 14.4493ZM23.7673 16.5706L23.5488 17.9582C23.4974 18.2846 23.0643 18.5479 22.5023 18.5942L21.3178 18.6919L22.5023 18.7896C23.0643 18.8359 23.4974 19.0992 23.5488 19.4256L23.7673 20.8132L23.9858 19.4256C24.0372 19.0992 24.4703 18.8359 25.0323 18.7896L26.2168 18.6919L25.0323 18.5942C24.4703 18.5479 24.0372 18.2846 23.9858 17.9582L23.7673 16.5706Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+
+    
+</svg>
+</button>
+</div>
+</div>
+</div>
+<div  id="Spac_4ziud2-gk" data-vp="" class="lay_nvune3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+<div  id="Flex_UC3x-gk" data-vp="" class="lay_dRKRe1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_OSB0Y2-gk" data-vp="" class="lay_cZ1KB4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_z52gH1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_D7Dng2 ">templates-ui ⇒</p>
+<p  id="Text_NBMun3-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_RxzRY1 ">templates-ui</p>
+<p  id="Text_thw9G1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_JN8eg3 ">A collection of ready-to-use templates components built on top of Vapor, copy and paste into your apps.</p>
+</div>
+<div  id="Flex_eBxS11-gk" data-vp="" class="lay_WU0B3 pos_e8wtf3 mapa_jHAIQ vis_SWFkJ2 ">
+<p  id="Text_O3BrX4-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_6TQs02 vis_dxEbU ">Template Ecommerce</p>
+<p  id="Text_VONb22-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_0Ngye4 vis_j9g222 ">A simple ecommerce template with cart, login, and checkout.</p>
+<div  id="Flex_9R4BX2-gk" data-vp="" class="lay_HKTla3 pos_e8wtf3 mapa_CrkEb2 vis_WwEfq2 ">
+<div  id="Flex_zFJ1V1-gk" data-vp="" class="lay_WG2Kn2 pos_e8wtf3 mapa_jigL04 vis_WwEfq2 ">
+<a  id="Link_p3FBo2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 " href="/ui/templates">
+<p  id="Text_2hqfU3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_PFOQS3 ">ryvan engineering</p>
+</a>
+<div  id="Flex_Gs03H1-gk" data-vp="" class="lay_MgAxA3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<a  id="Link_Odz84-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 " href="/ui/templates">
+<p  id="Text_yaly12-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_wciFJ2 intr_EtH2H4 ">store</p>
+</a>
+<a  id="Link_aGqvJ2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 " href="/ui/templates">
+<p  id="Text_X7L2d4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_Ds3FH3 intr_EtH2H4 ">products</p>
+</a>
+<a  id="Link_x9bM41-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 " href="/ui/templates">
+<p  id="Text_f3efM2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_Ds3FH3 intr_EtH2H4 ">now</p>
+</a>
+<a  id="Link_npke91-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 " href="/ui/templates">
+<p  id="Text_vagnA-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_Ds3FH3 intr_EtH2H4 ">support</p>
+</a>
+</div>
+<button  id="CtxB_nPQBK4-gk" data-vp="" class="lay_FZLOH4 pos_e8wtf3 mapa_TK4ER4 vis_gyebf ">
+<p  id="Text_FBfr94-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_PFOQS3 ">cart</p>
+</button>
+</div>
+<div  id="Flex_8Wn4R1-gk" data-vp="" class="lay_GmMJB3 pos_e8wtf3 mapa_UEUFa vis_SWFkJ2 ">
+<div  id="Flex_RrWnK4-gk" data-vp="" class="lay_pjWzV1 pos_t0s233 mapa_8UNrs vis_2BMRA4 ">
+<img  id="Imag_LyXn51-gk" data-vp="" style="object-fit: cover;" class="lay_j73IP1 pos_rLJOu mapa_CrkEb2 vis_SWFkJ2 " src="/assets/koii.webp">
+</img>
+<div  id="Flex_eO2Ds2-gk" data-vp="" class="lay_y7AdG1 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_0wEkH4-gk" data-vp="" class="lay_gAq6w pos_e8wtf3 mapa_CrkEb2 vis_vLiSe3 ">
+<p  id="Text_wSGnu3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_PPwld ">[ device ]</p>
+</div>
+</div>
+<div  id="Flex_k63YD1-gk" data-vp="" class="lay_q9IQ61 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_NBhbX1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_92isH2 ">ryven</p>
+</div>
+<div  id="Flex_uSE4s1-gk" data-vp="" class="lay_h06Ma2 pos_t0s233 mapa_3RP2h2 vis_2BMRA4 ">
+<div  id="Flex_4kzZ54-gk" data-vp="" class="lay_XDNI21 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_5ScXk3-gk" data-vp="" class="lay_egUEe2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_EDEFl-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_qXAga1 ">RYVEN</p>
+<p  id="Text_GJ3ic-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_FHoHK3 ">SUPERTONE</p>
+</div>
+<p  id="Text_oCUuh-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_3XBLE1 ">EP–40</p>
+<p  id="Text_i2riK1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_OZbz73 ">ORIGINAL LAYERING MACHINE</p>
+<div  id="Flex_VZzPs-gk" data-vp="" class="lay_s8vaH2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+<p  id="Text_QNbBG1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_W8uxL2 ">a live loop performance mode, an on-board bass and lead synth, a massive reggae, dub and dancehall sound library.</p>
+</div>
+</div>
+</div>
+<div  id="Flex_qQbGe1-gk" data-vp="" class="lay_CV5jE2 pos_e8wtf3 mapa_UmGjR1 vis_CrboD4 ">
+<button  id="CtxB_MP6Xy2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_gyebf ">
+<p  id="Text_RVj6X2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_HRWn32 intr_EtH2H4 ">all products</p>
+</button>
+<button  id="CtxB_2UjqO2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_gyebf ">
+<p  id="Text_baQwe1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_jzYFe3 intr_EtH2H4 ">synthesizers</p>
+</button>
+<button  id="CtxB_CQxUh2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_gyebf ">
+<p  id="Text_6KpQe4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_jzYFe3 intr_EtH2H4 ">speakers</p>
+</button>
+<button  id="CtxB_1H4cB4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_gyebf ">
+<p  id="Text_VNuFy1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_jzYFe3 intr_EtH2H4 ">accessories</p>
+</button>
+</div>
+<div  id="Flex_20QgA4-gk" data-vp="" class="lay_AEgkh1 pos_e8wtf3 mapa_CrkEb2 vis_WwEfq2 ">
+<div  id="Flex_hhAlN1-gk" data-vp="" class="lay_eM0AS3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_uB4mN-gk" data-vp="" class="lay_eEnLS2 pos_e8wtf3 mapa_3RP2h2 vis_4sa1V1 anim_hgmgx ">
+<div  id="Flex_7oFEy1-gk" data-vp="" class="lay_41OZh2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_vTR0l-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_PFOQS3 ">EP–40 riddim</p>
+<button  id="CtxB_K1BeV1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_gyebf ">
+<p  id="Text_mr65c1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_0GPWv2 intr_uH8up2 ">buy now</p>
+</button>
+</div>
+<button  id="CtxB_NaVpL4-gk" data-vp="" class="lay_xXjVC3 pos_e8wtf3 mapa_CrkEb2 vis_tpX5x2 intr_DH9B83 ">
+<div  id="Flex_ocugI-gk" data-vp="" class="lay_lZCST pos_t0s233 mapa_CrkEb2 vis_AgG9D3 ">
+<img  id="Imag_lCzyA1-gk" data-vp="" style="object-fit: cover;" class="lay_j73IP1 pos_rLJOu mapa_CrkEb2 vis_SWFkJ2 " src="/assets/ep-40.webp">
+</img>
+<div  id="Flex_GtnqO4-gk" data-vp="" class="lay_J9WQF pos_ADNXc1 mapa_CrkEb2 vis_7pbuC ">
+</div>
+<p  id="Text_G3SzQ-gk" data-vp="" class="lay_jXzf62 pos_t0s233 mapa_CrkEb2 vis_LQqAr3 ">riddim</p>
+</div>
+</button>
+</div>
+<div  id="Flex_eSpTu3-gk" data-vp="" class="lay_eEnLS2 pos_e8wtf3 mapa_3RP2h2 vis_4sa1V1 anim_hgmgx ">
+<div  id="Flex_Jd8TJ3-gk" data-vp="" class="lay_41OZh2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_bsSte1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_PFOQS3 ">EP–2350 ting</p>
+<button  id="CtxB_yo1yr2-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_gyebf ">
+<p  id="Text_7zaG11-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_0GPWv2 intr_uH8up2 ">buy now</p>
+</button>
+</div>
+<button  id="CtxB_Z0EUP-gk" data-vp="" class="lay_xXjVC3 pos_e8wtf3 mapa_CrkEb2 vis_tpX5x2 intr_DH9B83 ">
+<div  id="Flex_Zw8YV-gk" data-vp="" class="lay_lZCST pos_t0s233 mapa_CrkEb2 vis_AgG9D3 ">
+<img  id="Imag_12eh63-gk" data-vp="" style="object-fit: cover;" class="lay_j73IP1 pos_rLJOu mapa_CrkEb2 vis_SWFkJ2 " src="/assets/lenon.webp">
+</img>
+<div  id="Flex_CbCLI1-gk" data-vp="" class="lay_J9WQF pos_ADNXc1 mapa_CrkEb2 vis_Zr5Tb1 ">
+</div>
+<p  id="Text_1MBXM3-gk" data-vp="" class="lay_jXzf62 pos_t0s233 mapa_CrkEb2 vis_LQqAr3 ">ting</p>
+</div>
+</button>
+</div>
+<div  id="Flex_GGc9i1-gk" data-vp="" class="lay_eEnLS2 pos_e8wtf3 mapa_3RP2h2 vis_4sa1V1 anim_hgmgx ">
+<div  id="Flex_HuOIe2-gk" data-vp="" class="lay_41OZh2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_WKEXf1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_PFOQS3 ">riddim shoulder bag</p>
+<button  id="CtxB_1sJoA4-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_gyebf ">
+<p  id="Text_mZGcd2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_0GPWv2 intr_uH8up2 ">buy now</p>
+</button>
+</div>
+<button  id="CtxB_lDxG8-gk" data-vp="" class="lay_xXjVC3 pos_e8wtf3 mapa_CrkEb2 vis_tpX5x2 intr_DH9B83 ">
+<div  id="Flex_wtWJv1-gk" data-vp="" class="lay_lZCST pos_t0s233 mapa_CrkEb2 vis_AgG9D3 ">
+<img  id="Imag_HYHEO3-gk" data-vp="" style="object-fit: cover;" class="lay_j73IP1 pos_rLJOu mapa_CrkEb2 vis_SWFkJ2 " src="/assets/fusion.webp">
+</img>
+<div  id="Flex_eU4kY4-gk" data-vp="" class="lay_J9WQF pos_ADNXc1 mapa_CrkEb2 vis_q1nEA3 ">
+</div>
+<p  id="Text_6o4c8-gk" data-vp="" class="lay_jXzf62 pos_t0s233 mapa_CrkEb2 vis_LQqAr3 ">shoulder bag</p>
+</div>
+</button>
+</div>
+<div  id="Flex_Cuktf1-gk" data-vp="" class="lay_eEnLS2 pos_e8wtf3 mapa_3RP2h2 vis_4sa1V1 anim_hgmgx ">
+<div  id="Flex_m95fL-gk" data-vp="" class="lay_41OZh2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_CQwpw-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_PFOQS3 ">OP–1 field</p>
+<button  id="CtxB_JK2ov3-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_gyebf ">
+<p  id="Text_zDQmG-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_0GPWv2 intr_uH8up2 ">buy now</p>
+</button>
+</div>
+<button  id="CtxB_AlO6c2-gk" data-vp="" class="lay_xXjVC3 pos_e8wtf3 mapa_CrkEb2 vis_tpX5x2 intr_DH9B83 ">
+<div  id="Flex_F7rcb-gk" data-vp="" class="lay_lZCST pos_t0s233 mapa_CrkEb2 vis_AgG9D3 ">
+<img  id="Imag_rwO1l1-gk" data-vp="" style="object-fit: cover;" class="lay_j73IP1 pos_rLJOu mapa_CrkEb2 vis_SWFkJ2 " src="/assets/op-1.webp">
+</img>
+<div  id="Flex_jH7DI3-gk" data-vp="" class="lay_J9WQF pos_ADNXc1 mapa_CrkEb2 vis_NXN9p3 ">
+</div>
+<p  id="Text_xXCUl-gk" data-vp="" class="lay_jXzf62 pos_t0s233 mapa_CrkEb2 vis_LQqAr3 ">op–1 field</p>
+</div>
+</button>
+</div>
+<div  id="Flex_84JkZ4-gk" data-vp="" class="lay_eEnLS2 pos_e8wtf3 mapa_3RP2h2 vis_4sa1V1 anim_hgmgx ">
+<div  id="Flex_EeaHb3-gk" data-vp="" class="lay_41OZh2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_KgjCu-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_PFOQS3 ">OB–4 magic radio</p>
+<button  id="CtxB_8tQZz2-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_gyebf ">
+<p  id="Text_ZWwdi-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_0GPWv2 intr_uH8up2 ">buy now</p>
+</button>
+</div>
+<button  id="CtxB_B8g852-gk" data-vp="" class="lay_xXjVC3 pos_e8wtf3 mapa_CrkEb2 vis_tpX5x2 intr_DH9B83 ">
+<div  id="Flex_09p1m3-gk" data-vp="" class="lay_lZCST pos_t0s233 mapa_CrkEb2 vis_AgG9D3 ">
+<img  id="Imag_GfAvp2-gk" data-vp="" style="object-fit: cover;" class="lay_j73IP1 pos_rLJOu mapa_CrkEb2 vis_SWFkJ2 " src="/assets/tp-7.webp">
+</img>
+<div  id="Flex_upgny1-gk" data-vp="" class="lay_J9WQF pos_ADNXc1 mapa_CrkEb2 vis_2BMRA4 ">
+</div>
+<p  id="Text_r7Pxa2-gk" data-vp="" class="lay_jXzf62 pos_t0s233 mapa_CrkEb2 vis_LQqAr3 ">ob–4</p>
+</div>
+</button>
+</div>
+<div  id="Flex_2ImLn-gk" data-vp="" class="lay_eEnLS2 pos_e8wtf3 mapa_3RP2h2 vis_4sa1V1 anim_hgmgx ">
+<div  id="Flex_TSGCh3-gk" data-vp="" class="lay_41OZh2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_aoPQk2-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_PFOQS3 ">TX–6 ultra-portable pro mixer</p>
+<button  id="CtxB_IrVj74-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_gyebf ">
+<p  id="Text_PYESS2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_0GPWv2 intr_uH8up2 ">buy now</p>
+</button>
+</div>
+<button  id="CtxB_4JqnO1-gk" data-vp="" class="lay_xXjVC3 pos_e8wtf3 mapa_CrkEb2 vis_tpX5x2 intr_DH9B83 ">
+<div  id="Flex_bDYrS-gk" data-vp="" class="lay_lZCST pos_t0s233 mapa_CrkEb2 vis_AgG9D3 ">
+<img  id="Imag_kK48V1-gk" data-vp="" style="object-fit: cover;" class="lay_j73IP1 pos_rLJOu mapa_CrkEb2 vis_SWFkJ2 " src="/assets/ep133.webp">
+</img>
+<div  id="Flex_X7LEZ3-gk" data-vp="" class="lay_J9WQF pos_ADNXc1 mapa_CrkEb2 vis_Zr5Tb1 ">
+</div>
+<p  id="Text_NBzB21-gk" data-vp="" class="lay_jXzf62 pos_t0s233 mapa_CrkEb2 vis_LQqAr3 ">tx–6</p>
+</div>
+</button>
+</div>
+<div  id="Flex_LK2LK4-gk" data-vp="" class="lay_eEnLS2 pos_e8wtf3 mapa_3RP2h2 vis_4sa1V1 anim_hgmgx ">
+<div  id="Flex_5z5q92-gk" data-vp="" class="lay_41OZh2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_u5QmZ4-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_PFOQS3 ">CM–15 studio mic</p>
+<button  id="CtxB_b7zcb2-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_gyebf ">
+<p  id="Text_l7g9K3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_0GPWv2 intr_uH8up2 ">buy now</p>
+</button>
+</div>
+<button  id="CtxB_HSLFM4-gk" data-vp="" class="lay_xXjVC3 pos_e8wtf3 mapa_CrkEb2 vis_tpX5x2 intr_DH9B83 ">
+<div  id="Flex_60w3B3-gk" data-vp="" class="lay_lZCST pos_t0s233 mapa_CrkEb2 vis_AgG9D3 ">
+<img  id="Imag_8PU38-gk" data-vp="" style="object-fit: cover;" class="lay_j73IP1 pos_rLJOu mapa_CrkEb2 vis_SWFkJ2 " src="/assets/op-2.webp">
+</img>
+<div  id="Flex_27K9F2-gk" data-vp="" class="lay_J9WQF pos_ADNXc1 mapa_CrkEb2 vis_NXN9p3 ">
+</div>
+<p  id="Text_UjdBj-gk" data-vp="" class="lay_jXzf62 pos_t0s233 mapa_CrkEb2 vis_LQqAr3 ">cm–15</p>
+</div>
+</button>
+</div>
+<div  id="Flex_Gudo2-gk" data-vp="" class="lay_eEnLS2 pos_e8wtf3 mapa_3RP2h2 vis_4sa1V1 anim_hgmgx ">
+<div  id="Flex_HY0Xc2-gk" data-vp="" class="lay_41OZh2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_DigbS2-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_PFOQS3 ">PO–33 K.O!</p>
+<button  id="CtxB_X9fbD3-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_gyebf ">
+<p  id="Text_BwzPf1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_0GPWv2 intr_uH8up2 ">buy now</p>
+</button>
+</div>
+<button  id="CtxB_qWnDw2-gk" data-vp="" class="lay_xXjVC3 pos_e8wtf3 mapa_CrkEb2 vis_tpX5x2 intr_DH9B83 ">
+<div  id="Flex_sFQFs-gk" data-vp="" class="lay_lZCST pos_t0s233 mapa_CrkEb2 vis_AgG9D3 ">
+<img  id="Imag_PRMlB3-gk" data-vp="" style="object-fit: cover;" class="lay_j73IP1 pos_rLJOu mapa_CrkEb2 vis_SWFkJ2 " src="/assets/tx-6.webp">
+</img>
+<div  id="Flex_3CbDw2-gk" data-vp="" class="lay_J9WQF pos_ADNXc1 mapa_CrkEb2 vis_Zr5Tb1 ">
+</div>
+<p  id="Text_L81IY1-gk" data-vp="" class="lay_jXzf62 pos_t0s233 mapa_CrkEb2 vis_LQqAr3 ">po–33</p>
+</div>
+</button>
+</div>
+</div>
+</div>
+<div  id="Flex_AN1ms3-gk" data-vp="" class="lay_zl9v61 pos_e8wtf3 mapa_CrkEb2 vis_NXN9p3 ">
+<p  id="Text_oIhKT4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ufYJg ">© ryvan engineering 2026</p>
+</div>
+</div>
+</div>
+<p  id="Text_LyL7R-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_6TQs02 vis_dxEbU ">DND Kanban</p>
+<p  id="Text_n1SV24-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_0Ngye4 vis_j9g222 ">Drag and Drop Kanban Board with Sortable Collections filtering, search, and creation modals.</p>
+<div  id="Flex_l2iyv1-gk" data-vp="" class="lay_QBdUk3 pos_e8wtf3 mapa_CrkEb2 vis_WwEfq2 ">
+<div  id="Flex_j8yCh1-gk" data-vp="" class="lay_q9cYN3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_ThyFs1-gk" data-vp="" class="lay_bzJ1G1 pos_e8wtf3 mapa_Pdd2g2 vis_WwEfq2 ">
+<div  id="Flex_QatHT3-gk" data-vp="" class="lay_1P6hl pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_0knPQ3-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_nsLs4 ">Kanban Board</p>
+</div>
+<div  id="Flex_1coFh1-gk" data-vp="" class="lay_P5InU pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_2rLZe3-gk" data-vp="" class="lay_UjMPp3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_HXKru1-gk" data-vp="" class="lay_7IV8t1 pos_t0s233 mapa_CrkEb2 vis_GXTYv2 ">
+<label for="string_Flex_HXKru1-gk"  id="Labe_w0cx33-gk" data-vp="" style="transform: translateY(-50%) scale(1); z-index: 0; text-align: center;" class="lay_1I8dE4 pos_7GSMa1 mapa_sgnwh vis_E2bGI3 ">Search...</label>
+
+<input  id="string_Flex_HXKru1-gk" data-vp="" class="lay_kSFpR4 pos_h7ld4 mapa_TK4ER4 vis_j26R42 "name=""/>
+
+</div>
+</div>
+<div  id="Flex_IXiP71-gk" data-vp="" class="lay_Qvyvw1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_5Xc4R1-gk" data-vp="" class="lay_i0bZ63 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_T7cLP2-gk" data-vp="" class="lay_tupWc4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<button  id="CtxB_wJro2-gk" data-vp="" class="lay_ipwPq1 pos_e8wtf3 mapa_RM5YV3 vis_2OaxJ4 intr_NfIPq2 "aria-label="Select Dropdown">
+<div  id="Flex_qU9ND3-gk" data-vp="" class="lay_LfISh3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_bY3Md-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_RM5YV3 vis_d2KdQ1 ">Priority</p>
+<i  id="Icon_1P3Gd2-gk" data-vp="" class="bi bi-chevron-down lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_I8cxd4 ">
+</i>
+</div>
+</button>
+</div>
+<div  id="Flex_Funvp1-gk" data-vp="" class="lay_AEgkh1 pos_4MMng3 mapa_CrkEb2 vis_SWFkJ2 tran_akFuA3 ">
+
+
+</div>
+
+
+</div>
+</div>
+<button  id="CtxB_hUZPE4-gk" data-vp="" class="lay_Jayt61 pos_e8wtf3 mapa_DL9vi vis_QFWOy1 intr_df5dn ">
+<div  id="Flex_eOMOi-gk" data-vp="" class="lay_rLxs pos_e8wtf3 mapa_CrkEb2 vis_fTQ681 ">
+</div>
+<p  id="Text_m2GD41-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_hO5Cf ">Hide Done</p>
+</button>
+<button  id="CtxB_cb8OA-gk" data-vp="" class="lay_Jayt61 pos_e8wtf3 mapa_DL9vi vis_kYzxX2 intr_tvJrU2 ">
+<p  id="Text_OUGgv-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_DtlAS4 ">Export</p>
+<i  id="Icon_X3Bwo2-gk" data-vp="" class="bi bi-download lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_JIHP63 ">
+</i>
+</button>
+<button  id="CtxB_lZF1D-gk" data-vp="" class="lay_wD5b32 pos_e8wtf3 mapa_hW4aM4 vis_M5AnY intr_YD5WP2 ">
+<i  id="Icon_nrKBc2-gk" data-vp="" class="bi bi-arrow-clockwise lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_xomsG3 ">
+</i>
+</button>
+<button  id="CtxB_OfeJJ3-gk" data-vp="" class="lay_Jayt61 pos_e8wtf3 mapa_DL9vi vis_PQsaf intr_cbmdJ ">
+<i  id="Icon_Bu2i22-gk" data-vp="" class="bi bi-plus-lg lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_fQK0P ">
+</i>
+<p  id="Text_6qWD63-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_3t1Df3 ">Add Task</p>
+</button>
+</div>
+</div>
+<div  id="Flex_NioSP2-gk" data-vp="" class="lay_R2kCO1 pos_e8wtf3 mapa_Pdd2g2 vis_SWFkJ2 ">
+<div  id="Flex_ukpdZ-gk" data-vp="" class="lay_YXBsQ2 pos_e8wtf3 mapa_AdOAc4 vis_4ddSE3 ">
+<p  id="Text_vpQzp3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_rHkJY4 ">Board Progress</p>
+<div  id="Flex_clnSt3-gk" data-vp="" class="lay_UMbTT4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+<p  id="Text_l42O41-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_i7Djz2 ">34%</p>
+
+</div>
+</div>
+<div  id="Flex_dWDNy3-gk" data-vp="" class="lay_ClTJv3 pos_e8wtf3 mapa_difnC vis_SWFkJ2 ">
+<div  id="Flex_32yy12-gk" data-vp="" class="lay_3iF1A pos_e8wtf3 mapa_rPfvm1 vis_M92ir2 ">
+<div  id="Flex_7JdXk3-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_kzin31-gk" data-vp="" class="lay_wQ0s2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_ExXzM2-gk" data-vp="" class="lay_Owo7D2 pos_e8wtf3 mapa_4hFg71 vis_SWFkJ2 ">
+<p  id="Text_URQXI3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SGZRG1 ">2</p>
+
+</div>
+<p  id="Text_5ybTJ-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ADb382 ">Backlog</p>
+</div>
+<button  id="CtxB_1tYIo3-gk" data-vp="" class="lay_OG6Dc2 pos_e8wtf3 mapa_CrkEb2 vis_r1lHq3 intr_DUn8d4 ">
+<i  id="Icon_uMlzo3-gk" data-vp="" class="bi bi-plus-lg lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_A7DgX2 ">
+</i>
+</button>
+</div>
+<div  id="Flex_hwlRF4-gk" data-vp="" class="lay_eUsaR pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_7Z4q6-gk" data-vp="" class="lay_Hi19x pos_e8wtf3 mapa_CrkEb2 vis_zYPu53 ">
+<div  id="Flex_Ax2Li2-gk" data-vp="" class="lay_2R4cN pos_e8wtf3 mapa_1HyXA vis_0hKWl1 anim_sM8nv1 intr_GMW3Q ">
+<div  id="Flex_3Cc354-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_S6CF1 vis_SWFkJ2 ">
+<p  id="Text_cYoWa4-gk" data-vp="" class="lay_wOj1o2 pos_e8wtf3 mapa_CrkEb2 vis_t3S3V ">Database schema review</p>
+<div  id="Flex_7jZfV2-gk" data-vp="" class="lay_Owo7D2 pos_e8wtf3 mapa_zmKjs vis_SWFkJ2 ">
+<p  id="Text_7XRby1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_LdS6k ">Medium</p>
+</div>
+</div>
+<p  id="Text_Bsiie-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_S6CF1 vis_oqKh41 ">Review and optimize current database schema</p>
+<div  id="Flex_nI7NQ4-gk" data-vp="" class="lay_1wHVY1 pos_e8wtf3 mapa_DKRFh vis_o8s8D1 ">
+<div  id="Flex_B0xh82-gk" data-vp="" class="lay_E1BVP4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+<div  id="Flex_R6YLE3-gk" data-vp="" class="lay_L1WWl3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_u3oc44-gk" data-vp="" class="lay_3eQTE4 pos_e8wtf3 mapa_CrkEb2 vis_um3ii ">
+<p  id="Text_ZOAD82-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_pj9ZA ">28%</p>
+
+<div  id="Flex_KhzpR-gk" data-vp="" class="lay_hSrtk3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Hook_JzKgN-gk" data-vp="">
+</div>
+</div>
+</div>
+<button  id="CtxB_MMETa3-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_DUn8d4 ">
+<i  id="Icon_6UTKr3-gk" data-vp="" class="bi bi-eye lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_B37LW-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_Fn5JI ">
+<i  id="Icon_dyWdp3-gk" data-vp="" class="bi bi-chevron-right lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_J45Q04-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_BAvcc4 ">
+<i  id="Icon_8Fo202-gk" data-vp="" class="bi bi-trash lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_wxDW9 ">
+</i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div  id="Flex_EmHvk-gk" data-vp="" class="lay_Hi19x pos_e8wtf3 mapa_CrkEb2 vis_zYPu53 ">
+<div  id="Flex_Qz5IR1-gk" data-vp="" class="lay_2R4cN pos_e8wtf3 mapa_1HyXA vis_0hKWl1 anim_sM8nv1 intr_GMW3Q ">
+<div  id="Flex_QJJVd3-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_S6CF1 vis_SWFkJ2 ">
+<p  id="Text_Ld1BK2-gk" data-vp="" class="lay_wOj1o2 pos_e8wtf3 mapa_CrkEb2 vis_t3S3V ">Performance audit</p>
+<div  id="Flex_MBW472-gk" data-vp="" class="lay_Owo7D2 pos_e8wtf3 mapa_zmKjs vis_SWFkJ2 ">
+<p  id="Text_ot8hH2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_rytuc4 ">Low</p>
+</div>
+</div>
+<p  id="Text_bmZU62-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_S6CF1 vis_oqKh41 ">Run Lighthouse and optimize critical metrics</p>
+<div  id="Flex_Tuxxw2-gk" data-vp="" class="lay_1wHVY1 pos_e8wtf3 mapa_DKRFh vis_o8s8D1 ">
+<div  id="Flex_PeIUC4-gk" data-vp="" class="lay_E1BVP4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+<div  id="Flex_PqYwm-gk" data-vp="" class="lay_L1WWl3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_52xQN2-gk" data-vp="" class="lay_3eQTE4 pos_e8wtf3 mapa_CrkEb2 vis_um3ii ">
+<p  id="Text_4KwJ94-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_pj9ZA ">77%</p>
+
+<div  id="Flex_8ApaI2-gk" data-vp="" class="lay_hSrtk3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Hook_vfoBq1-gk" data-vp="">
+</div>
+</div>
+</div>
+<button  id="CtxB_5VxEI4-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_DUn8d4 ">
+<i  id="Icon_AbevB3-gk" data-vp="" class="bi bi-eye lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_LsSiK-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_Fn5JI ">
+<i  id="Icon_PNf9m1-gk" data-vp="" class="bi bi-chevron-right lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_1fBTG3-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_BAvcc4 ">
+<i  id="Icon_B1ibT3-gk" data-vp="" class="bi bi-trash lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_wxDW9 ">
+</i>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div  id="Flex_ShpAl2-gk" data-vp="" class="lay_3iF1A pos_e8wtf3 mapa_rPfvm1 vis_M92ir2 ">
+<div  id="Flex_C5hqy3-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_XUOMR2-gk" data-vp="" class="lay_wQ0s2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_pCmSP-gk" data-vp="" class="lay_Owo7D2 pos_e8wtf3 mapa_4hFg71 vis_SWFkJ2 ">
+<p  id="Text_f96rG3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SGZRG1 ">3</p>
+
+</div>
+<p  id="Text_4eqyL4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ADb382 ">To Do</p>
+</div>
+<button  id="CtxB_QUHc03-gk" data-vp="" class="lay_OG6Dc2 pos_e8wtf3 mapa_CrkEb2 vis_r1lHq3 intr_DUn8d4 ">
+<i  id="Icon_uu6q1-gk" data-vp="" class="bi bi-plus-lg lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_A7DgX2 ">
+</i>
+</button>
+</div>
+<div  id="Flex_WNKVU3-gk" data-vp="" class="lay_eUsaR pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_03XSM-gk" data-vp="" class="lay_Hi19x pos_e8wtf3 mapa_CrkEb2 vis_zYPu53 ">
+<div  id="Flex_v74dz1-gk" data-vp="" class="lay_2R4cN pos_e8wtf3 mapa_1HyXA vis_0hKWl1 anim_sM8nv1 intr_GMW3Q ">
+<div  id="Flex_QzQLx2-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_S6CF1 vis_SWFkJ2 ">
+<p  id="Text_HnIiP3-gk" data-vp="" class="lay_wOj1o2 pos_e8wtf3 mapa_CrkEb2 vis_t3S3V ">API documentation</p>
+<div  id="Flex_LH0d2-gk" data-vp="" class="lay_Owo7D2 pos_e8wtf3 mapa_zmKjs vis_SWFkJ2 ">
+<p  id="Text_isSvK-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_rytuc4 ">Low</p>
+</div>
+</div>
+<p  id="Text_JdWPs3-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_S6CF1 vis_oqKh41 ">Document all REST endpoints with examples</p>
+<div  id="Flex_WRNdb1-gk" data-vp="" class="lay_siHox1 pos_e8wtf3 mapa_S6CF1 vis_SWFkJ2 ">
+<i  id="Icon_u2fMd3-gk" data-vp="" class="bi bi-calendar3 lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_b0ErJ2 ">
+</i>
+<p  id="Text_2a7mx2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SqgGl ">21-01-2026</p>
+</div>
+<div  id="Flex_XZ9IB3-gk" data-vp="" class="lay_1wHVY1 pos_e8wtf3 mapa_DKRFh vis_o8s8D1 ">
+<div  id="Flex_77wkm3-gk" data-vp="" class="lay_E1BVP4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_0ImpA3-gk" data-vp="" class="lay_AZ1f52 pos_4TjQa3 mapa_CrkEb2 vis_SWFkJ2 ">
+<img  id="Imag_Ahu192-gk" data-vp="" class="lay_wsiGk pos_e8wtf3 mapa_CrkEb2 vis_oWmIp2 " src="/assets/me.webp">
+</img>
+</div>
+
+<div  id="Hook_WYFTd-gk" data-vp="">
+
+
+</div>
+
+</div>
+<div  id="Flex_ejG6r3-gk" data-vp="" class="lay_L1WWl3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_xofrI3-gk" data-vp="" class="lay_3eQTE4 pos_e8wtf3 mapa_CrkEb2 vis_um3ii ">
+<p  id="Text_0ffOv-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_pj9ZA ">93%</p>
+
+<div  id="Flex_VpxYJ2-gk" data-vp="" class="lay_hSrtk3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Hook_rUtOu3-gk" data-vp="">
+</div>
+</div>
+</div>
+<button  id="CtxB_nLeuf2-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_DUn8d4 ">
+<i  id="Icon_chcec3-gk" data-vp="" class="bi bi-eye lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_zkUMh-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_DUn8d4 ">
+<i  id="Icon_u1c4d4-gk" data-vp="" class="bi bi-chevron-left lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_f9DQK3-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_Fn5JI ">
+<i  id="Icon_4YHN24-gk" data-vp="" class="bi bi-chevron-right lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_pJ4VY4-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_BAvcc4 ">
+<i  id="Icon_UcDaI2-gk" data-vp="" class="bi bi-trash lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_wxDW9 ">
+</i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div  id="Flex_hhc344-gk" data-vp="" class="lay_Hi19x pos_e8wtf3 mapa_CrkEb2 vis_zYPu53 ">
+<div  id="Flex_9agtU4-gk" data-vp="" class="lay_2R4cN pos_e8wtf3 mapa_1HyXA vis_0hKWl1 anim_sM8nv1 intr_GMW3Q ">
+<div  id="Flex_6n72A1-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_S6CF1 vis_SWFkJ2 ">
+<p  id="Text_T9mBb-gk" data-vp="" class="lay_wOj1o2 pos_e8wtf3 mapa_CrkEb2 vis_t3S3V ">Mobile responsive layout</p>
+<div  id="Flex_fGAv72-gk" data-vp="" class="lay_Owo7D2 pos_e8wtf3 mapa_zmKjs vis_SWFkJ2 ">
+<p  id="Text_2xFUZ3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_zM5IT2 ">High</p>
+</div>
+</div>
+<p  id="Text_SCr1o1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_S6CF1 vis_oqKh41 ">Ensure all pages work on mobile devices</p>
+<div  id="Flex_kMjfe-gk" data-vp="" class="lay_siHox1 pos_e8wtf3 mapa_S6CF1 vis_SWFkJ2 ">
+<i  id="Icon_xmFp12-gk" data-vp="" class="bi bi-calendar3 lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_b0ErJ2 ">
+</i>
+<p  id="Text_xYPO31-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SqgGl ">12-08-2026</p>
+</div>
+<div  id="Flex_OlJMn1-gk" data-vp="" class="lay_1wHVY1 pos_e8wtf3 mapa_DKRFh vis_o8s8D1 ">
+<div  id="Flex_DFdtM3-gk" data-vp="" class="lay_E1BVP4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_UHjXr3-gk" data-vp="" class="lay_AZ1f52 pos_vZtfh3 mapa_CrkEb2 vis_SWFkJ2 ">
+<img  id="Imag_9XaFx-gk" data-vp="" class="lay_wsiGk pos_e8wtf3 mapa_CrkEb2 vis_oWmIp2 " src="/assets/me.webp">
+</img>
+</div>
+
+<div  id="Hook_YkSHD1-gk" data-vp="">
+
+
+</div>
+
+</div>
+<div  id="Flex_61lTC3-gk" data-vp="" class="lay_L1WWl3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_WAURz3-gk" data-vp="" class="lay_3eQTE4 pos_e8wtf3 mapa_CrkEb2 vis_um3ii ">
+<p  id="Text_lHiHQ4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_pj9ZA ">23%</p>
+
+<div  id="Flex_SqJMA1-gk" data-vp="" class="lay_hSrtk3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Hook_6nx0f3-gk" data-vp="">
+</div>
+</div>
+</div>
+<button  id="CtxB_RccgI-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_DUn8d4 ">
+<i  id="Icon_3Lz6O2-gk" data-vp="" class="bi bi-eye lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_GTbYi2-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_DUn8d4 ">
+<i  id="Icon_w5AwK1-gk" data-vp="" class="bi bi-chevron-left lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_u98WT-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_Fn5JI ">
+<i  id="Icon_4kndw1-gk" data-vp="" class="bi bi-chevron-right lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_cCMlq-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_BAvcc4 ">
+<i  id="Icon_FvYkK2-gk" data-vp="" class="bi bi-trash lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_wxDW9 ">
+</i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div  id="Flex_6d2wv3-gk" data-vp="" class="lay_Hi19x pos_e8wtf3 mapa_CrkEb2 vis_zYPu53 ">
+<div  id="Flex_0UBQl1-gk" data-vp="" class="lay_2R4cN pos_e8wtf3 mapa_1HyXA vis_0hKWl1 anim_sM8nv1 intr_GMW3Q ">
+<div  id="Flex_utiBP1-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_S6CF1 vis_SWFkJ2 ">
+<p  id="Text_aMWul2-gk" data-vp="" class="lay_wOj1o2 pos_e8wtf3 mapa_CrkEb2 vis_t3S3V ">Notification system</p>
+<div  id="Flex_K6dG6-gk" data-vp="" class="lay_Owo7D2 pos_e8wtf3 mapa_zmKjs vis_SWFkJ2 ">
+<p  id="Text_he7NB3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_zM5IT2 ">High</p>
+</div>
+</div>
+<p  id="Text_4Ffjt1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_S6CF1 vis_oqKh41 ">Build real-time notification infrastructure</p>
+<div  id="Flex_kpbiY-gk" data-vp="" class="lay_siHox1 pos_e8wtf3 mapa_S6CF1 vis_SWFkJ2 ">
+<i  id="Icon_0PZAd2-gk" data-vp="" class="bi bi-calendar3 lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_b0ErJ2 ">
+</i>
+<p  id="Text_Y4lG41-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SqgGl ">03-06-2026</p>
+</div>
+<div  id="Flex_zhtLH4-gk" data-vp="" class="lay_1wHVY1 pos_e8wtf3 mapa_DKRFh vis_o8s8D1 ">
+<div  id="Flex_VhXcf2-gk" data-vp="" class="lay_E1BVP4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_skKiY1-gk" data-vp="" class="lay_AZ1f52 pos_Dh3Lf1 mapa_CrkEb2 vis_SWFkJ2 ">
+<img  id="Imag_UJYjC3-gk" data-vp="" class="lay_wsiGk pos_e8wtf3 mapa_CrkEb2 vis_oWmIp2 " src="/assets/me.webp">
+</img>
+</div>
+
+<div  id="Hook_Vl14Y2-gk" data-vp="">
+
+
+</div>
+
+</div>
+<div  id="Flex_mPzQL4-gk" data-vp="" class="lay_L1WWl3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_Futv24-gk" data-vp="" class="lay_3eQTE4 pos_e8wtf3 mapa_CrkEb2 vis_um3ii ">
+<p  id="Text_VyV4S1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_pj9ZA ">69%</p>
+
+<div  id="Flex_kjm3Q2-gk" data-vp="" class="lay_hSrtk3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Hook_gI1Bk3-gk" data-vp="">
+</div>
+</div>
+</div>
+<button  id="CtxB_rILvx2-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_DUn8d4 ">
+<i  id="Icon_mieOH2-gk" data-vp="" class="bi bi-eye lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_GwRkW-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_DUn8d4 ">
+<i  id="Icon_RucFB4-gk" data-vp="" class="bi bi-chevron-left lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_KUUa84-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_Fn5JI ">
+<i  id="Icon_v1pAD2-gk" data-vp="" class="bi bi-chevron-right lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_SfcoZ3-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_BAvcc4 ">
+<i  id="Icon_9zpX82-gk" data-vp="" class="bi bi-trash lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_wxDW9 ">
+</i>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div  id="Flex_orj0c1-gk" data-vp="" class="lay_3iF1A pos_e8wtf3 mapa_rPfvm1 vis_M92ir2 ">
+<div  id="Flex_8lm5v1-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_tTEFw-gk" data-vp="" class="lay_wQ0s2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_B9SZK4-gk" data-vp="" class="lay_Owo7D2 pos_e8wtf3 mapa_4hFg71 vis_SWFkJ2 ">
+<p  id="Text_4bE8j2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SGZRG1 ">2</p>
+
+</div>
+<p  id="Text_2qg6d3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ADb382 ">In Progress</p>
+</div>
+<button  id="CtxB_tfyiC4-gk" data-vp="" class="lay_OG6Dc2 pos_e8wtf3 mapa_CrkEb2 vis_r1lHq3 intr_DUn8d4 ">
+<i  id="Icon_xSNrM4-gk" data-vp="" class="bi bi-plus-lg lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_A7DgX2 ">
+</i>
+</button>
+</div>
+<div  id="Flex_tlsOt-gk" data-vp="" class="lay_eUsaR pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_lffYw1-gk" data-vp="" class="lay_Hi19x pos_e8wtf3 mapa_CrkEb2 vis_zYPu53 ">
+<div  id="Flex_ODdhU4-gk" data-vp="" class="lay_2R4cN pos_e8wtf3 mapa_1HyXA vis_0hKWl1 anim_sM8nv1 intr_GMW3Q ">
+<div  id="Flex_4gpQV4-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_S6CF1 vis_SWFkJ2 ">
+<p  id="Text_bpBjC-gk" data-vp="" class="lay_wOj1o2 pos_e8wtf3 mapa_CrkEb2 vis_t3S3V ">User authentication flow</p>
+<div  id="Flex_8P2FO2-gk" data-vp="" class="lay_Owo7D2 pos_e8wtf3 mapa_zmKjs vis_SWFkJ2 ">
+<p  id="Text_cD22B4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_mbZVf1 ">Urgent</p>
+</div>
+</div>
+<p  id="Text_LLueF1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_S6CF1 vis_oqKh41 ">Implement login, signup, and password reset</p>
+<div  id="Flex_bAuJ22-gk" data-vp="" class="lay_siHox1 pos_e8wtf3 mapa_S6CF1 vis_SWFkJ2 ">
+<i  id="Icon_18eyB-gk" data-vp="" class="bi bi-calendar3 lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_b0ErJ2 ">
+</i>
+<p  id="Text_cQPVG1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SqgGl ">13-01-2026</p>
+</div>
+<div  id="Flex_y7rII3-gk" data-vp="" class="lay_1wHVY1 pos_e8wtf3 mapa_DKRFh vis_o8s8D1 ">
+<div  id="Flex_iFxHc4-gk" data-vp="" class="lay_E1BVP4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_63mTZ1-gk" data-vp="" class="lay_AZ1f52 pos_ifS4S1 mapa_CrkEb2 vis_SWFkJ2 ">
+<img  id="Imag_1qDYC3-gk" data-vp="" class="lay_wsiGk pos_e8wtf3 mapa_CrkEb2 vis_oWmIp2 " src="/assets/me.webp">
+</img>
+</div>
+
+<div  id="Hook_QmElB1-gk" data-vp="">
+
+
+</div>
+
+</div>
+<div  id="Flex_MiDwI1-gk" data-vp="" class="lay_L1WWl3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_gMQwO3-gk" data-vp="" class="lay_3eQTE4 pos_e8wtf3 mapa_CrkEb2 vis_um3ii ">
+<p  id="Text_vPXv64-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_pj9ZA ">34%</p>
+
+<div  id="Flex_kYCqb3-gk" data-vp="" class="lay_hSrtk3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Hook_QnyNX2-gk" data-vp="">
+</div>
+</div>
+</div>
+<button  id="CtxB_1lidD-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_DUn8d4 ">
+<i  id="Icon_H04no-gk" data-vp="" class="bi bi-eye lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_tNKs51-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_DUn8d4 ">
+<i  id="Icon_CUL3e4-gk" data-vp="" class="bi bi-chevron-left lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_Mm6wm3-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_Fn5JI ">
+<i  id="Icon_2j9B64-gk" data-vp="" class="bi bi-chevron-right lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_VWFQY4-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_BAvcc4 ">
+<i  id="Icon_i2ela-gk" data-vp="" class="bi bi-trash lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_wxDW9 ">
+</i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div  id="Flex_Gxnf74-gk" data-vp="" class="lay_Hi19x pos_e8wtf3 mapa_CrkEb2 vis_zYPu53 ">
+<div  id="Flex_A0MBJ4-gk" data-vp="" class="lay_2R4cN pos_e8wtf3 mapa_1HyXA vis_0hKWl1 anim_sM8nv1 intr_GMW3Q ">
+<div  id="Flex_nY3Sm-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_S6CF1 vis_SWFkJ2 ">
+<p  id="Text_RVR854-gk" data-vp="" class="lay_wOj1o2 pos_e8wtf3 mapa_CrkEb2 vis_t3S3V ">Unit test coverage</p>
+<div  id="Flex_Dfg2N-gk" data-vp="" class="lay_Owo7D2 pos_e8wtf3 mapa_zmKjs vis_SWFkJ2 ">
+<p  id="Text_lqfGa4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_LdS6k ">Medium</p>
+</div>
+</div>
+<p  id="Text_9SuDj1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_S6CF1 vis_oqKh41 ">Increase test coverage to 80%</p>
+<div  id="Flex_1IoE03-gk" data-vp="" class="lay_siHox1 pos_e8wtf3 mapa_S6CF1 vis_SWFkJ2 ">
+<i  id="Icon_pZ7vX1-gk" data-vp="" class="bi bi-calendar3 lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_b0ErJ2 ">
+</i>
+<p  id="Text_P9ZdX2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SqgGl ">17-04-2026</p>
+</div>
+<div  id="Flex_mQLNK-gk" data-vp="" class="lay_1wHVY1 pos_e8wtf3 mapa_DKRFh vis_o8s8D1 ">
+<div  id="Flex_1a3fA3-gk" data-vp="" class="lay_E1BVP4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_ZR3s72-gk" data-vp="" class="lay_AZ1f52 pos_Y4iXn2 mapa_CrkEb2 vis_SWFkJ2 ">
+<img  id="Imag_ohPSC2-gk" data-vp="" class="lay_wsiGk pos_e8wtf3 mapa_CrkEb2 vis_oWmIp2 " src="/assets/me.webp">
+</img>
+</div>
+
+<div  id="Hook_sfCx62-gk" data-vp="">
+
+
+</div>
+
+</div>
+<div  id="Flex_khqRV4-gk" data-vp="" class="lay_L1WWl3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_kUiDQ-gk" data-vp="" class="lay_3eQTE4 pos_e8wtf3 mapa_CrkEb2 vis_um3ii ">
+<p  id="Text_EZ3tX4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_pj9ZA ">35%</p>
+
+<div  id="Flex_OVMj51-gk" data-vp="" class="lay_hSrtk3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Hook_pGgPu-gk" data-vp="">
+</div>
+</div>
+</div>
+<button  id="CtxB_UexbA4-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_DUn8d4 ">
+<i  id="Icon_VaGeq1-gk" data-vp="" class="bi bi-eye lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_ynhJJ4-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_DUn8d4 ">
+<i  id="Icon_thTg2-gk" data-vp="" class="bi bi-chevron-left lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_1VTVN1-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_Fn5JI ">
+<i  id="Icon_HlUkw3-gk" data-vp="" class="bi bi-chevron-right lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_IYZkw-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_BAvcc4 ">
+<i  id="Icon_QAIdK-gk" data-vp="" class="bi bi-trash lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_wxDW9 ">
+</i>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div  id="Flex_UmKf32-gk" data-vp="" class="lay_3iF1A pos_e8wtf3 mapa_rPfvm1 vis_M92ir2 ">
+<div  id="Flex_yqyiJ2-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_uflws3-gk" data-vp="" class="lay_wQ0s2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_9tCPq1-gk" data-vp="" class="lay_Owo7D2 pos_e8wtf3 mapa_4hFg71 vis_SWFkJ2 ">
+<p  id="Text_ppbt5-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SGZRG1 ">2</p>
+
+</div>
+<p  id="Text_k1KGe1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ADb382 ">Review</p>
+</div>
+<button  id="CtxB_PaQxN4-gk" data-vp="" class="lay_OG6Dc2 pos_e8wtf3 mapa_CrkEb2 vis_r1lHq3 intr_DUn8d4 ">
+<i  id="Icon_sD5Ji1-gk" data-vp="" class="bi bi-plus-lg lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_A7DgX2 ">
+</i>
+</button>
+</div>
+<div  id="Flex_cqTzw-gk" data-vp="" class="lay_eUsaR pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_vg5yH4-gk" data-vp="" class="lay_Hi19x pos_e8wtf3 mapa_CrkEb2 vis_zYPu53 ">
+<div  id="Flex_cpz4M2-gk" data-vp="" class="lay_2R4cN pos_e8wtf3 mapa_1HyXA vis_0hKWl1 anim_sM8nv1 intr_GMW3Q ">
+<div  id="Flex_mdyBb-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_S6CF1 vis_SWFkJ2 ">
+<p  id="Text_04Em64-gk" data-vp="" class="lay_wOj1o2 pos_e8wtf3 mapa_CrkEb2 vis_t3S3V ">Dashboard wireframes</p>
+<div  id="Flex_MVsnO-gk" data-vp="" class="lay_Owo7D2 pos_e8wtf3 mapa_zmKjs vis_SWFkJ2 ">
+<p  id="Text_mO0fH2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_LdS6k ">Medium</p>
+</div>
+</div>
+<p  id="Text_uEeSk-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_S6CF1 vis_oqKh41 ">Create low-fidelity wireframes for main dashboard</p>
+<div  id="Flex_Tya2M2-gk" data-vp="" class="lay_siHox1 pos_e8wtf3 mapa_S6CF1 vis_SWFkJ2 ">
+<i  id="Icon_0zmgD1-gk" data-vp="" class="bi bi-calendar3 lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_b0ErJ2 ">
+</i>
+<p  id="Text_9HVX14-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SqgGl ">08-01-2026</p>
+</div>
+<div  id="Flex_N02Sa3-gk" data-vp="" class="lay_1wHVY1 pos_e8wtf3 mapa_DKRFh vis_o8s8D1 ">
+<div  id="Flex_F5hdZ-gk" data-vp="" class="lay_E1BVP4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_0evtZ-gk" data-vp="" class="lay_AZ1f52 pos_AtjJA2 mapa_CrkEb2 vis_SWFkJ2 ">
+<img  id="Imag_onXdE1-gk" data-vp="" class="lay_wsiGk pos_e8wtf3 mapa_CrkEb2 vis_oWmIp2 " src="/assets/me.webp">
+</img>
+</div>
+
+<div  id="Hook_EVM7t2-gk" data-vp="">
+
+
+</div>
+
+</div>
+<div  id="Flex_N0ZzF4-gk" data-vp="" class="lay_L1WWl3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_ZonNk3-gk" data-vp="" class="lay_3eQTE4 pos_e8wtf3 mapa_CrkEb2 vis_um3ii ">
+<p  id="Text_7Vd094-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_pj9ZA ">27%</p>
+
+<div  id="Flex_QRSTG1-gk" data-vp="" class="lay_hSrtk3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Hook_DlERE-gk" data-vp="">
+</div>
+</div>
+</div>
+<button  id="CtxB_vnZUc1-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_DUn8d4 ">
+<i  id="Icon_PqYYi2-gk" data-vp="" class="bi bi-eye lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_Fu69L-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_DUn8d4 ">
+<i  id="Icon_qLW8C1-gk" data-vp="" class="bi bi-chevron-left lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_OojKB2-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_Fn5JI ">
+<i  id="Icon_qdy2J-gk" data-vp="" class="bi bi-chevron-right lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_tbAFS3-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_BAvcc4 ">
+<i  id="Icon_JUhkA1-gk" data-vp="" class="bi bi-trash lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_wxDW9 ">
+</i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div  id="Flex_fygmb1-gk" data-vp="" class="lay_Hi19x pos_e8wtf3 mapa_CrkEb2 vis_zYPu53 ">
+<div  id="Flex_B5wyz1-gk" data-vp="" class="lay_2R4cN pos_e8wtf3 mapa_1HyXA vis_0hKWl1 anim_sM8nv1 intr_GMW3Q ">
+<div  id="Flex_E98qu3-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_S6CF1 vis_SWFkJ2 ">
+<p  id="Text_JIpRw2-gk" data-vp="" class="lay_wOj1o2 pos_e8wtf3 mapa_CrkEb2 vis_t3S3V ">Settings page</p>
+<div  id="Flex_CU3yV3-gk" data-vp="" class="lay_Owo7D2 pos_e8wtf3 mapa_zmKjs vis_SWFkJ2 ">
+<p  id="Text_uMITi-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_LdS6k ">Medium</p>
+</div>
+</div>
+<p  id="Text_bBBpY2-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_S6CF1 vis_oqKh41 ">User preferences and account settings UI</p>
+<div  id="Flex_6uEYg-gk" data-vp="" class="lay_siHox1 pos_e8wtf3 mapa_S6CF1 vis_SWFkJ2 ">
+<i  id="Icon_hrkWS2-gk" data-vp="" class="bi bi-calendar3 lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_b0ErJ2 ">
+</i>
+<p  id="Text_8V81N-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SqgGl ">28-04-2026</p>
+</div>
+<div  id="Flex_0uGAq1-gk" data-vp="" class="lay_1wHVY1 pos_e8wtf3 mapa_DKRFh vis_o8s8D1 ">
+<div  id="Flex_iewAA4-gk" data-vp="" class="lay_E1BVP4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_coPI12-gk" data-vp="" class="lay_AZ1f52 pos_M62oX2 mapa_CrkEb2 vis_SWFkJ2 ">
+<img  id="Imag_uNalf-gk" data-vp="" class="lay_wsiGk pos_e8wtf3 mapa_CrkEb2 vis_oWmIp2 " src="/assets/me.webp">
+</img>
+</div>
+
+<div  id="Hook_Fif791-gk" data-vp="">
+
+
+</div>
+
+</div>
+<div  id="Flex_PPcBi-gk" data-vp="" class="lay_L1WWl3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_IKfcy1-gk" data-vp="" class="lay_3eQTE4 pos_e8wtf3 mapa_CrkEb2 vis_um3ii ">
+<p  id="Text_L6uXF-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_pj9ZA ">14%</p>
+
+<div  id="Flex_cMChA-gk" data-vp="" class="lay_hSrtk3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Hook_rlBHK1-gk" data-vp="">
+</div>
+</div>
+</div>
+<button  id="CtxB_cklXp-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_DUn8d4 ">
+<i  id="Icon_uKZlT4-gk" data-vp="" class="bi bi-eye lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_mSLxg1-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_DUn8d4 ">
+<i  id="Icon_197uD-gk" data-vp="" class="bi bi-chevron-left lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_dtsac2-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_Fn5JI ">
+<i  id="Icon_rwkVX4-gk" data-vp="" class="bi bi-chevron-right lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_qOeEo-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_BAvcc4 ">
+<i  id="Icon_FELoQ-gk" data-vp="" class="bi bi-trash lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_wxDW9 ">
+</i>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div  id="Flex_YNiWE-gk" data-vp="" class="lay_3iF1A pos_e8wtf3 mapa_rPfvm1 vis_M92ir2 ">
+<div  id="Flex_U6Hl02-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_ze9E62-gk" data-vp="" class="lay_wQ0s2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_ZoISo-gk" data-vp="" class="lay_Owo7D2 pos_e8wtf3 mapa_4hFg71 vis_SWFkJ2 ">
+<p  id="Text_XELQM2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SGZRG1 ">1</p>
+
+</div>
+<p  id="Text_gqX4T3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ADb382 ">Done</p>
+</div>
+<button  id="CtxB_sbzUH3-gk" data-vp="" class="lay_OG6Dc2 pos_e8wtf3 mapa_CrkEb2 vis_r1lHq3 intr_DUn8d4 ">
+<i  id="Icon_xKdxl3-gk" data-vp="" class="bi bi-plus-lg lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_A7DgX2 ">
+</i>
+</button>
+</div>
+<div  id="Flex_PZ0zi2-gk" data-vp="" class="lay_eUsaR pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_iSord2-gk" data-vp="" class="lay_Hi19x pos_e8wtf3 mapa_CrkEb2 vis_zYPu53 ">
+<div  id="Flex_uTNS23-gk" data-vp="" class="lay_2R4cN pos_e8wtf3 mapa_1HyXA vis_0hKWl1 anim_sM8nv1 intr_GMW3Q ">
+<div  id="Flex_9YVzU4-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_S6CF1 vis_SWFkJ2 ">
+<p  id="Text_e8nAO1-gk" data-vp="" class="lay_wOj1o2 pos_e8wtf3 mapa_CrkEb2 vis_t3S3V ">Design system setup</p>
+<div  id="Flex_qXWtJ-gk" data-vp="" class="lay_Owo7D2 pos_e8wtf3 mapa_zmKjs vis_SWFkJ2 ">
+<p  id="Text_mGVMh3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_zM5IT2 ">High</p>
+</div>
+</div>
+<p  id="Text_t1JUg-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_S6CF1 vis_oqKh41 ">Create color tokens, typography scale, and spacing system</p>
+<div  id="Flex_SNWXI4-gk" data-vp="" class="lay_siHox1 pos_e8wtf3 mapa_S6CF1 vis_SWFkJ2 ">
+<i  id="Icon_DKWQf-gk" data-vp="" class="bi bi-calendar3 lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_b0ErJ2 ">
+</i>
+<p  id="Text_pJtQq3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SqgGl ">01-01-2026</p>
+</div>
+<div  id="Flex_WwBUo1-gk" data-vp="" class="lay_1wHVY1 pos_e8wtf3 mapa_DKRFh vis_o8s8D1 ">
+<div  id="Flex_Rt9QO3-gk" data-vp="" class="lay_E1BVP4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_3SHED1-gk" data-vp="" class="lay_AZ1f52 pos_Ek9jA mapa_CrkEb2 vis_SWFkJ2 ">
+<img  id="Imag_apgnh1-gk" data-vp="" class="lay_wsiGk pos_e8wtf3 mapa_CrkEb2 vis_oWmIp2 " src="/assets/me.webp">
+</img>
+</div>
+
+<div  id="Hook_bSf4W-gk" data-vp="">
+
+
+</div>
+
+</div>
+<div  id="Flex_0rdqI3-gk" data-vp="" class="lay_L1WWl3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_wb2K94-gk" data-vp="" class="lay_3eQTE4 pos_e8wtf3 mapa_CrkEb2 vis_um3ii ">
+<p  id="Text_rt0e62-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_pj9ZA ">75%</p>
+
+<div  id="Flex_3tc2v2-gk" data-vp="" class="lay_hSrtk3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Hook_UBaty3-gk" data-vp="">
+</div>
+</div>
+</div>
+<button  id="CtxB_5D0mh3-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_DUn8d4 ">
+<i  id="Icon_wmFSM1-gk" data-vp="" class="bi bi-eye lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_YnE9j1-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_DUn8d4 ">
+<i  id="Icon_XrNrM-gk" data-vp="" class="bi bi-chevron-left lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ytg9j1 ">
+</i>
+</button>
+<button  id="CtxB_i6NVH1-gk" data-vp="" class="lay_Jt1Kh3 pos_e8wtf3 mapa_CrkEb2 vis_GSBnI intr_BAvcc4 ">
+<i  id="Icon_7zpvm3-gk" data-vp="" class="bi bi-trash lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_wxDW9 ">
+</i>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+</div>
+<p  id="Text_clpsH1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_6TQs02 vis_dxEbU ">Fullstack Dashboard</p>
+<p  id="Text_awCL64-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_0Ngye4 vis_j9g222 ">Dashboard with charts, tables, filtering, search, and sidebar.</p>
+<div  id="Flex_2jNgG3-gk" data-vp="" class="lay_mBmYH pos_e8wtf3 mapa_CrkEb2 vis_WwEfq2 ">
+<div  id="Flex_dXsfF4-gk" data-vp="" class="lay_BLUWU1 pos_e8wtf3 mapa_MG7pt1 vis_SWFkJ2 ">
+<div  id="Flex_FpQ7J4-gk" data-vp="" class="lay_Qbu0A4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_SC8ej-gk" data-vp="" class="lay_uvckf4 pos_e8wtf3 mapa_CrkEb2 vis_gZ5i33 ">
+<i  id="Icon_4NtKY1-gk" data-vp="" class="bi bi-flower1 lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_Y0ftz3 ">
+</i>
+</div>
+<div  id="Flex_v1AqX3-gk" data-vp="" class="lay_c2Y5C2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_fieuF2-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_Ado3v2 ">Watcher</p>
+<p  id="Text_bjY003-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_YyBCc4 ">Analytics</p>
+</div>
+</div>
+<div  id="Flex_vrNau-gk" data-vp="" class="lay_2uPLZ2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_AfcE31-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_p5bbH2 vis_3UTb83 ">MENU</p>
+<button  id="CtxB_88nN9-gk" data-vp="" class="lay_ugtO92 pos_e8wtf3 mapa_4JruL3 vis_zjHyO4 intr_HI6ex1 ">
+<div  id="Flex_0mgli2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<i  id="Icon_cWjxN1-gk" data-vp="" class="bi bi-grid-3x3 lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_7hscG ">
+</i>
+</div>
+<p  id="Text_jeDyQ-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_5GGth2 ">Dashboard</p>
+</button>
+<button  id="CtxB_UqbAr-gk" data-vp="" class="lay_ugtO92 pos_e8wtf3 mapa_4JruL3 vis_Vvz4X1 intr_rBik44 ">
+<div  id="Flex_u2Ec52-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<i  id="Icon_nrBH32-gk" data-vp="" class="bi bi-credit-card lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_nJLb51 ">
+</i>
+</div>
+<p  id="Text_dWR8h-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_VJQV93 ">Transactions</p>
+</button>
+<button  id="CtxB_ahUxO-gk" data-vp="" class="lay_ugtO92 pos_e8wtf3 mapa_4JruL3 vis_Vvz4X1 intr_rBik44 ">
+<div  id="Flex_0kmSG2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<i  id="Icon_hye1b-gk" data-vp="" class="bi bi-bar-chart-line lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_nJLb51 ">
+</i>
+</div>
+<p  id="Text_YciJ04-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_VJQV93 ">Analytics</p>
+</button>
+<button  id="CtxB_qeX8y3-gk" data-vp="" class="lay_ugtO92 pos_e8wtf3 mapa_4JruL3 vis_Vvz4X1 intr_rBik44 ">
+<div  id="Flex_JY5eb1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<i  id="Icon_1OYze-gk" data-vp="" class="bi bi-people lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_nJLb51 ">
+</i>
+</div>
+<p  id="Text_APaXW3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_VJQV93 ">Customers</p>
+</button>
+</div>
+<div  id="Spac_38lfX1-gk" data-vp="" class="lay_3eoXy2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+<button  id="CtxB_fmece4-gk" data-vp="" class="lay_ugtO92 pos_e8wtf3 mapa_4JruL3 vis_Vvz4X1 intr_rBik44 ">
+<div  id="Flex_QCh3W1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<i  id="Icon_D53Y34-gk" data-vp="" class="bi bi-gear lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_nJLb51 ">
+</i>
+</div>
+<p  id="Text_uPrNj3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_VJQV93 ">Settings</p>
+</button>
+<div  id="Flex_ToVAX3-gk" data-vp="" class="lay_ugtO92 pos_e8wtf3 mapa_rPfvm1 vis_SWFkJ2 ">
+<div  id="Flex_03NDI4-gk" data-vp="" class="lay_AQcqB1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_GxeJE4-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_StHiJ1 ">Vic Rokx</p>
+<p  id="Text_fEr6c2-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_q142J ">Admin</p>
+</div>
+<i  id="Icon_1c87c1-gk" data-vp="" class="bi bi-chevron-expand lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_pMxoh2 ">
+</i>
+</div>
+</div>
+<div  id="Flex_VWnxq-gk" data-vp="" class="lay_cnE4s2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_fqIme1-gk" data-vp="" class="lay_bzJ1G1 pos_e8wtf3 mapa_Pdd2g2 vis_WwEfq2 ">
+<div  id="Flex_moGb02-gk" data-vp="" class="lay_1P6hl pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_2lfzI4-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_qpbgx ">Dashboard</p>
+</div>
+<div  id="Flex_PJzgf2-gk" data-vp="" class="lay_P5InU pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_KOUug-gk" data-vp="" class="lay_42QeL3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_i5xIc2-gk" data-vp="" class="lay_i0bZ63 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_TiIJX1-gk" data-vp="" class="lay_tupWc4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<button  id="CtxB_73DmF2-gk" data-vp="" class="lay_ipwPq1 pos_e8wtf3 mapa_RM5YV3 vis_2OaxJ4 intr_NfIPq2 "aria-label="Select Dropdown">
+<div  id="Flex_suoFv1-gk" data-vp="" class="lay_LfISh3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_05VgI-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_RM5YV3 vis_d2KdQ1 ">Time Range</p>
+<i  id="Icon_Y3IBX-gk" data-vp="" class="bi bi-chevron-down lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_I8cxd4 ">
+</i>
+</div>
+</button>
+</div>
+<div  id="Flex_hK0xA2-gk" data-vp="" class="lay_AEgkh1 pos_4MMng3 mapa_CrkEb2 vis_SWFkJ2 tran_akFuA3 ">
+
+
+</div>
+
+
+</div>
+</div>
+<button  id="CtxB_bfn662-gk" data-vp="" class="lay_Jayt61 pos_e8wtf3 mapa_DL9vi vis_E0tRy2 intr_9DHJw2 ">
+<div  id="Flex_Df50c2-gk" data-vp="" class="lay_rLxs pos_e8wtf3 mapa_CrkEb2 vis_mJSlt3 ">
+</div>
+<p  id="Text_zmUAW3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_kLL0Y1 ">Live</p>
+</button>
+<button  id="CtxB_MJO6A3-gk" data-vp="" class="lay_Jayt61 pos_e8wtf3 mapa_DL9vi vis_WCbN04 intr_3RnbO4 ">
+<p  id="Text_67EeH1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CemJe ">Export</p>
+<i  id="Icon_CPNWd4-gk" data-vp="" class="bi bi-download lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_JIHP63 ">
+</i>
+</button>
+<div  id="Flex_BvJdi1-gk" data-vp="" class="lay_nAUZk3 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
+<button  id="CtxB_4Htg73-gk" data-vp="" class="lay_wD5b32 pos_e8wtf3 mapa_hW4aM4 vis_YrYj34 intr_eEsDU2 ">
+<i  id="Icon_JCCJD1-gk" data-vp="" class="bi bi-calendar3 lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_xomsG3 ">
+</i>
+</button>
+</div>
+<button  id="CtxB_5isyK-gk" data-vp="" class="lay_wD5b32 pos_e8wtf3 mapa_hW4aM4 vis_8VbiN4 intr_nhiLC3 ">
+<i  id="Icon_OnnRa3-gk" data-vp="" class="bi bi-arrow-clockwise lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_xomsG3 ">
+</i>
+</button>
+</div>
+</div>
+<div  id="Flex_I7L1j-gk" data-vp="" class="lay_h7EqM1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_j27ra1-gk" data-vp="" class="lay_h0Nw5 pos_e8wtf3 mapa_difnC vis_SWFkJ2 ">
+<div  id="Flex_3wUZJ4-gk" data-vp="" class="lay_ydbXY2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_QP0Wg4-gk" data-vp="" class="lay_iZOfK3 pos_e8wtf3 mapa_3RP2h2 vis_SWFkJ2 ">
+<div  id="Flex_dUvmz3-gk" data-vp="" class="lay_c2Y5C2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_2fR7T2-gk" data-vp="" class="lay_T7rTG3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_2Na3m2-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_v66gG ">Revenue Overview</p>
+<p  id="Text_jWakT2-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_yFvud1 ">Monthly revenue and transaction volume</p>
+</div>
+<div  id="Flex_PwqrI2-gk" data-vp="" class="lay_PSFR42 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Hook_0GQSW1-gk" data-vp="">
+</div>
+<div  id="Flex_fgxoC4-gk" data-vp="" class="lay_ihMZH4 pos_t0s233 mapa_CrkEb2 vis_KeSob3 ">
+<div  id="Flex_KzkuS2-gk" data-vp="" class="lay_a9SPe3 pos_MeztO1 mapa_4jFby3 vis_I8C8e2 ">
+<p  id="Text_yBNgv-gk" data-vp="" style="user-select: none;" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_Nz32V ">Month</p>
+<div  id="Flex_pjC4T1-gk" data-vp="" class="lay_ACgFW3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_1FwoP1-gk" data-vp="" class="lay_8KEIJ2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_XAlCQ3-gk" data-vp="" style="user-select: none;" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_Nz32V ">Total</p>
+</div>
+<p  id="Text_OvWuC2-gk" data-vp="" style="user-select: none;" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_Nz32V ">0</p>
+</div>
+</div>
+
+
+
+
+</div>
+</div>
+</div>
+<div  id="Flex_50RZI-gk" data-vp="" class="lay_c2Y5C2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_ANzRs-gk" data-vp="" class="lay_T7rTG3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_Z5Vji2-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_v66gG ">Requests Overview</p>
+<p  id="Text_GwS2f2-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_yFvud1 ">Monthly requests</p>
+</div>
+<div  id="Flex_yRTJQ-gk" data-vp="" class="lay_PSFR42 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Hook_A3i6c2-gk" data-vp="">
+</div>
+<div  id="Flex_yillt2-gk" data-vp="" class="lay_ihMZH4 pos_t0s233 mapa_CrkEb2 vis_KeSob3 ">
+<div  id="Flex_2WJQp2-gk" data-vp="" class="lay_a9SPe3 pos_MeztO1 mapa_4jFby3 vis_I8C8e2 ">
+<p  id="Text_bjiZc2-gk" data-vp="" style="user-select: none;" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_Nz32V ">Time</p>
+<div  id="Flex_8ALj12-gk" data-vp="" class="lay_ACgFW3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_QpwmM-gk" data-vp="" class="lay_8KEIJ2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_16fq5-gk" data-vp="" style="user-select: none;" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_Nz32V ">Total</p>
+</div>
+<p  id="Text_2HYkR1-gk" data-vp="" style="user-select: none;" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_Nz32V ">0</p>
+</div>
+</div>
+
+
+
+
+</div>
+</div>
+</div>
+</div>
+</div>
+<div  id="Flex_gUt294-gk" data-vp="" class="lay_SXpbH2 pos_e8wtf3 mapa_3RP2h2 vis_SWFkJ2 ">
+<div  id="Flex_jqwPJ4-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_51nyS4-gk" data-vp="" class="lay_LnFwe pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_zxfTp-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_v66gG ">Recent Transactions</p>
+<p  id="Text_3JAs-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_yFvud1 ">Latest payment activity across all channels</p>
+</div>
+<div  id="Flex_alcUI2-gk" data-vp="" class="lay_P5InU pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_hrsPt3-gk" data-vp="" class="lay_Qvyvw1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_i8daD4-gk" data-vp="" class="lay_i0bZ63 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_hSSji-gk" data-vp="" class="lay_tupWc4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<button  id="CtxB_NreiN2-gk" data-vp="" class="lay_ipwPq1 pos_e8wtf3 mapa_RM5YV3 vis_2OaxJ4 intr_NfIPq2 "aria-label="Select Dropdown">
+<div  id="Flex_Yjwt44-gk" data-vp="" class="lay_LfISh3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_o4uCW4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_RM5YV3 vis_d2KdQ1 ">Select</p>
+<i  id="Icon_cimhL2-gk" data-vp="" class="bi bi-chevron-down lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_I8cxd4 ">
+</i>
+</div>
+</button>
+</div>
+<div  id="Flex_F0FSU2-gk" data-vp="" class="lay_AEgkh1 pos_4MMng3 mapa_CrkEb2 vis_SWFkJ2 tran_akFuA3 ">
+
+
+</div>
+
+
+</div>
+</div>
+<button  id="CtxB_YiV4P1-gk" data-vp="" class="lay_Jayt61 pos_e8wtf3 mapa_DL9vi vis_djIFL intr_9lTuW3 ">
+<p  id="Text_jNxKc4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_6qH1Y4 ">View All</p>
+<i  id="Icon_t3AOP2-gk" data-vp="" class="bi bi-arrow-right lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZfDje3 ">
+</i>
+</button>
+</div>
+</div>
+<div  id="Flex_XNBui1-gk" data-vp="" class="lay_dxAUl pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_PjORo1-gk" data-vp="" class="lay_xhnuO1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_YqCbZ3-gk" data-vp="" class="lay_PSJ082 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 "aria-label="content">
+<div  id="Flex_PX6N12-gk" data-vp="" class="lay_3Tgcx pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_urHWT2-gk" data-vp="" class="lay_bK0mY4 pos_t0s233 mapa_CrkEb2 vis_UOrXE ">
+<div  id="Flex_NfMF52-gk" data-vp="" class="lay_8ud1Q2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_EPnnZ4-gk" data-vp="" style="min-width: 600px" class="lay_fvkQX pos_e8wtf3 mapa_CrkEb2 vis_3Y5ob ">
+<div  id="Flex_WHBoI1-gk" data-vp="" class="lay_8YVI32 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_ybtvv3-gk" data-vp="" class="lay_GDsiV3 pos_e8wtf3 mapa_RM5YV3 vis_SWFkJ2 ">
+<button  id="CtxB_L1Nrx2-gk" data-vp="" class="lay_EE5dc3 pos_e8wtf3 mapa_CrkEb2 vis_VCKY32 intr_m5kAX3 "aria-label="Select all">
+</button>
+</div>
+<div  id="Flex_aq57D4-gk" data-vp="" class="lay_3Wujb pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_8hzS24-gk" data-vp="" class="lay_xqh3f3 pos_e8wtf3 mapa_RM5YV3 vis_ZuPDF2 "aria-label="Customer">
+<p  id="Text_lBNWq1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_v0u3o2 ">Customer</p>
+<button  id="CtxB_UFbJ14-gk" data-vp="" class="lay_PeuqZ2 pos_e8wtf3 mapa_tFMrw3 vis_OSaz23 intr_KzwHL3 "aria-label="Search by Customer ">
+<i  id="Icon_4m3Vu3-gk" data-vp="" class="bi bi-search lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_HObO1 ">
+</i>
+</button>
+<div  id="Flex_tGhgS3-gk" data-vp="" style="transform: translate(0px, 0px)" class="lay_AZ1f52 pos_ZWgxd4 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+<div  id="Flex_kXQBy3-gk" data-vp="" style="transform: translate(0px, 0px)" class="lay_AZ1f52 pos_ZWgxd4 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+</div>
+<div  id="Flex_7p2CC2-gk" data-vp="" class="lay_xqh3f3 pos_e8wtf3 mapa_RM5YV3 vis_ZuPDF2 "aria-label="Amount">
+<p  id="Text_yMrEO3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_v0u3o2 ">Amount</p>
+<button  id="CtxB_ZxhZG1-gk" data-vp="" class="lay_PeuqZ2 pos_e8wtf3 mapa_tFMrw3 vis_OSaz23 intr_KzwHL3 "aria-label="Sort by Amount descending">
+<i  id="Icon_PFh0u3-gk" data-vp="" class="bi bi-sort-alpha-up-alt lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_HObO1 ">
+</i>
+</button>
+<div  id="Flex_EQcs11-gk" data-vp="" style="transform: translate(0px, 0px)" class="lay_AZ1f52 pos_ZWgxd4 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+<div  id="Flex_NoEYn3-gk" data-vp="" style="transform: translate(0px, 0px)" class="lay_AZ1f52 pos_ZWgxd4 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+</div>
+<div  id="Flex_GmNLc4-gk" data-vp="" class="lay_xqh3f3 pos_e8wtf3 mapa_RM5YV3 vis_ZuPDF2 "aria-label="Status">
+<p  id="Text_n1Or72-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_v0u3o2 ">Status</p>
+<button  id="CtxB_dy9uw1-gk" data-vp="" class="lay_PeuqZ2 pos_e8wtf3 mapa_tFMrw3 vis_OSaz23 intr_KzwHL3 "aria-label="Filter by Status ">
+<i  id="Icon_E1qbf3-gk" data-vp="" class="bi bi-funnel lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_HObO1 ">
+</i>
+</button>
+<div  id="Flex_nPCMI4-gk" data-vp="" style="transform: translate(0px, 0px)" class="lay_AZ1f52 pos_ZWgxd4 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+<div  id="Flex_R0xMd4-gk" data-vp="" style="transform: translate(0px, 0px)" class="lay_AZ1f52 pos_ZWgxd4 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+</div>
+<div  id="Flex_FwwcW3-gk" data-vp="" class="lay_xqh3f3 pos_e8wtf3 mapa_RM5YV3 vis_ZuPDF2 "aria-label="Date">
+<p  id="Text_S0J3o3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_v0u3o2 ">Date</p>
+<div  id="Flex_fY2HL2-gk" data-vp="" style="transform: translate(0px, 0px)" class="lay_AZ1f52 pos_ZWgxd4 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+<div  id="Flex_ditr82-gk" data-vp="" style="transform: translate(0px, 0px)" class="lay_AZ1f52 pos_ZWgxd4 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+</div>
+<div  id="Flex_gGffK-gk" data-vp="" class="lay_xqh3f3 pos_e8wtf3 mapa_RM5YV3 vis_ZuPDF2 "aria-label="Method">
+<p  id="Text_UD4d01-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_v0u3o2 ">Method</p>
+<div  id="Flex_DMgiK4-gk" data-vp="" style="transform: translate(0px, 0px)" class="lay_AZ1f52 pos_ZWgxd4 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+<div  id="Flex_GOVn04-gk" data-vp="" style="transform: translate(0px, 0px)" class="lay_AZ1f52 pos_ZWgxd4 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+</div>
+</div>
+<div  id="Flex_DiPoF4-gk" data-vp="" class="lay_x610w2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 "aria-label="Actions">
+<div  id="Flex_V4PnE2-gk" data-vp="" class="lay_Kn4O84 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div  id="Flex_WKF3N4-gk" data-vp="" class="lay_T0CAa2 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_6fpQI-gk" data-vp="" style="min-width: 128px; width: max-content;" class="lay_Hi19x pos_rLJOu mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_yEe9Z1-gk" data-vp="" class="lay_W59ox3 pos_4MMng3 mapa_CrkEb2 vis_SWFkJ2 tran_akFuA3 ">
+
+
+</div>
+
+
+</div>
+<div  id="Flex_mNErS1-gk" data-vp="" style="min-width: 600px" class="lay_dwjbo1 pos_e8wtf3 mapa_CrkEb2 vis_YHsJp ">
+<div  id="Flex_JL8hJ2-gk" data-vp="" class="lay_DtEOn3 pos_e8wtf3 mapa_CrkEb2 vis_UOrXE ">
+<div  id="Flex_FmkyM1-gk" data-vp="" class="lay_GDsiV3 pos_e8wtf3 mapa_RM5YV3 vis_SWFkJ2 ">
+<button  id="CtxB_XsCyG3-gk" data-vp="" class="lay_EE5dc3 pos_e8wtf3 mapa_CrkEb2 vis_VCKY32 intr_m5kAX3 "aria-label="DynamicTable Row Checkbox">
+</button>
+</div>
+<div  id="Flex_WvY431-gk" data-vp="" class="lay_b70ro pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_G3LrY-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_2VElH4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Emma Thompson</p>
+</div>
+<div  id="Flex_euyrd1-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_0PVbM3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">2499</p>
+</div>
+<div  id="Flex_BugFT2-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_9xURy-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">completed</p>
+</div>
+<div  id="Flex_X0c9I3-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_q8rjF1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Jan 12, 2026</p>
+</div>
+<div  id="Flex_kEdm71-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_CmbeL4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Visa •••• 4242</p>
+</div>
+</div>
+<div  id="Flex_QBTOI2-gk" data-vp="" class="lay_x610w2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+</div>
+</div>
+<div  id="Flex_Y3f3W3-gk" data-vp="" style="min-width: 600px" class="lay_dwjbo1 pos_e8wtf3 mapa_CrkEb2 vis_YHsJp ">
+<div  id="Flex_jb97A3-gk" data-vp="" class="lay_DtEOn3 pos_e8wtf3 mapa_CrkEb2 vis_UOrXE ">
+<div  id="Flex_XiYA9-gk" data-vp="" class="lay_GDsiV3 pos_e8wtf3 mapa_RM5YV3 vis_SWFkJ2 ">
+<button  id="CtxB_HdB113-gk" data-vp="" class="lay_EE5dc3 pos_e8wtf3 mapa_CrkEb2 vis_VCKY32 intr_m5kAX3 "aria-label="DynamicTable Row Checkbox">
+</button>
+</div>
+<div  id="Flex_cSkdd4-gk" data-vp="" class="lay_b70ro pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_ko4P73-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_c6bQf-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">James Wilson</p>
+</div>
+<div  id="Flex_2MQlj1-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_Qvy0U1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">8750</p>
+</div>
+<div  id="Flex_e1p4j3-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_yrZCQ1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">completed</p>
+</div>
+<div  id="Flex_dd1s64-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_k8GIf-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Jan 12, 2026</p>
+</div>
+<div  id="Flex_3J9c41-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_ve2ke1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Mastercard •••• 5555</p>
+</div>
+</div>
+<div  id="Flex_YRZgd3-gk" data-vp="" class="lay_x610w2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+</div>
+</div>
+<div  id="Flex_F8jqq3-gk" data-vp="" style="min-width: 600px" class="lay_dwjbo1 pos_e8wtf3 mapa_CrkEb2 vis_YHsJp ">
+<div  id="Flex_SfueQ3-gk" data-vp="" class="lay_DtEOn3 pos_e8wtf3 mapa_CrkEb2 vis_UOrXE ">
+<div  id="Flex_iW6gN3-gk" data-vp="" class="lay_GDsiV3 pos_e8wtf3 mapa_RM5YV3 vis_SWFkJ2 ">
+<button  id="CtxB_ytAo8-gk" data-vp="" class="lay_EE5dc3 pos_e8wtf3 mapa_CrkEb2 vis_VCKY32 intr_m5kAX3 "aria-label="DynamicTable Row Checkbox">
+</button>
+</div>
+<div  id="Flex_2bJLn-gk" data-vp="" class="lay_b70ro pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_a7B691-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_9dsF72-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Sofia Garcia</p>
+</div>
+<div  id="Flex_ceQVT4-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_FYGi6-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">1299</p>
+</div>
+<div  id="Flex_kJbbk2-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_Zot4F3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">pending</p>
+</div>
+<div  id="Flex_NRLb41-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_Ib4X21-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Jan 11, 2026</p>
+</div>
+<div  id="Flex_viuLC-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_dmCZK4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Amex •••• 1234</p>
+</div>
+</div>
+<div  id="Flex_jATZu2-gk" data-vp="" class="lay_x610w2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+</div>
+</div>
+<div  id="Flex_WOu7E3-gk" data-vp="" style="min-width: 600px" class="lay_dwjbo1 pos_e8wtf3 mapa_CrkEb2 vis_YHsJp ">
+<div  id="Flex_AyMwR3-gk" data-vp="" class="lay_DtEOn3 pos_e8wtf3 mapa_CrkEb2 vis_UOrXE ">
+<div  id="Flex_gEDlD2-gk" data-vp="" class="lay_GDsiV3 pos_e8wtf3 mapa_RM5YV3 vis_SWFkJ2 ">
+<button  id="CtxB_pcsAX4-gk" data-vp="" class="lay_EE5dc3 pos_e8wtf3 mapa_CrkEb2 vis_VCKY32 intr_m5kAX3 "aria-label="DynamicTable Row Checkbox">
+</button>
+</div>
+<div  id="Flex_PIqP94-gk" data-vp="" class="lay_b70ro pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_c4kpQ3-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_PAuhX4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Michael Chen</p>
+</div>
+<div  id="Flex_PiuQg2-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_kLG2M3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">4500</p>
+</div>
+<div  id="Flex_ARabv2-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_uuCTN4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">completed</p>
+</div>
+<div  id="Flex_Ykwjv-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_KhtOW1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Jan 11, 2026</p>
+</div>
+<div  id="Flex_m0WE3-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_cHnuK2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Visa •••• 9876</p>
+</div>
+</div>
+<div  id="Flex_nvMbQ2-gk" data-vp="" class="lay_x610w2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+</div>
+</div>
+<div  id="Flex_LMcll-gk" data-vp="" style="min-width: 600px" class="lay_dwjbo1 pos_e8wtf3 mapa_CrkEb2 vis_YHsJp ">
+<div  id="Flex_7f2fU-gk" data-vp="" class="lay_DtEOn3 pos_e8wtf3 mapa_CrkEb2 vis_UOrXE ">
+<div  id="Flex_QPQnw2-gk" data-vp="" class="lay_GDsiV3 pos_e8wtf3 mapa_RM5YV3 vis_SWFkJ2 ">
+<button  id="CtxB_IFzMa3-gk" data-vp="" class="lay_EE5dc3 pos_e8wtf3 mapa_CrkEb2 vis_VCKY32 intr_m5kAX3 "aria-label="DynamicTable Row Checkbox">
+</button>
+</div>
+<div  id="Flex_yyYD24-gk" data-vp="" class="lay_b70ro pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_ooCIX1-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_X69Wi2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Olivia Brown</p>
+</div>
+<div  id="Flex_TERlm3-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_EryXI3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">3200</p>
+</div>
+<div  id="Flex_cV0zg1-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_UpFYm3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">failed</p>
+</div>
+<div  id="Flex_SFyzz-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_jLja02-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Jan 10, 2026</p>
+</div>
+<div  id="Flex_X0v5x3-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_CfwEb4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Visa •••• 1111</p>
+</div>
+</div>
+<div  id="Flex_bexc74-gk" data-vp="" class="lay_x610w2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+</div>
+</div>
+<div  id="Flex_9WvN74-gk" data-vp="" style="min-width: 600px" class="lay_dwjbo1 pos_e8wtf3 mapa_CrkEb2 vis_YHsJp ">
+<div  id="Flex_01FOS2-gk" data-vp="" class="lay_DtEOn3 pos_e8wtf3 mapa_CrkEb2 vis_UOrXE ">
+<div  id="Flex_ueakF-gk" data-vp="" class="lay_GDsiV3 pos_e8wtf3 mapa_RM5YV3 vis_SWFkJ2 ">
+<button  id="CtxB_p7Y062-gk" data-vp="" class="lay_EE5dc3 pos_e8wtf3 mapa_CrkEb2 vis_VCKY32 intr_m5kAX3 "aria-label="DynamicTable Row Checkbox">
+</button>
+</div>
+<div  id="Flex_bPkLV3-gk" data-vp="" class="lay_b70ro pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_cngFr3-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_jaj3F3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Lucas Martinez</p>
+</div>
+<div  id="Flex_gmWHM-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_BbxfA3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">950</p>
+</div>
+<div  id="Flex_0CEQ44-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_WzPqk-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">refunded</p>
+</div>
+<div  id="Flex_CbYKC3-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_FVrJj1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Jan 10, 2026</p>
+</div>
+<div  id="Flex_SgClB3-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_MIRMp3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">PayPal</p>
+</div>
+</div>
+<div  id="Flex_dXK4C4-gk" data-vp="" class="lay_x610w2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+</div>
+</div>
+<div  id="Flex_yHjpf-gk" data-vp="" style="min-width: 600px" class="lay_dwjbo1 pos_e8wtf3 mapa_CrkEb2 vis_YHsJp ">
+<div  id="Flex_Vdx13-gk" data-vp="" class="lay_DtEOn3 pos_e8wtf3 mapa_CrkEb2 vis_UOrXE ">
+<div  id="Flex_9YIPz2-gk" data-vp="" class="lay_GDsiV3 pos_e8wtf3 mapa_RM5YV3 vis_SWFkJ2 ">
+<button  id="CtxB_vLjSu1-gk" data-vp="" class="lay_EE5dc3 pos_e8wtf3 mapa_CrkEb2 vis_VCKY32 intr_m5kAX3 "aria-label="DynamicTable Row Checkbox">
+</button>
+</div>
+<div  id="Flex_eO0aY3-gk" data-vp="" class="lay_b70ro pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_K070R-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_DfENE2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Ava Johnson</p>
+</div>
+<div  id="Flex_IEiaG-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_rfXG61-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">15000</p>
+</div>
+<div  id="Flex_dR4eh3-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_3fASV2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">completed</p>
+</div>
+<div  id="Flex_5QnAz-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_JsEFT3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Jan 9, 2026</p>
+</div>
+<div  id="Flex_zlIhE2-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_BErOU2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Wire Transfer</p>
+</div>
+</div>
+<div  id="Flex_BB7Kp2-gk" data-vp="" class="lay_x610w2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+</div>
+</div>
+<div  id="Flex_bGoMg-gk" data-vp="" style="min-width: 600px" class="lay_dwjbo1 pos_e8wtf3 mapa_CrkEb2 vis_YHsJp ">
+<div  id="Flex_WIOO-gk" data-vp="" class="lay_DtEOn3 pos_e8wtf3 mapa_CrkEb2 vis_UOrXE ">
+<div  id="Flex_VA0Y93-gk" data-vp="" class="lay_GDsiV3 pos_e8wtf3 mapa_RM5YV3 vis_SWFkJ2 ">
+<button  id="CtxB_4wnrM2-gk" data-vp="" class="lay_EE5dc3 pos_e8wtf3 mapa_CrkEb2 vis_VCKY32 intr_m5kAX3 "aria-label="DynamicTable Row Checkbox">
+</button>
+</div>
+<div  id="Flex_qbeYk-gk" data-vp="" class="lay_b70ro pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_eo9Kb2-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_02jWs2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Noah Williams</p>
+</div>
+<div  id="Flex_aoEJE2-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_nqAsv2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">2100</p>
+</div>
+<div  id="Flex_WFCEm-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_dxKFI3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">pending</p>
+</div>
+<div  id="Flex_RYRI02-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_MNuS6-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Jan 9, 2026</p>
+</div>
+<div  id="Flex_OSTAz2-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_WE8de-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Mastercard •••• 8888</p>
+</div>
+</div>
+<div  id="Flex_Kwm793-gk" data-vp="" class="lay_x610w2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+</div>
+</div>
+<div  id="Flex_k2l4Z4-gk" data-vp="" style="min-width: 600px" class="lay_dwjbo1 pos_e8wtf3 mapa_CrkEb2 vis_YHsJp ">
+<div  id="Flex_3f8CV-gk" data-vp="" class="lay_DtEOn3 pos_e8wtf3 mapa_CrkEb2 vis_UOrXE ">
+<div  id="Flex_ICXB01-gk" data-vp="" class="lay_GDsiV3 pos_e8wtf3 mapa_RM5YV3 vis_SWFkJ2 ">
+<button  id="CtxB_zKANv-gk" data-vp="" class="lay_EE5dc3 pos_e8wtf3 mapa_CrkEb2 vis_VCKY32 intr_m5kAX3 "aria-label="DynamicTable Row Checkbox">
+</button>
+</div>
+<div  id="Flex_Kfz8x-gk" data-vp="" class="lay_b70ro pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_E7AC32-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_l5rNS4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Isabella Davis</p>
+</div>
+<div  id="Flex_5Nwfe1-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_JUkYG1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">675</p>
+</div>
+<div  id="Flex_Q7rbQ1-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_7R6Ek3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">completed</p>
+</div>
+<div  id="Flex_PMXCo3-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_rkn3Y1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Jan 8, 2026</p>
+</div>
+<div  id="Flex_5SFNi3-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_1WvIU1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Visa •••• 3333</p>
+</div>
+</div>
+<div  id="Flex_EBMdT-gk" data-vp="" class="lay_x610w2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+</div>
+</div>
+<div  id="Flex_87XFm3-gk" data-vp="" style="min-width: 600px" class="lay_dwjbo1 pos_e8wtf3 mapa_CrkEb2 vis_YHsJp ">
+<div  id="Flex_3sXcN3-gk" data-vp="" class="lay_DtEOn3 pos_e8wtf3 mapa_CrkEb2 vis_UOrXE ">
+<div  id="Flex_ha14b4-gk" data-vp="" class="lay_GDsiV3 pos_e8wtf3 mapa_RM5YV3 vis_SWFkJ2 ">
+<button  id="CtxB_VOYcc3-gk" data-vp="" class="lay_EE5dc3 pos_e8wtf3 mapa_CrkEb2 vis_VCKY32 intr_m5kAX3 "aria-label="DynamicTable Row Checkbox">
+</button>
+</div>
+<div  id="Flex_kpi2P-gk" data-vp="" class="lay_b70ro pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_OoUgZ1-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_VE3rX-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Ethan Moore</p>
+</div>
+<div  id="Flex_2sGwy2-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_ezhI33-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">5400</p>
+</div>
+<div  id="Flex_gF4df-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_5is6p2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">completed</p>
+</div>
+<div  id="Flex_WsmaA2-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_Ux7FL2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Jan 8, 2026</p>
+</div>
+<div  id="Flex_or04G-gk" data-vp="" class="lay_wbQms pos_t0s233 mapa_RM5YV3 vis_6Ik261 ">
+<p  id="Text_V1Be61-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_ZTTcq3 ">Amex •••• 7777</p>
+</div>
+</div>
+<div  id="Flex_vkoas2-gk" data-vp="" class="lay_x610w2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div  id="Flex_vsuR83-gk" data-vp="" class="lay_27nG9 pos_e8wtf3 mapa_Kbi5Z1 vis_SWFkJ2 "aria-label="Table pagination">
+<div  id="Flex_ynozB-gk" data-vp="" class="lay_Owo7D2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_wJbZp-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">Page 1 of 3</p>
+
+</div>
+<div  id="Flex_wTS7A4-gk" data-vp="" class="lay_0yRDz2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<button  id="CtxB_8OKJ92-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_gyebf "aria-label="Go to next page">
+<i  id="Icon_BMV1V2-gk" data-vp="" class="bi bi-chevron-right lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_gSyq53 ">
+</i>
+</button>
+</div>
+</div>
+</div>
+<div  id="Hook_zGSk23-gk" data-vp="">
+<div  id="Hook_x35aa-gk" data-vp="">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+</div>
+<p  id="Text_CWc0L2-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_6TQs02 vis_dxEbU ">Chat App</p>
+<p  id="Text_Yv5Da4-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_0Ngye4 vis_j9g222 ">Chat App with working websockets, chat history, and typing indicators.</p>
+<div  id="Flex_pL4Sq1-gk" data-vp="" class="lay_QBdUk3 pos_e8wtf3 mapa_yJIS42 vis_MyWYB3 ">
+<div  id="Flex_OTEfT2-gk" data-vp="" class="lay_s4sPJ1 pos_e8wtf3 mapa_CrkEb2 vis_2y6ud ">
+<div  id="Flex_b4pu7-gk" data-vp="" class="lay_bzJ1G1 pos_e8wtf3 mapa_pT4FI4 vis_YHsJp ">
+<div  id="Flex_OTubG4-gk" data-vp="" class="lay_ERyub4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_BAO7U1-gk" data-vp="" class="lay_mkFlD3 pos_e8wtf3 mapa_CrkEb2 vis_gZ5i33 ">
+<i  id="Icon_1YbdS4-gk" data-vp="" class="bi bi-chat-dots lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_Y0ftz3 ">
+</i>
+</div>
+<p  id="Text_vrCin1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CTxDJ1 ">Messages</p>
+</div>
+<button  id="CtxB_jUEiF3-gk" data-vp="" class="lay_mkFlD3 pos_e8wtf3 mapa_CrkEb2 vis_gyebf ">
+<i  id="Icon_4mfgH1-gk" data-vp="" class="bi bi-pencil-square lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_QgJOM ">
+</i>
+</button>
+</div>
+<div  id="Flex_eRy58-gk" data-vp="" class="lay_mh8xP1 pos_e8wtf3 mapa_WM2Wg4 vis_SWFkJ2 ">
+<div  id="Flex_W1wRz3-gk" data-vp="" class="lay_AEgkh1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_EiqNJ3-gk" data-vp="" class="lay_7IV8t1 pos_t0s233 mapa_CrkEb2 vis_GXTYv2 ">
+<label for="string_Flex_EiqNJ3-gk"  id="Labe_UrVQL-gk" data-vp="" style="transform: translateY(-50%) scale(1); z-index: 0; text-align: center;" class="lay_1I8dE4 pos_7GSMa1 mapa_sgnwh vis_E2bGI3 ">Search conversations...</label>
+
+<input  id="string_Flex_EiqNJ3-gk" data-vp="" class="lay_kSFpR4 pos_h7ld4 mapa_TK4ER4 vis_j26R42 "name=""/>
+
+</div>
+</div>
+<div  id="Flex_HiPNf2-gk" data-vp="" class="lay_egUEe2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<button  id="CtxB_SM2bc-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_VSOuc2 vis_WDitE2 ">
+<p  id="Text_8S7u8-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_oYH6b4 ">Unread</p>
+</button>
+<button  id="CtxB_wNsP72-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_VSOuc2 vis_WDitE2 ">
+<p  id="Text_9vvo23-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_oYH6b4 ">Pinned</p>
+</button>
+</div>
+</div>
+<div  id="Flex_zSK201-gk" data-vp="" class="lay_67Txf4 pos_e8wtf3 mapa_WM2Wg4 vis_SWFkJ2 ">
+<button  id="CtxB_y9zFV2-gk" data-vp="" class="lay_hIPux pos_e8wtf3 mapa_KGcH53 vis_iV4qH intr_rBik44 ">
+<div  id="Flex_D00e34-gk" data-vp="" class="lay_RYrea3 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_tD8Yf4-gk" data-vp="" class="lay_MymkL3 pos_e8wtf3 mapa_CrkEb2 vis_R1GU54 ">
+<img  id="Imag_v8bPG4-gk" data-vp="" class="lay_j73IP1 pos_e8wtf3 mapa_CrkEb2 vis_oWmIp2 " src="/assets/Picasso-Bull-11.webp">
+</img>
+</div>
+<div  id="Flex_Jokkm1-gk" data-vp="" class="lay_RTBi04 pos_fOQvL mapa_CrkEb2 vis_VDi7j3 ">
+</div>
+</div>
+<div  id="Flex_Gka84-gk" data-vp="" class="lay_QGO2G4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_DeDNf2-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_A09Rf3-gk" data-vp="" class="lay_ObFf52 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<i  id="Icon_vTBqR-gk" data-vp="" class="bi bi-pin-fill lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_4W07K4 ">
+</i>
+<p  id="Text_HlFEU-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_EtnKo2 ">Sarah Chen</p>
+</div>
+<p  id="Text_S5imQ4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_rG3t64 ">2 min</p>
+</div>
+<div  id="Flex_mMVto1-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_GbYUH2-gk" data-vp="" class="lay_wKLD5 pos_e8wtf3 mapa_CrkEb2 vis_PHdqf1 ">Sounds good! Let me know when you're free</p>
+<div  id="Flex_zye454-gk" data-vp="" class="lay_OG6Dc2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_dnUAR3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_Cycu83 ">2</p>
+
+</div>
+</div>
+</div>
+</button>
+<button  id="CtxB_GOo4d-gk" data-vp="" class="lay_hIPux pos_e8wtf3 mapa_KGcH53 vis_eaiv42 intr_rBik44 ">
+<div  id="Flex_UuTzL-gk" data-vp="" class="lay_RYrea3 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_l0jII2-gk" data-vp="" class="lay_MymkL3 pos_e8wtf3 mapa_CrkEb2 vis_cbW3S3 ">
+<i  id="Icon_xiVEO2-gk" data-vp="" class="bi bi-people lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_8cOSK4 ">
+</i>
+</div>
+</div>
+<div  id="Flex_1Ri823-gk" data-vp="" class="lay_QGO2G4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_13Q5k3-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_dgnD64-gk" data-vp="" class="lay_ObFf52 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<i  id="Icon_fepyD1-gk" data-vp="" class="bi bi-pin-fill lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_4W07K4 ">
+</i>
+<p  id="Text_o8AuO2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_08tUh3 ">Design Team</p>
+</div>
+<p  id="Text_mUFRD3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_rG3t64 ">15 min</p>
+</div>
+<div  id="Flex_uE9Bu1-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_ZQ7j24-gk" data-vp="" class="lay_wKLD5 pos_e8wtf3 mapa_CrkEb2 vis_bgj2V3 ">Mike: Updated the mockups</p>
+</div>
+</div>
+</button>
+<button  id="CtxB_CyjLA1-gk" data-vp="" class="lay_hIPux pos_e8wtf3 mapa_KGcH53 vis_eaiv42 intr_rBik44 ">
+<div  id="Flex_oNnBr-gk" data-vp="" class="lay_RYrea3 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_aepdI1-gk" data-vp="" class="lay_MymkL3 pos_e8wtf3 mapa_CrkEb2 vis_R1GU54 ">
+<img  id="Imag_hpcJp2-gk" data-vp="" class="lay_j73IP1 pos_e8wtf3 mapa_CrkEb2 vis_oWmIp2 " src="/assets/Picasso-Bull-11.webp">
+</img>
+</div>
+</div>
+<div  id="Flex_e6Ozc2-gk" data-vp="" class="lay_QGO2G4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_uHmvQ3-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_wsLWt3-gk" data-vp="" class="lay_ObFf52 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_BPLuk2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_EtnKo2 ">Mike Johnson</p>
+</div>
+<p  id="Text_8tDu51-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_rG3t64 ">1 hour</p>
+</div>
+<div  id="Flex_fF04B1-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_jitkY-gk" data-vp="" class="lay_wKLD5 pos_e8wtf3 mapa_CrkEb2 vis_PHdqf1 ">Can you review the PR?</p>
+<div  id="Flex_fjmt5-gk" data-vp="" class="lay_OG6Dc2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_d45SL1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_Cycu83 ">1</p>
+
+</div>
+</div>
+</div>
+</button>
+<button  id="CtxB_AQZsb4-gk" data-vp="" class="lay_hIPux pos_e8wtf3 mapa_KGcH53 vis_eaiv42 intr_rBik44 ">
+<div  id="Flex_eIhHC2-gk" data-vp="" class="lay_RYrea3 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_fyrMk3-gk" data-vp="" class="lay_MymkL3 pos_e8wtf3 mapa_CrkEb2 vis_cbW3S3 ">
+<i  id="Icon_gbgiH1-gk" data-vp="" class="bi bi-people lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_8cOSK4 ">
+</i>
+</div>
+</div>
+<div  id="Flex_zRbQ1-gk" data-vp="" class="lay_QGO2G4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_zGfZU3-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_dRU4y-gk" data-vp="" class="lay_ObFf52 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_SRuyS3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_08tUh3 ">Project Alpha</p>
+<i  id="Icon_tidnq2-gk" data-vp="" class="bi bi-bell-slash lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_wELoy ">
+</i>
+</div>
+<p  id="Text_RGnku-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_rG3t64 ">3 hours</p>
+</div>
+<div  id="Flex_DPK3Y-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_kVd1f-gk" data-vp="" class="lay_wKLD5 pos_e8wtf3 mapa_CrkEb2 vis_bgj2V3 ">Alex: Meeting at 3pm</p>
+</div>
+</div>
+</button>
+<button  id="CtxB_79UpJ4-gk" data-vp="" class="lay_hIPux pos_e8wtf3 mapa_KGcH53 vis_eaiv42 intr_rBik44 ">
+<div  id="Flex_m641f-gk" data-vp="" class="lay_RYrea3 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_MeK502-gk" data-vp="" class="lay_MymkL3 pos_e8wtf3 mapa_CrkEb2 vis_R1GU54 ">
+<img  id="Imag_f2aPe1-gk" data-vp="" class="lay_j73IP1 pos_e8wtf3 mapa_CrkEb2 vis_oWmIp2 " src="/assets/Picasso-Bull-11.webp">
+</img>
+</div>
+</div>
+<div  id="Flex_FFmA11-gk" data-vp="" class="lay_QGO2G4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_O5tbE2-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_mz3aA-gk" data-vp="" class="lay_ObFf52 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_rW1hC3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_08tUh3 ">Emily Davis</p>
+</div>
+<p  id="Text_qrSs7-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_rG3t64 ">Yesterday</p>
+</div>
+<div  id="Flex_Ifcv53-gk" data-vp="" class="lay_rRpQB3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_3Kfwl1-gk" data-vp="" class="lay_wKLD5 pos_e8wtf3 mapa_CrkEb2 vis_bgj2V3 ">Thanks for your help!</p>
+</div>
+</div>
+</button>
+</div>
+<div  id="Flex_t8uN02-gk" data-vp="" class="lay_bzJ1G1 pos_e8wtf3 mapa_WM2Wg4 vis_SWFkJ2 ">
+<div  id="Flex_aERrJ-gk" data-vp="" class="lay_YXBsQ2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_N8rNJ3-gk" data-vp="" class="lay_z6UZ6 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_ASkqq1-gk" data-vp="" class="lay_MymkL3 pos_e8wtf3 mapa_CrkEb2 vis_qjt4I3 ">
+<p  id="Text_mFu2B-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_zuECK1 ">Y</p>
+</div>
+<div  id="Flex_2Mklm1-gk" data-vp="" class="lay_v7XjA3 pos_fOQvL mapa_CrkEb2 vis_VDi7j3 ">
+</div>
+</div>
+<div  id="Flex_NaE3z1-gk" data-vp="" class="lay_QhAhD3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_R0BuQ4-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_O57qN1 ">You</p>
+<p  id="Text_wfuq9-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_INmo63 ">Online</p>
+</div>
+</div>
+<div  id="Flex_Jbhky-gk" data-vp="" class="lay_QoBcv pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_9VFE6-gk" data-vp="" class="lay_i0bZ63 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_sI0VZ1-gk" data-vp="" class="lay_tupWc4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<button  id="CtxB_sGvQc1-gk" data-vp="" class="lay_ipwPq1 pos_e8wtf3 mapa_RM5YV3 vis_2OaxJ4 intr_NfIPq2 "aria-label="Select Dropdown">
+<div  id="Flex_rDQ061-gk" data-vp="" class="lay_LfISh3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_j5mMF3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_RM5YV3 vis_d2KdQ1 ">Status</p>
+<i  id="Icon_L4RTd1-gk" data-vp="" class="bi bi-chevron-down lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_I8cxd4 ">
+</i>
+</div>
+</button>
+</div>
+<div  id="Flex_l0y2F4-gk" data-vp="" class="lay_AEgkh1 pos_4MMng3 mapa_CrkEb2 vis_SWFkJ2 tran_akFuA3 ">
+
+
+</div>
+
+
+</div>
+</div>
+</div>
+</div>
+<div  id="Flex_sr5uG4-gk" data-vp="" class="lay_L27Dg1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_dLPUF1-gk" data-vp="" class="lay_bzJ1G1 pos_e8wtf3 mapa_jigL04 vis_gE4gL4 ">
+<div  id="Flex_TkhiN2-gk" data-vp="" class="lay_1y3WM pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_RQzgJ-gk" data-vp="" class="lay_mkFlD3 pos_e8wtf3 mapa_CrkEb2 vis_R1GU54 ">
+<img  id="Imag_itayb1-gk" data-vp="" class="lay_j73IP1 pos_e8wtf3 mapa_CrkEb2 vis_oWmIp2 " src="/assets/me.webp">
+</img>
+</div>
+<div  id="Flex_GOlYS-gk" data-vp="" class="lay_QhAhD3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_KVj7T3-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_wYKBd1 ">Sarah Chen</p>
+<p  id="Text_ABKdy-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_aYxf81 ">Online</p>
+</div>
+</div>
+<div  id="Flex_bJPaM3-gk" data-vp="" class="lay_116TP1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<button  id="CtxB_e5FZI4-gk" data-vp="" class="lay_mkFlD3 pos_e8wtf3 mapa_CrkEb2 vis_Jl5Kr2 ">
+<i  id="Icon_GecHF-gk" data-vp="" class="bi bi-pin-fill lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_GThDR ">
+</i>
+</button>
+<button  id="CtxB_JkGWz1-gk" data-vp="" class="lay_mkFlD3 pos_e8wtf3 mapa_CrkEb2 vis_gyebf ">
+<i  id="Icon_V8GJE2-gk" data-vp="" class="bi bi-bell lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_QgJOM ">
+</i>
+</button>
+<button  id="CtxB_6eCIq-gk" data-vp="" class="lay_mkFlD3 pos_e8wtf3 mapa_CrkEb2 vis_gyebf ">
+<i  id="Icon_vhSoY2-gk" data-vp="" class="bi bi-search lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_QgJOM ">
+</i>
+</button>
+<div  id="Flex_Opbu73-gk" data-vp="" class="lay_i0bZ63 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_G63nf1-gk" data-vp="" class="lay_tupWc4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<button  id="CtxB_anPQM-gk" data-vp="" class="lay_ipwPq1 pos_e8wtf3 mapa_RM5YV3 vis_2OaxJ4 intr_NfIPq2 "aria-label="Select Dropdown">
+<div  id="Flex_xTPHr1-gk" data-vp="" class="lay_LfISh3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_k3h7Q2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_RM5YV3 vis_d2KdQ1 ">Select user</p>
+<i  id="Icon_4cgMR2-gk" data-vp="" class="bi bi-chevron-down lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_I8cxd4 ">
+</i>
+</div>
+</button>
+</div>
+<div  id="Flex_1Jwd72-gk" data-vp="" class="lay_AEgkh1 pos_4MMng3 mapa_CrkEb2 vis_SWFkJ2 tran_akFuA3 ">
+
+
+</div>
+
+
+</div>
+</div>
+</div>
+<div  id="Flex_17Fcc2-gk" data-vp="" class="lay_MYZ761 pos_e8wtf3 mapa_3RP2h2 vis_SWFkJ2 ">
+<div  id="Flex_rzCKB4-gk" data-vp="" class="lay_N3tXh1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 anim_VZQhN1 ">
+<div  id="Flex_y7iZT3-gk" data-vp="" class="lay_32isF3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_hwPj92-gk" data-vp="" class="lay_CC1qM3 pos_pgYKR4 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_52vc31-gk" data-vp="" class="lay_Owo7D2 pos_t0s233 mapa_Ogt73 vis_CHVQv3 ">
+<p  id="Text_oQSoS2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_rk0Cu ">Hey! How's the project going?</p>
+</div>
+</div>
+
+<div  id="Hook_KT1KY2-gk" data-vp="">
+
+
+</div>
+
+<div  id="Flex_f3gBw2-gk" data-vp="" class="lay_EFio3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_7MxX92-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SqgGl ">19:20</p>
+</div>
+</div>
+</div>
+<div  id="Flex_GMOcq-gk" data-vp="" class="lay_IPPcx1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 anim_VZQhN1 ">
+<div  id="Flex_gViBq-gk" data-vp="" class="lay_9vI6G1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_8aOu01-gk" data-vp="" class="lay_CC1qM3 pos_9ostp3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_qX5G74-gk" data-vp="" class="lay_Owo7D2 pos_t0s233 mapa_Ogt73 vis_CgMOL ">
+<p  id="Text_A9neL1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_QVg862 ">Going well! Just finished the main features</p>
+</div>
+</div>
+
+<div  id="Hook_lzjQG4-gk" data-vp="">
+
+
+</div>
+
+<div  id="Flex_A8Zcw1-gk" data-vp="" class="lay_t8puL1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_oevhh1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SqgGl ">19:22</p>
+<i  id="Icon_PbS57-gk" data-vp="" class="bi bi-check2-all lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_RXJPf4 ">
+</i>
+</div>
+</div>
+</div>
+<div  id="Flex_QV1PH-gk" data-vp="" class="lay_N3tXh1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 anim_VZQhN1 ">
+<div  id="Flex_fA5ye4-gk" data-vp="" class="lay_32isF3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_tpt4Y-gk" data-vp="" class="lay_CC1qM3 pos_gtof83 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_qAppJ3-gk" data-vp="" class="lay_Owo7D2 pos_t0s233 mapa_Ogt73 vis_KYLZr1 ">
+<p  id="Text_FWDOZ3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_rk0Cu ">That's awesome! Can you share a demo?</p>
+</div>
+</div>
+
+<div  id="Hook_JfA352-gk" data-vp="">
+
+
+</div>
+
+<div  id="Flex_C7bsg2-gk" data-vp="" class="lay_EFio3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_aBCU13-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SqgGl ">19:23</p>
+</div>
+</div>
+</div>
+<div  id="Flex_q1vUn3-gk" data-vp="" class="lay_IPPcx1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 anim_VZQhN1 ">
+<div  id="Flex_DVJ8W4-gk" data-vp="" class="lay_9vI6G1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_Hnji34-gk" data-vp="" class="lay_CC1qM3 pos_4h8Vz3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_5EEtM3-gk" data-vp="" class="lay_Owo7D2 pos_t0s233 mapa_Ogt73 vis_lTCcd3 ">
+<p  id="Text_MekMa2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_QVg862 ">Sure, let me put together a quick video</p>
+</div>
+</div>
+
+<div  id="Hook_vAArR2-gk" data-vp="">
+
+
+</div>
+
+<div  id="Flex_mHkM2-gk" data-vp="" class="lay_t8puL1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_EhWW54-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SqgGl ">19:25</p>
+<i  id="Icon_YBXiL4-gk" data-vp="" class="bi bi-check2-all lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_RXJPf4 ">
+</i>
+</div>
+</div>
+</div>
+<div  id="Flex_qHM7x3-gk" data-vp="" class="lay_N3tXh1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 anim_VZQhN1 ">
+<div  id="Flex_y13v7-gk" data-vp="" class="lay_32isF3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_kCrOT-gk" data-vp="" class="lay_CC1qM3 pos_qOgF82 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_v8xho2-gk" data-vp="" class="lay_Owo7D2 pos_t0s233 mapa_Ogt73 vis_dgSkj2 ">
+<p  id="Text_1oCuX2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_rk0Cu ">Perfect! No rush though</p>
+</div>
+</div>
+
+<div  id="Hook_e2OWd1-gk" data-vp="">
+
+
+</div>
+
+<div  id="Flex_4zCwk3-gk" data-vp="" class="lay_EFio3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_AIpC-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SqgGl ">19:26</p>
+</div>
+</div>
+</div>
+<div  id="Flex_koeYB4-gk" data-vp="" class="lay_IPPcx1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 anim_VZQhN1 ">
+<div  id="Flex_8R8iM4-gk" data-vp="" class="lay_9vI6G1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_VSVAF4-gk" data-vp="" class="lay_CC1qM3 pos_LAsnA4 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_8NQyq1-gk" data-vp="" class="lay_Owo7D2 pos_t0s233 mapa_Ogt73 vis_bImyx2 ">
+<p  id="Text_evpc8-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_QVg862 ">I'll have it ready by end of day</p>
+</div>
+</div>
+
+<div  id="Hook_PdWe64-gk" data-vp="">
+
+
+</div>
+
+<div  id="Flex_c8PMQ2-gk" data-vp="" class="lay_t8puL1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_s8NMp1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SqgGl ">19:30</p>
+<i  id="Icon_pPRe11-gk" data-vp="" class="bi bi-check2-all lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_RXJPf4 ">
+</i>
+</div>
+</div>
+</div>
+<div  id="Flex_Oov0N2-gk" data-vp="" class="lay_N3tXh1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 anim_VZQhN1 ">
+<div  id="Flex_uz0Ck2-gk" data-vp="" class="lay_32isF3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_CN17h2-gk" data-vp="" class="lay_CC1qM3 pos_fWSZL1 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_zFYtN1-gk" data-vp="" class="lay_Owo7D2 pos_t0s233 mapa_Ogt73 vis_cCrHm1 ">
+<p  id="Text_nO5Gn2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_rk0Cu ">Sounds good! Let me know when you're free</p>
+</div>
+</div>
+
+<div  id="Hook_6y9vn-gk" data-vp="">
+
+
+</div>
+
+<div  id="Flex_iFNlX-gk" data-vp="" class="lay_EFio3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_2le4h-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SqgGl ">19:32</p>
+</div>
+</div>
+</div>
+</div>
+<div  id="Flex_gGUHz1-gk" data-vp="" class="lay_2iMTu2 pos_e8wtf3 mapa_WM2Wg4 vis_SWFkJ2 ">
+<div  id="Flex_go0H51-gk" data-vp="" class="lay_D0eqN pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
+<button  id="CtxB_XtNQI4-gk" data-vp="" class="lay_mkFlD3 pos_e8wtf3 mapa_CrkEb2 vis_gyebf ">
+<i  id="Icon_8Dqye2-gk" data-vp="" class="bi bi-plus-circle lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_9El2x ">
+</i>
+</button>
+</div>
+<div  id="Flex_ON8ax3-gk" data-vp="" class="lay_ayS3T2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<textarea  id="Text_5j9Zi2-gk" data-vp="" style="field-sizing: content;" class="lay_OmfyJ1 pos_e8wtf3 mapa_GjRnP2 vis_uHJ843 "type="email"placeholder=""></textarea>
+
+</div>
+<div  id="Flex_r6VsB3-gk" data-vp="" class="lay_D0eqN pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<button  id="CtxB_a4rLi2-gk" data-vp="" class="lay_mkFlD3 pos_e8wtf3 mapa_CrkEb2 vis_eLeZg ">
+<i  id="Icon_VvYoT4-gk" data-vp="" class="bi bi-send lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_R4IyX ">
+</i>
+</button>
+</div>
+</div>
+</div>
+
+
+
+
+</div>
+<p  id="Text_Ij0tn3-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_6TQs02 vis_dxEbU ">API Client</p>
+<p  id="Text_LHEjw-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_0Ngye4 vis_j9g222 ">A single-file REST API client component with: Method selector (GET/POST/PUT/DELETE/PATCH), URL input field, Request body editor (JSON) with syntax highlighting, and headers editor (key/value pairs).</p>
+<div  id="Flex_Ic4sW4-gk" data-vp="" class="lay_4KJVy2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_g6jZ9-gk" data-vp="" class="lay_hIPux pos_e8wtf3 mapa_Ogt73 vis_YHsJp ">
+<div  id="Flex_adpD63-gk" data-vp="" class="lay_VLi4h3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_yZe3i1-gk" data-vp="" class="lay_IOA891 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_9046q1-gk" data-vp="" class="lay_tupWc4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<button  id="CtxB_PfgNr3-gk" data-vp="" class="lay_ipwPq1 pos_e8wtf3 mapa_RM5YV3 vis_lxLw23 intr_yvHV61 "aria-label="Select Dropdown">
+<div  id="Flex_oKknU1-gk" data-vp="" class="lay_LfISh3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_rHzqt2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_RM5YV3 vis_d2KdQ1 ">GET</p>
+<i  id="Icon_CyzoM4-gk" data-vp="" class="bi bi-chevron-down lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_I8cxd4 ">
+</i>
+</div>
+</button>
+</div>
+<div  id="Flex_kTjn14-gk" data-vp="" class="lay_AEgkh1 pos_4MMng3 mapa_CrkEb2 vis_SWFkJ2 tran_akFuA3 ">
+
+
+</div>
+
+
+</div>
+</div>
+<div  id="Flex_vvxqf3-gk" data-vp="" class="lay_tnUVV4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_e9AtY4-gk" data-vp="" class="lay_YRTjh1 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_icaay2-gk" data-vp="" class="lay_CIaFC pos_t0s233 mapa_CrkEb2 vis_bUFjR4 ">
+<label for="string_Flex_e9AtY4-gk"  id="Labe_U25Tc4-gk" data-vp="" style="transform: translateY(-50%) scale(0.9); z-index: 0; text-align: center;" class="lay_1I8dE4 pos_RoAtR4 mapa_sgnwh vis_ko6Zh ">URL</label>
+
+<input  id="string_Flex_e9AtY4-gk" data-vp="" class="lay_kSFpR4 pos_h7ld4 mapa_TK4ER4 vis_j26R42 "name=""/>
+
+</div>
+</div>
+</div>
+<button  id="CtxB_RZi183-gk" data-vp="" class="lay_Gatee3 pos_e8wtf3 mapa_eoJ7b1 vis_IR2VE4 intr_d5YKP3 ">
+<div  id="Flex_nepls3-gk" data-vp="" class="lay_ObFf52 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<i  id="Icon_TXryG-gk" data-vp="" class="bi bi-send lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_0TPRH1 ">
+</i>
+<p  id="Text_SHqfc2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_21aOC3 ">Send</p>
+</div>
+</button>
+</div>
+<div  id="Flex_8oMwI3-gk" data-vp="" class="lay_1wHVY1 pos_e8wtf3 mapa_Ogt73 vis_YHsJp ">
+<div  id="Flex_56xxM1-gk" data-vp="" class="lay_rHzpX2 pos_e8wtf3 mapa_Ooany3 vis_SWFkJ2 "aria-label="Main navigation tabs">
+<button  id="CtxB_WJ6S5-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_lMev51 ">
+<div  id="Flex_FymbU3-gk" data-vp="" style="min-width: 60px;" class="lay_OG6Dc2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_ph9DH3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_7Tbf14 ">{body}</p>
+
+</div>
+</button>
+<button  id="CtxB_OmjcG3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_lMev51 ">
+<div  id="Flex_CR3td4-gk" data-vp="" style="min-width: 60px;" class="lay_OG6Dc2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_tsUtb1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_uwNsN1 ">{headers}</p>
+
+</div>
+</button>
+</div>
+</div>
+<div  id="Flex_T2rO02-gk" data-vp="" class="lay_lcXSO2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_tFIja4-gk" data-vp="" class="lay_Oauvu pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_WdeIH2-gk" data-vp="" class="lay_KMEsd3 pos_e8wtf3 mapa_TK4ER4 vis_c9soN1 ">
+<div  id="Flex_5UvMR3-gk" data-vp="" class="lay_ERyub4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_cJRiN4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_8Ajwh1 ">JSON</p>
+</div>
+<button  id="CtxB_ZLXfF1-gk" data-vp="" class="lay_VQ1nz2 pos_e8wtf3 mapa_CrkEb2 vis_gyebf ">
+<i  id="Icon_CVWQX2-gk" data-vp="" class="bi bi-clipboard lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_mqzVb3 ">
+</i>
+</button>
+</div>
+<div  id="Flex_Xj76o-gk" data-vp="" class="lay_siisH4 pos_t0s233 mapa_CrkEb2 vis_C3pSA3 ">
+<div  id="Flex_XMeij2-gk" data-vp="" class="lay_ArHzY pos_rLJOu mapa_TK4ER4 vis_SWFkJ2 ">
+<div  id="Flex_l8P7E2-gk" data-vp="" class="lay_EBRGL2 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_KgcK71-gk" data-vp="" class="lay_EBRGL2 pos_e8wtf3 mapa_Fls5t vis_SWFkJ2 ">
+<code  id="Code_kTcVP-gk" data-vp="" class="lay_j73IP1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_aGfi2-gk" data-vp="" class="lay_cRrsd2 pos_e8wtf3 mapa_CrkEb2 vis_PZYxz1 ">
+<p  id="Text_HHhxh3-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_asEZj3 ">1</p>
+<div  id="Flex_lYCIk-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_9PJMM2 ">
+<p  id="Text_VVxfQ3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_TzqcF3 ">{</p>
+</div>
+</div>
+<div  id="Flex_HCU904-gk" data-vp="" class="lay_cRrsd2 pos_e8wtf3 mapa_CrkEb2 vis_PZYxz1 ">
+<p  id="Text_bj51x2-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_asEZj3 ">2</p>
+<div  id="Flex_CTseT3-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_9PJMM2 ">
+<p  id="Text_SFsOj1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_gObks3 ">  </p>
+<p  id="Text_F9iCp2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_UzKGL ">"name"</p>
+<p  id="Text_bXkPV2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_TzqcF3 ">:</p>
+<p  id="Text_SrO8A-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_gObks3 "> </p>
+<p  id="Text_SqnmL2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_wriIL3 ">"hello"</p>
+<p  id="Text_EDTdQ1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_TzqcF3 ">,</p>
+</div>
+</div>
+<div  id="Flex_92PmP1-gk" data-vp="" class="lay_cRrsd2 pos_e8wtf3 mapa_CrkEb2 vis_PZYxz1 ">
+<p  id="Text_aNDI33-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_asEZj3 ">3</p>
+<div  id="Flex_2rp1Z4-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_9PJMM2 ">
+<p  id="Text_G8hGr1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_gObks3 ">  </p>
+<p  id="Text_UOg5I2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_UzKGL ">"value"</p>
+<p  id="Text_7Yekk-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_TzqcF3 ">:</p>
+<p  id="Text_RFica1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_gObks3 "> </p>
+<p  id="Text_HSG9D-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_QpiDt1 ">42</p>
+</div>
+</div>
+<div  id="Flex_6Z0d13-gk" data-vp="" class="lay_cRrsd2 pos_e8wtf3 mapa_CrkEb2 vis_PZYxz1 ">
+<p  id="Text_D9exQ-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_asEZj3 ">4</p>
+<div  id="Flex_6BTnP4-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_9PJMM2 ">
+<p  id="Text_5CgTR2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_TzqcF3 ">}</p>
+</div>
+</div>
+</code>
+</div>
+</div>
+</div>
+<div  id="Flex_DYG7p1-gk" data-vp="" class="lay_ihMZH4 pos_rLJOu mapa_TK4ER4 vis_PZYxz1 ">
+<textarea  id="Text_OH9XC-gk" data-vp="" class="lay_j73IP1 pos_e8wtf3 mapa_0bvRx vis_eJVHx "type="email"placeholder="{
+  "name": "hello",
+  "value": 42
+}"></textarea>
+
+</div>
+<div  id="Flex_NdFFx1-gk" data-vp="" style="pointer-events: none; display: none;" class="lay_Owo7D2 pos_fsO45 mapa_CrkEb2 vis_Zq0Ok3 ">
+</div>
+</div>
+</div>
+</div>
+<div  id="Flex_JBO5C3-gk" data-vp="" class="lay_GmMJB3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_fxicy1-gk" data-vp="" class="lay_cf7Z13 pos_e8wtf3 mapa_eoJ7b1 vis_YHsJp ">
+<div  id="Flex_5BWg53-gk" data-vp="" class="lay_1y3WM pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_zmb7u3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_tDobr1 ">Response</p>
+<div  id="Flex_qSH3C-gk" data-vp="" class="lay_rHzpX2 pos_e8wtf3 mapa_Ooany3 vis_SWFkJ2 "aria-label="Main navigation tabs">
+<button  id="CtxB_Csuvj2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_lMev51 ">
+<div  id="Flex_2grOd-gk" data-vp="" style="min-width: 60px;" class="lay_OG6Dc2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_4xX5y2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_7Tbf14 ">{body}</p>
+
+</div>
+</button>
+<button  id="CtxB_5miOa1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_lMev51 ">
+<div  id="Flex_jVcUE4-gk" data-vp="" style="min-width: 60px;" class="lay_OG6Dc2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<p  id="Text_mgBEr-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_uwNsN1 ">{headers}</p>
+
+</div>
+</button>
+</div>
+</div>
+</div>
+<div  id="Flex_ug88T2-gk" data-vp="" class="lay_h7EqM1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_XKNoR-gk" data-vp="" class="lay_xK1ZE4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_H863Y1-gk" data-vp="" class="lay_DN7Yb1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<i  id="Icon_mceYs1-gk" data-vp="" class="bi bi-send lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_5lCVZ ">
+</i>
+<p  id="Text_otsPs2-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_rHkJY4 ">Send a request to see the response</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+<div  id="opaque-toast-stack" data-vp="" class="lay_eGDG91 pos_AUI0J mapa_CrkEb2 vis_PZYxz1 ">
+</div>
+</main>
+</body>
+</html>

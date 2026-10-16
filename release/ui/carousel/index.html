@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>Vapor UI</title>
+  <meta charset="utf-8" />
+  <meta name="google-site-verification" content="12aR_338F0VaglKbfvPLczdZV_Ej6AVx9Ef7M4ULfLU" />
+  <meta name="description" content="Senet Application" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
+  <link rel="preload" href="/zig-out/bin/vapor.wasm" as="fetch" type="application/wasm" crossorigin />
+
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <!-- Preconnect stays the same -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Montserrat:wght@400;700&display=swap"
+    rel="stylesheet" media="print" onload="this.media = 'all'" />
+
+  <link rel="preload" href="/assets/css/bootstrap-icons.css" as="style" onload="
+        this.onload = null;
+        this.rel = 'stylesheet';
+      " />
+  <!-- <script type="module" src="/web/bundle.min.js"></script> -->
+  <script type="module" src="/web/wasi_obj.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Montserrat;
+      font-optical-sizing: auto;
+      height: 100dvh;
+      width: 100%;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      background-color: rgba(var(--background));
+      color: rgb(var(--text_color));
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+      scrollbar-width: none;
+      /* Firefox */
+      -ms-overflow-style: none;
+      /* IE/Edge */
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-scrollbar: display: none;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      /* Chrome, Safari, Opera */
+      margin: 0;
+    }
+
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    textarea {
+      line-height: 1.5;
+      font-size-adjust: 0.5;
+    }
+
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    div {
+      min-width: 0;
+    }
+
+    button p {
+      font-family: inherit;
+    }
+
+    button {
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
+      color: inherit;
+    }
+
+    input[type="file"]::file-selector-button {
+      background: transparent;
+      color: transparent;
+      border: none;
+    }
+
+
+    input:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0 1000px transparent inset;
+      -webkit-text-fill-color: inherit;
+      caret-color: inherit;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+
+    .reload-indicator {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      background: #1a1a1a;
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 6px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      font-family: system-ui, sans-serif;
+      font-size: 14px;
+      z-index: 99999;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .reload-indicator.visible {
+      display: flex;
+    }
+
+    .reload-spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid #333;
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+
+
+    /* The gear disc - moves DOWN and LEFT when switched ON */
+    #gearDisc {
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* The star disc - moves UP and RIGHT when switched ON */
+    #starDisc {
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+  </style>
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="/static/style_variables.css" /></head>
+
+<body>
+  <main id="contents" style="display: contents"><div  id="Flex_OIm3f-gk" data-vp="" class="lay_XC0ie pos_e8wtf3 mapa_CrkEb2 vis_EEx1T2 ">
+<div  id="Flex_zqROb2-gk" data-vp="" class="lay_cZ1KB4 pos_e8wtf3 mapa_CrkEb2 vis_EEx1T2 ">
+<p  id="Text_sZe4B4-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_JTIoH2 ">carousel-ui ⇒</p>
+<p  id="Text_znTWB4-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_mX5La2 ">carousel-ui</p>
+<p  id="Text_2Aj9d3-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_puCxC ">Click + swipe carousel. Prev / next arrows, dot indicators, drag to swipe.</p>
+</div>
+<div  id="Flex_4IigU-gk" data-vp="" class="lay_7wUH8 pos_e8wtf3 mapa_jHAIQ vis_EEx1T2 ">
+<p  id="Text_ejWd93-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_wt0XY1 ">Carousel</p>
+<p  id="Text_e3s742-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_YIvzW1 vis_Up4YG1 ">Discrete slide carousel. Navigate with arrow buttons, dot indicators, or by swiping.</p>
+<p  id="Text_BonX61-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_sT3Sn vis_u8Rkz ">Basic</p>
+<p  id="Text_1altD1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_0Ngye4 vis_kked22 ">Click the arrows, drag to swipe, or click a dot to jump.</p>
+<div  id="Flex_Gv0y41-gk" data-vp="" class="lay_q6jDz2 pos_e8wtf3 mapa_n76d41 vis_ZN3cG2 ">
+<div  id="Flex_xPf8M-gk" data-vp="" class="lay_Oirhr pos_e8wtf3 mapa_CrkEb2 vis_EEx1T2 ">
+<div  id="Flex_XTnuW2-gk" data-vp="" style="touch-action: pan-y; cursor: grab; user-select: none; overflow: hidden;" class="lay_0g1KY pos_t0s233 mapa_CrkEb2 vis_EEx1T2 ">
+<div  id="Flex_b2wZK1-gk" data-vp="" style="transform: translate3d(0px, 0, 0); transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1); will-change: transform; gap: 16px;" class="lay_Owo7D2 pos_e8wtf3 mapa_CrkEb2 vis_EEx1T2 ">
+<div  id="Flex_nZkAG4-gk" data-vp="" style="flex-shrink: 0;" class="lay_X0Bqy1 pos_e8wtf3 mapa_CrkEb2 vis_n3oBX1 ">
+<p  id="Text_PRSuF4-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_DWl4P1 ">Slide One</p>
+</div>
+<div  id="Flex_xln8h2-gk" data-vp="" style="flex-shrink: 0;" class="lay_X0Bqy1 pos_e8wtf3 mapa_CrkEb2 vis_gV1pP2 ">
+<p  id="Text_RQQvd2-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_DWl4P1 ">Slide Two</p>
+</div>
+<div  id="Flex_ulGTx-gk" data-vp="" style="flex-shrink: 0;" class="lay_X0Bqy1 pos_e8wtf3 mapa_CrkEb2 vis_0xQYl2 ">
+<p  id="Text_Vpi6K3-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_DWl4P1 ">Slide Three</p>
+</div>
+<div  id="Flex_bHSZ7-gk" data-vp="" style="flex-shrink: 0;" class="lay_X0Bqy1 pos_e8wtf3 mapa_CrkEb2 vis_dhIR7 ">
+<p  id="Text_pvJsI-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_DWl4P1 ">Slide Four</p>
+</div>
+<div  id="Flex_qQatD2-gk" data-vp="" style="flex-shrink: 0;" class="lay_X0Bqy1 pos_e8wtf3 mapa_CrkEb2 vis_XTTZU2 ">
+<p  id="Text_R2qfq1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_DWl4P1 ">Slide Five</p>
+</div>
+</div>
+<div  id="Flex_2lMMC-gk" data-vp="" style="top: 50%; left: 0; right: 0; transform: translateY(-50%); pointer-events: none; padding: 0 12px; display: flex; justify-content: space-between; align-items: center;" class="lay_Owo7D2 pos_h7ld4 mapa_CrkEb2 vis_EEx1T2 ">
+<button  id="CtxB_L31I61-gk" data-vp="" style="pointer-events: auto;" class="lay_uvckf4 pos_e8wtf3 mapa_CrkEb2 vis_ybLCK2 "aria-label="previous slide">
+<p  id="Text_5LJaw3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_4Wvlp3 ">‹</p>
+</button>
+<button  id="CtxB_A5ezV3-gk" data-vp="" style="pointer-events: auto;" class="lay_uvckf4 pos_e8wtf3 mapa_CrkEb2 vis_ybLCK2 "aria-label="next slide">
+<p  id="Text_IAVIv-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_4Wvlp3 ">›</p>
+</button>
+</div>
+</div>
+<div  id="Flex_Hx0Ic3-gk" data-vp="" class="lay_6wT78 pos_e8wtf3 mapa_CrkEb2 vis_EEx1T2 ">
+<button  id="CtxB_RrHbq2-gk" data-vp="" class="lay_y0RsV2 pos_e8wtf3 mapa_CrkEb2 vis_J0jkp3 "aria-label="dot">
+</button>
+<button  id="CtxB_6Hddy-gk" data-vp="" class="lay_255vC4 pos_e8wtf3 mapa_CrkEb2 vis_Xaqrc2 "aria-label="dot">
+</button>
+<button  id="CtxB_GVO5m1-gk" data-vp="" class="lay_255vC4 pos_e8wtf3 mapa_CrkEb2 vis_Xaqrc2 "aria-label="dot">
+</button>
+<button  id="CtxB_HVCOD4-gk" data-vp="" class="lay_255vC4 pos_e8wtf3 mapa_CrkEb2 vis_Xaqrc2 "aria-label="dot">
+</button>
+<button  id="CtxB_kYw9I1-gk" data-vp="" class="lay_255vC4 pos_e8wtf3 mapa_CrkEb2 vis_Xaqrc2 "aria-label="dot">
+</button>
+</div>
+</div>
+</div>
+<p  id="Text_43pPH1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_sT3Sn vis_u8Rkz ">Compact</p>
+<p  id="Text_Qn7II-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_0Ngye4 vis_kked22 ">Smaller slides — same swipe + click behavior.</p>
+<div  id="Flex_TwmEc4-gk" data-vp="" class="lay_q6jDz2 pos_e8wtf3 mapa_n76d41 vis_ZN3cG2 ">
+</div>
+<p  id="Text_Q6kGR-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_sT3Sn vis_u8Rkz ">Bounded (no loop)</p>
+<p  id="Text_vfDbp2-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_0Ngye4 vis_kked22 ">Stops at the first and last slide instead of wrapping.</p>
+<div  id="Flex_UB6yU1-gk" data-vp="" class="lay_q6jDz2 pos_e8wtf3 mapa_n76d41 vis_ZN3cG2 ">
+</div>
+<p  id="Text_ig2rx1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_sT3Sn vis_u8Rkz ">Arrows only</p>
+<p  id="Text_FDEaY3-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_0Ngye4 vis_kked22 ">Hide the dot indicators below.</p>
+<div  id="Flex_L2VQi2-gk" data-vp="" class="lay_q6jDz2 pos_e8wtf3 mapa_n76d41 vis_ZN3cG2 ">
+</div>
+<p  id="Text_P180l-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_sT3Sn vis_u8Rkz ">Dots only</p>
+<p  id="Text_RLiAs1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_0Ngye4 vis_kked22 ">Hide arrow buttons — rely on swipes + dot indicators.</p>
+<div  id="Flex_2bsNb-gk" data-vp="" class="lay_q6jDz2 pos_e8wtf3 mapa_n76d41 vis_ZN3cG2 ">
+</div>
+<p  id="Text_vsWWK1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_sT3Sn vis_u8Rkz ">Custom Item Renderer</p>
+<p  id="Text_QACPG2-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_0Ngye4 vis_kked22 ">Use create() + Component() to render slides with your own component.</p>
+<div  id="Flex_9mVHO3-gk" data-vp="" class="lay_q6jDz2 pos_e8wtf3 mapa_n76d41 vis_ZN3cG2 ">
+</div>
+<p  id="Text_yCDqY-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_sT3Sn vis_u8Rkz ">Installation</p>
+<div  id="Flex_bVJ384-gk" data-vp="" class="lay_AEgkh1 pos_e8wtf3 mapa_WM2Wg4 vis_yNWLg ">
+<p  id="Text_HKpt12-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_s3wOF1 ">// In main.zig — initialize state map once at startup
+const Carousel = @import("components/Carousel.zig");
+Carousel.new();</p>
+</div>
+<p  id="Text_MBNWo2-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_sT3Sn vis_u8Rkz ">Usage</p>
+<div  id="Flex_S3i0c4-gk" data-vp="" class="lay_AEgkh1 pos_e8wtf3 mapa_WM2Wg4 vis_yNWLg ">
+<p  id="Text_GrGDp-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_s3wOF1 ">const Carousel = @import("components/Carousel.zig");
+
+const items = [_]CarouselItem{
+    .{ .title = "Slide 1", .subtitle = "desc", .color = .hex("#3b82f6") },
+    .{ .title = "Slide 2", .subtitle = "desc", .color = .hex("#8b5cf6") },
+    // ...
+};
+
+// Click + swipe carousel
+Carousel.render(.{
+    .id = "my-carousel",   // required for state persistence
+    .items = &items,
+    .item_width = 480,
+    .item_height = 280,
+});</p>
+</div>
+<p  id="Text_lAt5V3-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_sT3Sn vis_u8Rkz ">API Reference</p>
+<p  id="Text_rhpmp-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_9SPU2 vis_6hJPI3 ">CarouselItem</p>
+<div  id="Flex_p5egr2-gk" data-vp="" class="lay_AEgkh1 pos_e8wtf3 mapa_WM2Wg4 vis_yNWLg ">
+<p  id="Text_OGzlB-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_s3wOF1 ">pub const CarouselItem = struct {
+    title: []const u8,
+    subtitle: []const u8 = "",       // optional label below title
+    color: Color = .palette(.tint),  // background color of slide
+};</p>
+</div>
+<p  id="Text_9tlGb4-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_9SPU2 vis_6hJPI3 ">Custom item renderer via create() + Component()</p>
+<div  id="Flex_95I2b4-gk" data-vp="" class="lay_AEgkh1 pos_e8wtf3 mapa_WM2Wg4 vis_yNWLg ">
+<p  id="Text_WzJ052-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_s3wOF1 ">fn mySlide(item: CarouselItem, w: f32, h: f32) void {
+    Stack()
+        .width(.px(w))
+        .height(.px(h))
+        .background(item.color)
+        .children({
+        Text(item.title).end();
+    });
+}
+
+_ = Carousel.create(.{
+    .id = "custom",
+    .items = &items,
+}).Component(mySlide, .{});</p>
+</div>
+<p  id="Text_bKPE92-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_9SPU2 vis_6hJPI3 ">Carousel fields</p>
+<div  id="Flex_EbhLm3-gk" data-vp="" class="lay_AEgkh1 pos_e8wtf3 mapa_WM2Wg4 vis_yNWLg ">
+<p  id="Text_cnxHV4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_s3wOF1 ">id: []const u8 = "",         // stable id — required for state
+items: []const CarouselItem, // slide data
+item_width: f32 = 480,       // slide width  (px)
+item_height: f32 = 280,      // slide height (px)
+gap: f32 = 16,               // gap between slides (px)
+loop: bool = true,           // wrap around at the ends
+show_arrows: bool = true,    // prev / next buttons
+show_dots: bool = true,      // dot indicators
+swipe_threshold: f32 = 60,   // px drag needed to advance
+transition_ms: u32 = 350,    // snap animation duration</p>
+</div>
+</div>
+</div>
+</main>
+</body>
+</html>
