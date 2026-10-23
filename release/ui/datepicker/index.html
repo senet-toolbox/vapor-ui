@@ -10,6 +10,8 @@
   <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
   <link rel="preload" href="/zig-out/bin/vapor.wasm" as="fetch" type="application/wasm" crossorigin />
 
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
   <!-- Preconnect stays the same -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -23,8 +25,8 @@
         this.onload = null;
         this.rel = 'stylesheet';
       " />
+  <!-- <script type="module" src="/web/bundle.min.js"></script> -->
   <script type="module" src="/bundle.min.js"></script>
-  <!-- <script type="module" src="/web/wasi_obj.js"></script> -->
 
   <style>
     body {
@@ -157,72 +159,61 @@
   <link rel="stylesheet" href="/static/style_variables.css" /></head>
 
 <body>
-  <div id="reload-indicator" class="reload-indicator">
-    <div class="reload-spinner"></div>
-    <span>Reloading... <span id="reload-timer">0.0</span>s</span>
-  </div>
-  <main id="contents" style="display: contents"><div  id="Hook_R6olM-gk" data-vp="">
-<div  id="nav" data-vp="" class="lay_07qwZ pos_SdsMW2 mapa_obiMi2 vis_z9VOY3 ">
-<div  id="Flex_LhOqU1-gk" data-vp="" class="lay_afHcj1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<button  id="CtxB_EC2N9-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_lMev51 "aria-label="navigate home page of tether">
-<div  id="Flex_LSeAd2-gk" data-vp="" class="lay_OUCAc1 pos_e8wtf3 mapa_3GodU4 vis_bDheb3 intr_m5kAX3 ">
-<div  id="Grap_BXhHA1-gk" data-vp="" class="lay_j73IP1 pos_e8wtf3 mapa_CrkEb2 vis_48Djm2 intr_ZSRqZ3 ">
+  <main id="contents" style="display: contents"><div  id="nav" data-vp="" class="lay_07qwZ pos_SdsMW2 mapa_obiMi2 vis_eN7yA4 ">
+<div  id="Flex_MMGqT1-gk" data-vp="" class="lay_afHcj1 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<button  id="CtxB_Cf7pZ-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_5VSrQ4 "aria-label="navigate home page of tether">
+<div  id="Flex_kQIpm3-gk" data-vp="" class="lay_OUCAc1 pos_e8wtf3 mapa_3GodU4 vis_Jnr9B1 intr_rfT7n1 ">
+<div  id="Grap_9FZx6-gk" data-vp="" class="lay_j73IP1 pos_e8wtf3 mapa_CrkEb2 vis_g80pp2 intr_WpLmP4 ">
 </div>
 </div>
 </button>
-<ul  id="List_e5niL1-gk" data-vp="" class="lay_te7oH4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<li  id="List_YZf1t2-gk" data-vp="" class="lay_uFdNT pos_e8wtf3 mapa_CrkEb2 vis_86ALb3 intr_QHgsW2 "">
-<a  id="Link_51p24-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 " href="/ui/components">
-<p  id="Text_Mfz7e3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_DArr03 ">[1] = Components</p>
+<ul  id="List_aXgiq-gk" data-vp="" class="lay_te7oH4 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<li  id="List_5CTv6-gk" data-vp="" class="lay_uFdNT pos_e8wtf3 mapa_CrkEb2 vis_MZnYt intr_MXJhD3 ">
+<a  id="Link_YsaVf4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 " href="/ui/components">
+<p  id="Text_DqD3u1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_mzTgO4 ">[1] = Components</p>
 </a>
 </li>
-<li  id="List_v5M0J2-gk" data-vp="" class="lay_uFdNT pos_e8wtf3 mapa_CrkEb2 vis_86ALb3 intr_QHgsW2 "">
-<a  id="Link_zx8GW-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 " href="/ui/templates">
-<p  id="Text_UJZp42-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_DArr03 ">[2] = Templates</p>
+<li  id="List_40D8n3-gk" data-vp="" class="lay_uFdNT pos_e8wtf3 mapa_CrkEb2 vis_MZnYt intr_MXJhD3 ">
+<a  id="Link_X7WQe3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 " href="/ui/templates">
+<p  id="Text_hi3l01-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_mzTgO4 ">[2] = Templates</p>
 </a>
 </li>
-<li  id="List_goMKo2-gk" data-vp="" class="lay_uFdNT pos_e8wtf3 mapa_CrkEb2 vis_86ALb3 intr_QHgsW2 "">
-<a  id="Link_1dSpn3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 " href="/ui/auth">
-<p  id="Text_X3Rma3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_DArr03 ">[3] = Authentication</p>
+<li  id="List_JM7md-gk" data-vp="" class="lay_uFdNT pos_e8wtf3 mapa_CrkEb2 vis_MZnYt intr_MXJhD3 ">
+<a  id="Link_2RIDF-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 " href="/ui/auth">
+<p  id="Text_PezvG3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_mzTgO4 ">[3] = Authentication</p>
 </a>
 </li>
-<li  id="List_a1PNM2-gk" data-vp="" class="lay_uFdNT pos_e8wtf3 mapa_CrkEb2 vis_86ALb3 intr_QHgsW2 "">
-<a  id="Link_ZtHZf2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 " href="/ui/payment">
-<p  id="Text_LHS1T-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_DArr03 ">[4] = Payments</p>
+<li  id="List_YHTnh3-gk" data-vp="" class="lay_uFdNT pos_e8wtf3 mapa_CrkEb2 vis_MZnYt intr_MXJhD3 ">
+<a  id="Link_a955K-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 " href="/ui/payment">
+<p  id="Text_IWZCZ-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_mzTgO4 ">[4] = Payments</p>
 </a>
 </li>
 </ul>
 </div>
-<div  id="Flex_jP6WG1-gk" data-vp="" class="lay_9ec1Z3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<div  id="Flex_1CrMz2-gk" data-vp="" class="lay_8oAQm2 pos_e8wtf3 mapa_jarwO1 vis_SWFkJ2 ">
-<div  id="Flex_9p6X74-gk" data-vp="" class="lay_oSHHV pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<div  id="Hook_YsbAJ4-gk" data-vp="">
-<div  id="Flex_ADuMF3-gk" data-vp="" class="lay_W59ox3 pos_e8wtf3 mapa_CrkEb2 vis_LEK6H2 intr_hdyuO4 ">
-<button  id="CtxB_EKN9J1-gk" data-vp="" class="lay_seAbC1 pos_t0s233 mapa_ZJR9B1 vis_HckNn ">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"   id="Svg_hi9BJ4-gk" data-vp="" class="lay_9Tg063 pos_e8wtf3 mapa_CrkEb2 vis_QQM7K4 ">
+<div  id="Flex_cnAY73-gk" data-vp="" class="lay_9ec1Z3 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<div  id="Flex_iMqsd4-gk" data-vp="" class="lay_8oAQm2 pos_e8wtf3 mapa_jarwO1 vis_PMQ7Z1 ">
+<div  id="Flex_LMaKE2-gk" data-vp="" class="lay_oSHHV pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<div  id="Flex_rXfIX-gk" data-vp="" class="lay_AEgkh1 pos_e8wtf3 mapa_CrkEb2 vis_vwI1Q1 intr_X5tsf4 ">
+<button  id="CtxB_zhjRj3-gk" data-vp="" class="lay_seAbC1 pos_t0s233 mapa_ZJR9B1 vis_dZNBO4 ">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"   id="Svg_H3yQs3-gk" data-vp="" class="lay_9Tg063 pos_e8wtf3 mapa_CrkEb2 vis_E3zio2 ">
 <path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>
 </svg>
-<p  id="Text_yJ9PL3-gk" data-vp="" style="transform: translateY(0%) scale(1);" class="lay_jXzf62 pos_v368w mapa_sgnwh vis_mBjuO ">Search</p>
-<div  id="Flex_Ej0yc2-gk" data-vp="" class="lay_hULZR2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<i  id="Icon_ieCGP1-gk" data-vp="" class="bi bi-command lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_Nz32V ">
+<p  id="Text_7050D-gk" data-vp="" style="transform: translateY(0%) scale(1);" class="lay_jXzf62 pos_v368w mapa_sgnwh vis_ryjJt2 ">Search</p>
+<div  id="Flex_ynJ1p1-gk" data-vp="" class="lay_hULZR2 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<i  id="Icon_cIwQL-gk" data-vp="" class="bi bi-command lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_knyVH ">
 </i>
-<p  id="Text_PPnDw3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_Nz32V ">K</p>
+<p  id="Text_APBpi1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_knyVH ">K</p>
 </div>
 </button>
 </div>
 </div>
 </div>
-</div>
-<a  id="Redi_vV9Gn-gk" data-vp="" class="nav-item" href="https://github.com/vic-Rokx/vapor">
-<i  id="Icon_V21rR4-gk" data-vp="" class="bi bi-github nav-item-icon">
+<a  id="Redi_sYJ454-gk" data-vp="" class="nav-item" href="https://github.com/senet-toolbox/vapor-ui">
+<i  id="Icon_FulYG2-gk" data-vp="" class="bi bi-github nav-item-icon">
 </i>
 </a>
-<a  id="Redi_MFh9x2-gk" data-vp="" class="nav-item" href="https://github.com/vic-Rokx/vapor">
-<i  id="Icon_iqX6P4-gk" data-vp="" class="bi bi-discord nav-item-icon">
-</i>
-</a>
-<button  id="CtxB_V4o0S3-gk" data-vp="" class="lay_OG6Dc2 pos_e8wtf3 mapa_CrkEb2 vis_gyebf intr_bNDVL4 "aria-label="toggle theme">
-    <svg viewBox="0 0 89 55" fill="none" xmlns="http://www.w3.org/2000/svg"   id="Svg_SFEHK2-gk" data-vp="" class="lay_cpmKG1 pos_e8wtf3 mapa_CrkEb2 vis_jBfnf1 ">
+<button  id="CtxB_no1sa3-gk" data-vp="" class="lay_OG6Dc2 pos_e8wtf3 mapa_CrkEb2 vis_Ae73c4 "aria-label="toggle theme">
+    <svg viewBox="0 0 89 55" fill="none" xmlns="http://www.w3.org/2000/svg"   id="Svg_QzuOX1-gk" data-vp="" class="lay_cpmKG1 pos_e8wtf3 mapa_CrkEb2 vis_P09pN ">
 
       
       <!-- BACKGROUND: Top switch base (black/white one on top-right) -->
@@ -254,736 +245,1070 @@
 </button>
 </div>
 </div>
-<div  id="Flex_y5GyN-gk" data-vp="" class="lay_OWszu3 pos_k8lNC4 mapa_CrkEb2 vis_SWFkJ2 ">
-<ul  id="List_Vr7aI1-gk" data-vp="" class="lay_QJy9D4 pos_e8wtf3 mapa_bnttp vis_lcyu72 ">
-<li  id="menu-/ui/accordion" data-vp="" style="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_JqmSO3 intr_rBik44 "">
-<a  id="Link_hfzZM4-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_SLMTS4 "aria-label="navigate to /ui/accordion" href="/ui/accordion">
-<p  id="Text_kvyXY3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_AKoP24 ">Accordion</p>
+<div  id="Flex_OIm3f-gk" data-vp="" class="lay_OWszu3 pos_k8lNC4 mapa_CrkEb2 vis_PMQ7Z1 ">
+<ul  id="List_fwF9Q3-gk" data-vp="" class="lay_QJy9D4 pos_e8wtf3 mapa_bnttp vis_5FReC2 ">
+<li  id="menu-/ui/accordion" data-vp="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_GacEd3 intr_96IpU1 ">
+<a  id="Link_R77AK3-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_f9vTm2 "aria-label="navigate to /ui/accordion" href="/ui/accordion">
+<p  id="Text_7DXf03-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_f16lO3 ">Accordion</p>
 </a>
 </li>
-<li  id="menu-/ui/alert" data-vp="" style="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_JqmSO3 intr_rBik44 "">
-<a  id="Link_a3Of11-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_SLMTS4 "aria-label="navigate to /ui/alert" href="/ui/alert">
-<p  id="Text_yS7cg3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_AKoP24 ">Alert</p>
+<li  id="menu-/ui/alert" data-vp="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_GacEd3 intr_96IpU1 ">
+<a  id="Link_78cKB-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_f9vTm2 "aria-label="navigate to /ui/alert" href="/ui/alert">
+<p  id="Text_T2CCB-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_f16lO3 ">Alert</p>
 </a>
 </li>
-<li  id="menu-/ui/button" data-vp="" style="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_JqmSO3 intr_rBik44 "">
-<a  id="Link_roeDH2-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_SLMTS4 "aria-label="navigate to /ui/button" href="/ui/button">
-<p  id="Text_tke5O2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_AKoP24 ">Button</p>
+<li  id="menu-/ui/button" data-vp="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_GacEd3 intr_96IpU1 ">
+<a  id="Link_3HmBq2-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_f9vTm2 "aria-label="navigate to /ui/button" href="/ui/button">
+<p  id="Text_82SMy3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_f16lO3 ">Button</p>
 </a>
 </li>
-<li  id="menu-/ui/carousel" data-vp="" style="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_JqmSO3 intr_rBik44 "">
-<a  id="Link_O2u1r3-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_SLMTS4 "aria-label="navigate to /ui/carousel" href="/ui/carousel">
-<p  id="Text_cfBBQ4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_AKoP24 ">Carousel</p>
+<li  id="menu-/ui/carousel" data-vp="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_GacEd3 intr_96IpU1 ">
+<a  id="Link_fXWOE3-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_f9vTm2 "aria-label="navigate to /ui/carousel" href="/ui/carousel">
+<p  id="Text_P0h224-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_f16lO3 ">Carousel</p>
 </a>
 </li>
-<li  id="menu-/ui/chart" data-vp="" style="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_JqmSO3 intr_rBik44 "">
-<a  id="Link_jby8Y4-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_SLMTS4 "aria-label="navigate to /ui/chart" href="/ui/chart">
-<p  id="Text_nL9yP1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_AKoP24 ">Chart</p>
+<li  id="menu-/ui/chart" data-vp="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_GacEd3 intr_96IpU1 ">
+<a  id="Link_LGqdr1-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_f9vTm2 "aria-label="navigate to /ui/chart" href="/ui/chart">
+<p  id="Text_Kg9H41-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_f16lO3 ">Chart</p>
 </a>
 </li>
-<li  id="menu-/ui/combobox" data-vp="" style="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_JqmSO3 intr_rBik44 "">
-<a  id="Link_cnLfp1-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_SLMTS4 "aria-label="navigate to /ui/combobox" href="/ui/combobox">
-<p  id="Text_DbHPd1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_AKoP24 ">Combobox</p>
+<li  id="menu-/ui/combobox" data-vp="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_GacEd3 intr_96IpU1 ">
+<a  id="Link_DMO6d3-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_f9vTm2 "aria-label="navigate to /ui/combobox" href="/ui/combobox">
+<p  id="Text_79oPH4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_f16lO3 ">Combobox</p>
 </a>
 </li>
-<li  id="menu-/ui/commandpalette" data-vp="" style="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_JqmSO3 intr_rBik44 "">
-<a  id="Link_4kvZI-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_SLMTS4 "aria-label="navigate to /ui/commandpalette" href="/ui/commandpalette">
-<p  id="Text_d7oAc2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_AKoP24 ">CommandPalette</p>
+<li  id="menu-/ui/commandpalette" data-vp="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_GacEd3 intr_96IpU1 ">
+<a  id="Link_GrhKS4-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_f9vTm2 "aria-label="navigate to /ui/commandpalette" href="/ui/commandpalette">
+<p  id="Text_omJAE3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_f16lO3 ">CommandPalette</p>
 </a>
 </li>
-<li  id="menu-/ui/datepicker" data-vp="" style="background:
-linear-gradient(rgba(var(--background)), rgba(var(--background))) padding-box,
-linear-gradient(to top right, rgba(var(--tint)), rgba(var(--background)) 20%, rgba(var(--background)) 80%, rgba(var(--tint))) border-box;" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_JqmSO3 intr_HI6ex1 "">
-<a  id="Link_vlYoS4-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_SLMTS4 "aria-label="navigate to /ui/datepicker" href="/ui/datepicker">
-<p  id="Text_V6jE01-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_XfJUm ">DatePicker</p>
+<li  id="menu-/ui/datepicker" data-vp="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_wZ3p intr_Ad3Sa ">
+<a  id="Link_tpKYR-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_f9vTm2 "aria-label="navigate to /ui/datepicker" href="/ui/datepicker">
+<p  id="Text_LHVHR4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_Lprg33 ">DatePicker</p>
 </a>
 </li>
-<li  id="menu-/ui/dialog" data-vp="" style="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_JqmSO3 intr_rBik44 "">
-<a  id="Link_2dTid-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_SLMTS4 "aria-label="navigate to /ui/dialog" href="/ui/dialog">
-<p  id="Text_gT21x2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_AKoP24 ">Dialog</p>
+<li  id="menu-/ui/dialog" data-vp="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_GacEd3 intr_96IpU1 ">
+<a  id="Link_yyN1H3-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_f9vTm2 "aria-label="navigate to /ui/dialog" href="/ui/dialog">
+<p  id="Text_PGEDL2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_f16lO3 ">Dialog</p>
 </a>
 </li>
-<li  id="menu-/ui/drawer" data-vp="" style="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_JqmSO3 intr_rBik44 "">
-<a  id="Link_zDwF51-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_SLMTS4 "aria-label="navigate to /ui/drawer" href="/ui/drawer">
-<p  id="Text_kk6eZ1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_AKoP24 ">Drawer</p>
+<li  id="menu-/ui/drawer" data-vp="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_GacEd3 intr_96IpU1 ">
+<a  id="Link_8SWAM3-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_f9vTm2 "aria-label="navigate to /ui/drawer" href="/ui/drawer">
+<p  id="Text_yUlKY3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_f16lO3 ">Drawer</p>
 </a>
 </li>
-<li  id="menu-/ui/marquee" data-vp="" style="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_JqmSO3 intr_rBik44 "">
-<a  id="Link_RroVy2-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_SLMTS4 "aria-label="navigate to /ui/marquee" href="/ui/marquee">
-<p  id="Text_cf5dm-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_AKoP24 ">Marquee</p>
+<li  id="menu-/ui/marquee" data-vp="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_GacEd3 intr_96IpU1 ">
+<a  id="Link_snqOK3-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_f9vTm2 "aria-label="navigate to /ui/marquee" href="/ui/marquee">
+<p  id="Text_URQC63-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_f16lO3 ">Marquee</p>
 </a>
 </li>
-<li  id="menu-/ui/select" data-vp="" style="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_JqmSO3 intr_rBik44 "">
-<a  id="Link_X3Pqp-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_SLMTS4 "aria-label="navigate to /ui/select" href="/ui/select">
-<p  id="Text_6D40D4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_AKoP24 ">Select</p>
+<li  id="menu-/ui/select" data-vp="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_GacEd3 intr_96IpU1 ">
+<a  id="Link_sQdOl2-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_f9vTm2 "aria-label="navigate to /ui/select" href="/ui/select">
+<p  id="Text_zsEk2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_f16lO3 ">Select</p>
 </a>
 </li>
-<li  id="menu-/ui/sidebar" data-vp="" style="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_JqmSO3 intr_rBik44 "">
-<a  id="Link_kNCrO-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_SLMTS4 "aria-label="navigate to /ui/sidebar" href="/ui/sidebar">
-<p  id="Text_DJbDg3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_AKoP24 ">Sidebar</p>
+<li  id="menu-/ui/sidebar" data-vp="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_GacEd3 intr_96IpU1 ">
+<a  id="Link_EcaNN-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_f9vTm2 "aria-label="navigate to /ui/sidebar" href="/ui/sidebar">
+<p  id="Text_bv9qD3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_f16lO3 ">Sidebar</p>
 </a>
 </li>
-<li  id="menu-/ui/slider" data-vp="" style="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_JqmSO3 intr_rBik44 "">
-<a  id="Link_yeFpX-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_SLMTS4 "aria-label="navigate to /ui/slider" href="/ui/slider">
-<p  id="Text_KleC71-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_AKoP24 ">Slider</p>
+<li  id="menu-/ui/slider" data-vp="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_GacEd3 intr_96IpU1 ">
+<a  id="Link_Mnzqq-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_f9vTm2 "aria-label="navigate to /ui/slider" href="/ui/slider">
+<p  id="Text_oA1sr1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_f16lO3 ">Slider</p>
 </a>
 </li>
-<li  id="menu-/ui/switch" data-vp="" style="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_JqmSO3 intr_rBik44 "">
-<a  id="Link_omVKk-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_SLMTS4 "aria-label="navigate to /ui/switch" href="/ui/switch">
-<p  id="Text_xaDAJ3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_AKoP24 ">Switch</p>
+<li  id="menu-/ui/switch" data-vp="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_GacEd3 intr_96IpU1 ">
+<a  id="Link_Ui6G1-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_f9vTm2 "aria-label="navigate to /ui/switch" href="/ui/switch">
+<p  id="Text_JwZb34-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_f16lO3 ">Switch</p>
 </a>
 </li>
-<li  id="menu-/ui/table" data-vp="" style="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_JqmSO3 intr_rBik44 "">
-<a  id="Link_kHUTY-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_SLMTS4 "aria-label="navigate to /ui/table" href="/ui/table">
-<p  id="Text_xfZW6-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_AKoP24 ">Table</p>
+<li  id="menu-/ui/table" data-vp="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_GacEd3 intr_96IpU1 ">
+<a  id="Link_eOR302-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_f9vTm2 "aria-label="navigate to /ui/table" href="/ui/table">
+<p  id="Text_q7A4s3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_f16lO3 ">Table</p>
 </a>
 </li>
-<li  id="menu-/ui/tabs" data-vp="" style="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_JqmSO3 intr_rBik44 "">
-<a  id="Link_asN2l1-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_SLMTS4 "aria-label="navigate to /ui/tabs" href="/ui/tabs">
-<p  id="Text_mJpB1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_AKoP24 ">Tabs</p>
+<li  id="menu-/ui/tabs" data-vp="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_GacEd3 intr_96IpU1 ">
+<a  id="Link_vrCEJ3-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_f9vTm2 "aria-label="navigate to /ui/tabs" href="/ui/tabs">
+<p  id="Text_mkn7a-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_f16lO3 ">Tabs</p>
 </a>
 </li>
-<li  id="menu-/ui/textfield" data-vp="" style="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_JqmSO3 intr_rBik44 "">
-<a  id="Link_t10Mx3-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_SLMTS4 "aria-label="navigate to /ui/textfield" href="/ui/textfield">
-<p  id="Text_R3fkW4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_AKoP24 ">TextField</p>
+<li  id="menu-/ui/textfield" data-vp="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_GacEd3 intr_96IpU1 ">
+<a  id="Link_0Tufz1-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_f9vTm2 "aria-label="navigate to /ui/textfield" href="/ui/textfield">
+<p  id="Text_K3ue41-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_f16lO3 ">TextField</p>
 </a>
 </li>
-<li  id="menu-/ui/toasts" data-vp="" style="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_JqmSO3 intr_rBik44 "">
-<a  id="Link_uAhWP1-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_SLMTS4 "aria-label="navigate to /ui/toasts" href="/ui/toasts">
-<p  id="Text_sdS772-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_AKoP24 ">Toasts</p>
+<li  id="menu-/ui/toasts" data-vp="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_GacEd3 intr_96IpU1 ">
+<a  id="Link_eosyf3-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_f9vTm2 "aria-label="navigate to /ui/toasts" href="/ui/toasts">
+<p  id="Text_S3zwi-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_f16lO3 ">Toasts</p>
 </a>
 </li>
-<li  id="menu-/ui/tooltip" data-vp="" style="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_JqmSO3 intr_rBik44 "">
-<a  id="Link_K9K1I-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_SLMTS4 "aria-label="navigate to /ui/tooltip" href="/ui/tooltip">
-<p  id="Text_PiGsk2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_AKoP24 ">Tooltip</p>
+<li  id="menu-/ui/tooltip" data-vp="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_GacEd3 intr_96IpU1 ">
+<a  id="Link_kqppC4-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_f9vTm2 "aria-label="navigate to /ui/tooltip" href="/ui/tooltip">
+<p  id="Text_uI86C4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_f16lO3 ">Tooltip</p>
 </a>
 </li>
-<li  id="menu-/ui/progress" data-vp="" style="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_JqmSO3 intr_rBik44 "">
-<a  id="Link_tS9CX2-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_SLMTS4 "aria-label="navigate to /ui/progress" href="/ui/progress">
-<p  id="Text_877TH3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_AKoP24 ">Progress Bar/Circle</p>
+<li  id="menu-/ui/progress" data-vp="" class="lay_WAJEb3 pos_e8wtf3 mapa_CrkEb2 vis_GacEd3 intr_96IpU1 ">
+<a  id="Link_vyFEf2-gk" data-vp="" class="lay_DNi8R1 pos_e8wtf3 mapa_3Qb5v vis_f9vTm2 "aria-label="navigate to /ui/progress" href="/ui/progress">
+<p  id="Text_CpVfr3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_f16lO3 ">Progress Bar/Circle</p>
 </a>
 </li>
 </ul>
 </div>
+<div  id="Spac_nn54n3-gk" data-vp="" class="lay_nvune3 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
 </div>
-<div  id="Spac_4ziud2-gk" data-vp="" class="lay_nvune3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
+<div  id="Flex_S7ezG2-gk" data-vp="" class="lay_XC0ie pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<div  id="Flex_nulPw1-gk" data-vp="" class="lay_cZ1KB4 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_HdMHd-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_Ep3y94 ">datepicker-ui ⇒</p>
+<p  id="Text_FtSq24-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_X2tg31 ">datepicker-ui</p>
+<p  id="Text_HfcTN3-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_o0WnN ">Accessible calendar components for precise date and time selection.</p>
 </div>
-<div  id="Flex_UC3x-gk" data-vp="" class="lay_XC0ie pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<div  id="Flex_OSB0Y2-gk" data-vp="" class="lay_cZ1KB4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<p  id="Text_z52gH1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_D7Dng2 ">datepicker-ui ⇒</p>
-<p  id="Text_NBMun3-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_RxzRY1 ">datepicker-ui</p>
-<p  id="Text_thw9G1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_CrkEb2 vis_JN8eg3 ">Accessible calendar components for precise date and time selection.</p>
-</div>
-<div  id="Flex_eBxS11-gk" data-vp="" class="lay_P69lP3 pos_e8wtf3 mapa_jHAIQ vis_SWFkJ2 ">
-<div  id="Flex_p7esk-gk" data-vp="" class="lay_j1WNg1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<p  id="Text_vORQA3-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_j0VVX2 vis_dxEbU ">Basic DatePicker</p>
-<p  id="Text_RfmZV-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_p5bbH2 vis_j9g222 ">Default calendar view with no external dependencies or callbacks.</p>
-<div  id="Flex_tFFy51-gk" data-vp="" class="lay_q6jDz2 pos_e8wtf3 mapa_3RP2h2 vis_FS3sz ">
-<div  id="Flex_H9lcx3-gk" data-vp="" class="lay_3owrm pos_e8wtf3 mapa_x8DNe2 vis_fy1vI2 ">
-<div  id="Flex_XAjPf4-gk" data-vp="" class="lay_D9PVT pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<button  id="CtxB_qUcxM1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_MSDG64 "aria-label="Previous Month">
-<i  id="Icon_PJlz13-gk" data-vp="" class="bi bi-chevron-left lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_rEEme4 ">
+<div  id="Flex_4B6Ak-gk" data-vp="" class="lay_P69lP3 pos_e8wtf3 mapa_jHAIQ vis_PMQ7Z1 ">
+<div  id="Flex_fQllh-gk" data-vp="" class="lay_j1WNg1 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_FoJ5P2-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_j0VVX2 vis_T9885 ">Basic DatePicker</p>
+<p  id="Text_nfUPB-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_p5bbH2 vis_RpDVK4 ">Default calendar view with no external dependencies or callbacks.</p>
+<div  id="Flex_Grq293-gk" data-vp="" class="lay_q6jDz2 pos_e8wtf3 mapa_3RP2h2 vis_pe16U2 ">
+<div  id="Flex_sfwyi3-gk" data-vp="" class="lay_3owrm pos_e8wtf3 mapa_x8DNe2 vis_acJov2 ">
+<div  id="Flex_kxlhw-gk" data-vp="" class="lay_D9PVT pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<button  id="CtxB_W2UNE3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_XVDLv2 "aria-label="Previous Month">
+<i  id="Icon_UCaxO-gk" data-vp="" class="bi bi-chevron-left lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_B5Xbx2 ">
 </i>
 </button>
-<p  id="Text_kUZk03-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">April 2026</p>
+<p  id="Text_l2LEO1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">October 2026</p>
 
-<button  id="CtxB_2PBwu1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_MSDG64 "aria-label="Next Month">
-<i  id="Icon_jX2H12-gk" data-vp="" class="bi bi-chevron-right lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_v0u3o2 ">
+<button  id="CtxB_Gj5sB-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_XVDLv2 "aria-label="Next Month">
+<i  id="Icon_pW0Ce-gk" data-vp="" class="bi bi-chevron-right lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_vH8IV3 ">
 </i>
 </button>
 </div>
-<div  id="Flex_YkRsI3-gk" data-vp="" class="lay_nX7gU1 pos_e8wtf3 mapa_jdMNN4 vis_SWFkJ2 ">
-<div  id="Flex_2n2Lk-gk" data-vp="" class="lay_1wHVY1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<div  id="Flex_jPq2C3-gk" data-vp="" class="lay_NLYYg pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<div  id="Flex_TOzdT4-gk" data-vp="" class="lay_i0bZ63 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
-<div  id="Flex_qfhWN4-gk" data-vp="" class="lay_tupWc4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<button  id="CtxB_6D1nB1-gk" data-vp="" class="lay_ipwPq1 pos_e8wtf3 mapa_RM5YV3 vis_2OaxJ4 intr_NfIPq2 "aria-label="Select Dropdown">
-<div  id="Flex_FQ5dC4-gk" data-vp="" class="lay_LfISh3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<p  id="Text_mgJ1N2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_RM5YV3 vis_d2KdQ1 ">April</p>
-<i  id="Icon_W5HBK4-gk" data-vp="" class="bi bi-chevron-down lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_I8cxd4 ">
-</i>
-</div>
-</button>
-</div>
-<div  id="Flex_AlsIT4-gk" data-vp="" class="lay_AEgkh1 pos_4MMng3 mapa_CrkEb2 vis_SWFkJ2 tran_akFuA3 ">
-
-
-</div>
-
-
-</div>
-</div>
-<div  id="Flex_tQppc3-gk" data-vp="" class="lay_8i5ad4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<div  id="Flex_PW9f12-gk" data-vp="" class="lay_i0bZ63 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
-<div  id="Flex_l31kA1-gk" data-vp="" class="lay_tupWc4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<button  id="CtxB_smTro3-gk" data-vp="" class="lay_ipwPq1 pos_e8wtf3 mapa_RM5YV3 vis_2OaxJ4 intr_NfIPq2 "aria-label="Select Dropdown">
-<div  id="Flex_SmuqU2-gk" data-vp="" class="lay_LfISh3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<p  id="Text_G0umW4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_RM5YV3 vis_d2KdQ1 ">2026</p>
-<i  id="Icon_zBM0H1-gk" data-vp="" class="bi bi-chevron-down lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_I8cxd4 ">
+<div  id="Flex_dffQv-gk" data-vp="" class="lay_nX7gU1 pos_e8wtf3 mapa_jdMNN4 vis_PMQ7Z1 ">
+<div  id="Flex_CPE5E2-gk" data-vp="" class="lay_1wHVY1 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<div  id="Flex_49Jsi-gk" data-vp="" class="lay_NLYYg pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<div  id="Flex_VSSRa1-gk" data-vp="" class="lay_i0bZ63 pos_t0s233 mapa_CrkEb2 vis_PMQ7Z1 ">
+<div  id="Flex_1Q90R2-gk" data-vp="" class="lay_tupWc4 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<button  id="CtxB_WjA982-gk" data-vp="" class="lay_ipwPq1 pos_e8wtf3 mapa_RM5YV3 vis_nGwiv2 intr_KRI5U4 ">
+<div  id="Flex_JBNc12-gk" data-vp="" class="lay_LfISh3 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_4JnX52-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_RM5YV3 vis_nX1y53 ">October</p>
+<i  id="Icon_MYO13-gk" data-vp="" class="bi bi-chevron-down lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_mNNga2 ">
 </i>
 </div>
 </button>
 </div>
-<div  id="Flex_C07QI2-gk" data-vp="" class="lay_AEgkh1 pos_4MMng3 mapa_CrkEb2 vis_SWFkJ2 tran_akFuA3 ">
-
-
-</div>
-
-
+<div  id="Flex_ulVGu2-gk" data-vp="" class="lay_AEgkh1 pos_4MMng3 mapa_CrkEb2 vis_PMQ7Z1 tran_akFuA3 ">
 </div>
 </div>
 </div>
-<div  id="Flex_pgBkB1-gk" data-vp="" class="lay_421ks2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<div  id="Flex_3OcLk1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<p  id="Text_lvKpv-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_e2pne2 ">Mo</p>
-</div>
-<div  id="Flex_OaaOb2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<p  id="Text_Qssp2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_e2pne2 ">Tu</p>
-</div>
-<div  id="Flex_kjbRG-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<p  id="Text_0jZDP4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_e2pne2 ">We</p>
-</div>
-<div  id="Flex_XIqmT1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<p  id="Text_YBzxl1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_e2pne2 ">Th</p>
-</div>
-<div  id="Flex_govOK1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<p  id="Text_cS3pY3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_e2pne2 ">Fr</p>
-</div>
-<div  id="Flex_TLwZX-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<p  id="Text_EzIWY4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_e2pne2 ">Sa</p>
-</div>
-<div  id="Flex_TpNqI-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<p  id="Text_kDf4x-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_e2pne2 ">Su</p>
-</div>
-</div>
-<div  id="Flex_04v4V3-gk" data-vp="" class="lay_LwpBc pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<button  id="CtxB_03YwY-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_lCtgb4-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 ">30</p>
-
-</button>
-<button  id="CtxB_G27OC1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_tsGpS-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 ">31</p>
-
-</button>
-<button  id="CtxB_c2Y5x3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_vz0fM4-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl "> 1</p>
-
-</button>
-<button  id="CtxB_XPmNb1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_wIyNL1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl "> 2</p>
-
-</button>
-<button  id="CtxB_7suh41-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_VHZC93-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl "> 3</p>
-
-</button>
-<button  id="CtxB_jwOQP3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_Vw9tF3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl "> 4</p>
-
-</button>
-<button  id="CtxB_fG0y61-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_yhnoD-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl "> 5</p>
-
-</button>
-<button  id="CtxB_DxjdF4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_Rbqt8-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl "> 6</p>
-
-</button>
-<button  id="CtxB_buXqg2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_Mhywc-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl "> 7</p>
-
-</button>
-<button  id="CtxB_auEfV2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_jmRCd-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl "> 8</p>
-
-</button>
-<button  id="CtxB_VtVPZ4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_R3lu44-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl "> 9</p>
-
-</button>
-<button  id="CtxB_S7FxZ2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_KaVyL3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">10</p>
-
-</button>
-<button  id="CtxB_OyqwM-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_Vjl3D1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">11</p>
-
-</button>
-<button  id="CtxB_Aeq683-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_x4jsl2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">12</p>
-
-</button>
-<button  id="CtxB_7wddb1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_G4I8Y1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">13</p>
-
-</button>
-<button  id="CtxB_MpJ2O1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_TDUJr-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">14</p>
-
-</button>
-<button  id="CtxB_iKMXk-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_g36Dd2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">15</p>
-
-</button>
-<button  id="CtxB_lfAVU3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_D5uVc-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">16</p>
-
-</button>
-<button  id="CtxB_LTnI02-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_7sDHA-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">17</p>
-
-</button>
-<button  id="CtxB_5HUqC2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_mQyGJ2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">18</p>
-
-</button>
-<button  id="CtxB_JozEl3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_vlkY3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">19</p>
-
-</button>
-<button  id="CtxB_NpFAJ2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_B72Mb1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">20</p>
-
-</button>
-<button  id="CtxB_y6VbI2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_qCgFd3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">21</p>
-
-</button>
-<button  id="CtxB_oZKDT1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_221Sn1 intr_rPyZc1 "aria-label="Select Date">
-<p  id="Text_2Osou3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">22</p>
-
-</button>
-<button  id="CtxB_MyyD-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_B5jj6-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">23</p>
-
-</button>
-<button  id="CtxB_kELwh3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_oSQJv3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">24</p>
-
-</button>
-<button  id="CtxB_Qx5Dp3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_OG9a32-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">25</p>
-
-</button>
-<button  id="CtxB_WU1kV2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_xXzSW2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">26</p>
-
-</button>
-<button  id="CtxB_1oUlW2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_KKGvC3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">27</p>
-
-</button>
-<button  id="CtxB_zjHGZ-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_LPw3l2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">28</p>
-
-</button>
-<button  id="CtxB_BcVOA2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_tx5o51-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">29</p>
-
-</button>
-<button  id="CtxB_gvZFB-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_RmAcn-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">30</p>
-
-</button>
-<button  id="CtxB_RAdSz2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_tG8wk3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 "> 1</p>
-
-</button>
-<button  id="CtxB_87zdV-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_G7yEb-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 "> 2</p>
-
-</button>
-<button  id="CtxB_5Mp5Z4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_T9btu-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 "> 3</p>
-
-</button>
-<button  id="CtxB_wV90c-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_188n72-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 "> 4</p>
-
-</button>
-<button  id="CtxB_kzl0F1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_4qm173-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 "> 5</p>
-
-</button>
-<button  id="CtxB_vesQ81-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_t8sZ7-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 "> 6</p>
-
-</button>
-<button  id="CtxB_JgWsq2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_3r8PS1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 "> 7</p>
-
-</button>
-<button  id="CtxB_YeoKC2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_3oSf23-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 "> 8</p>
-
-</button>
-<button  id="CtxB_05KWU3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_IDLN72-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 "> 9</p>
-
-</button>
-<button  id="CtxB_SQMCa4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_XIJIy2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 ">10</p>
-
-</button>
-</div>
-</div>
-</div>
-</div>
-<div  id="Flex_uIZ4y2-gk" data-vp="" class="lay_DLEtj3 pos_e8wtf3 mapa_rPfvm1 vis_8DQU01 ">
-<div  id="Flex_Y3YEe1-gk" data-vp="" class="lay_DLEtj3 pos_e8wtf3 mapa_cLPMR vis_HP0lq2 ">
-<div  id="Flex_8uvhA2-gk" data-vp="" class="lay_DgBhg2 pos_e8wtf3 mapa_jigL04 vis_SWFkJ2 ">
-<div  id="Flex_VkBv61-gk" data-vp="" class="lay_yIkX62 pos_e8wtf3 mapa_rPfvm1 vis_dLRup3 ">
-<p  id="Text_pF6om1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_4XeJX2 ">Basic DatePicker</p>
-</div>
-</div>
-<div  id="Flex_W1zNb2-gk" data-vp="" class="lay_q8rEj1 pos_e8wtf3 mapa_CrkEb2 vis_yqiWn1 ">
-<div  id="Flex_GlaIT2-gk" data-vp="" class="lay_CenWL3 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
-<div  id="Flex_YOjm71-gk" data-vp="" class="lay_PVCm32 pos_e8wtf3 mapa_Fls5t vis_SWFkJ2 ">
-<div  id="Flex_43uhU1-gk" data-vp="" class="lay_X4urq pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
-<div  id="Flex_Izbff4-gk" data-vp="" style="transform: translate3d(0px, 0px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_PZYxz1 ">
-<p  id="Text_7akM74-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_0Vauq1 ">1</p>
-<div  id="Flex_f5gsl-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_9PJMM2 ">
-<p  id="Text_dx3s63-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_UzKGL ">const</p>
-<p  id="Text_fVlKN-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r6t7A3 "> Vapor = @import(</p>
-<p  id="Text_YQ5DC-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_YfxKa4 ">"vapor"</p>
-<p  id="Text_taWEf1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r6t7A3 ">);</p>
-</div>
-</div>
-<div  id="Flex_k1N7a4-gk" data-vp="" style="transform: translate3d(0px, 22.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_PZYxz1 ">
-<p  id="Text_SZRWD3-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_0Vauq1 ">2</p>
-<div  id="Flex_GXZn5-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_9PJMM2 ">
-<p  id="Text_tLKK81-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_UzKGL ">const</p>
-<p  id="Text_6DDMh1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r6t7A3 "> DateTime = Vapor.DateTime;</p>
-</div>
-</div>
-<div  id="Flex_XRKiE2-gk" data-vp="" style="transform: translate3d(0px, 45px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_PZYxz1 ">
-<p  id="Text_MzpvF2-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_0Vauq1 ">3</p>
-<div  id="Flex_IdOqZ1-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_9PJMM2 ">
-<p  id="Text_mVG2N3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_UzKGL ">const</p>
-<p  id="Text_cpfl8-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r6t7A3 "> DatePicker = @import(</p>
-<p  id="Text_AI7O5-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_YfxKa4 ">"opaque-ui"</p>
-<p  id="Text_gkfLB2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r6t7A3 ">).DatePicker;</p>
-</div>
-</div>
-<div  id="Flex_uVVut1-gk" data-vp="" style="transform: translate3d(0px, 67.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_PZYxz1 ">
-<p  id="Text_DFxEl1-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_0Vauq1 ">4</p>
-<div  id="Flex_yo7Zt3-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_9PJMM2 ">
-</div>
-</div>
-<div  id="Flex_F2kXp3-gk" data-vp="" style="transform: translate3d(0px, 90px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_PZYxz1 ">
-<p  id="Text_Or4j41-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_0Vauq1 ">5</p>
-<div  id="Flex_yCb8-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_9PJMM2 ">
-<p  id="Text_SkRql3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_UzKGL ">var</p>
-<p  id="Text_RI1ht-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r6t7A3 "> basic_picker: DatePicker = undefined;</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div  id="Flex_EEvxF2-gk" data-vp="" class="lay_j1WNg1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<p  id="Text_oxO0G1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_j0VVX2 vis_dxEbU ">Event-Driven Selection</p>
-<p  id="Text_0tTvi-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_p5bbH2 vis_j9g222 ">Hook into specific lifecycle events like year changes or month navigation.</p>
-<div  id="Flex_VYe7C-gk" data-vp="" class="lay_q6jDz2 pos_e8wtf3 mapa_3RP2h2 vis_FS3sz ">
-<div  id="Flex_lcuPU-gk" data-vp="" class="lay_3owrm pos_e8wtf3 mapa_x8DNe2 vis_fy1vI2 ">
-<div  id="Flex_jRQih-gk" data-vp="" class="lay_D9PVT pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<button  id="CtxB_8Zo771-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_MSDG64 "aria-label="Previous Month">
-<i  id="Icon_s2RjI1-gk" data-vp="" class="bi bi-chevron-left lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_rEEme4 ">
-</i>
-</button>
-<p  id="Text_BUydG2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">August 1991</p>
-
-<button  id="CtxB_pU3mZ1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_MSDG64 "aria-label="Next Month">
-<i  id="Icon_4Y8xx2-gk" data-vp="" class="bi bi-chevron-right lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_v0u3o2 ">
-</i>
-</button>
-</div>
-<div  id="Flex_0XF6t-gk" data-vp="" class="lay_nX7gU1 pos_e8wtf3 mapa_jdMNN4 vis_SWFkJ2 ">
-<div  id="Flex_VwtyD-gk" data-vp="" class="lay_1wHVY1 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<div  id="Flex_eNDEo1-gk" data-vp="" class="lay_NLYYg pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<div  id="Flex_tXZ4T3-gk" data-vp="" class="lay_i0bZ63 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
-<div  id="Flex_OsyUA-gk" data-vp="" class="lay_tupWc4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<button  id="CtxB_hzwP8-gk" data-vp="" class="lay_ipwPq1 pos_e8wtf3 mapa_RM5YV3 vis_2OaxJ4 intr_NfIPq2 "aria-label="Select Dropdown">
-<div  id="Flex_eUFWc-gk" data-vp="" class="lay_LfISh3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<p  id="Text_o8Xae2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_RM5YV3 vis_d2KdQ1 ">August</p>
-<i  id="Icon_FmPUZ2-gk" data-vp="" class="bi bi-chevron-down lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_I8cxd4 ">
+<div  id="Flex_EpFfH1-gk" data-vp="" class="lay_8i5ad4 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<div  id="Flex_KW2eJ4-gk" data-vp="" class="lay_i0bZ63 pos_t0s233 mapa_CrkEb2 vis_PMQ7Z1 ">
+<div  id="Flex_KsfO72-gk" data-vp="" class="lay_tupWc4 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<button  id="CtxB_lc0Q04-gk" data-vp="" class="lay_ipwPq1 pos_e8wtf3 mapa_RM5YV3 vis_F1TUb intr_KRI5U4 ">
+<div  id="Flex_4yDNV-gk" data-vp="" class="lay_LfISh3 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_oTELm3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_RM5YV3 vis_nX1y53 ">2026</p>
+<i  id="Icon_Qva4P1-gk" data-vp="" class="bi bi-chevron-down lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_mNNga2 ">
 </i>
 </div>
 </button>
 </div>
-<div  id="Flex_jCF8q2-gk" data-vp="" class="lay_AEgkh1 pos_4MMng3 mapa_CrkEb2 vis_SWFkJ2 tran_akFuA3 ">
-
-
-</div>
-
-
+<div  id="Flex_IVhBn2-gk" data-vp="" class="lay_AEgkh1 pos_4MMng3 mapa_CrkEb2 vis_PMQ7Z1 tran_akFuA3 ">
 </div>
 </div>
-<div  id="Flex_T1erb3-gk" data-vp="" class="lay_8i5ad4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<div  id="Flex_SfjYU4-gk" data-vp="" class="lay_i0bZ63 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
-<div  id="Flex_msTaH1-gk" data-vp="" class="lay_tupWc4 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<button  id="CtxB_4wFBY-gk" data-vp="" class="lay_ipwPq1 pos_e8wtf3 mapa_RM5YV3 vis_2OaxJ4 intr_NfIPq2 "aria-label="Select Dropdown">
-<div  id="Flex_fShDU-gk" data-vp="" class="lay_LfISh3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<p  id="Text_mMHUT3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_RM5YV3 vis_d2KdQ1 ">1991</p>
-<i  id="Icon_xbLRt-gk" data-vp="" class="bi bi-chevron-down lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_I8cxd4 ">
+</div>
+</div>
+<div  id="Flex_rzcL04-gk" data-vp="" class="lay_421ks2 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<div  id="Flex_Vpuov-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_AD9Xc2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_TqhFI2 ">Mo</p>
+</div>
+<div  id="Flex_yfnwI1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_qcp5d4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_TqhFI2 ">Tu</p>
+</div>
+<div  id="Flex_ZM3xf4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_4aDN14-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_TqhFI2 ">We</p>
+</div>
+<div  id="Flex_iuUdf2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_2lvWl3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_TqhFI2 ">Th</p>
+</div>
+<div  id="Flex_3MWZh1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_SCroU4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_TqhFI2 ">Fr</p>
+</div>
+<div  id="Flex_kG5ze3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_YGy7b4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_TqhFI2 ">Sa</p>
+</div>
+<div  id="Flex_Y0cy9-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_M80Nc2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_TqhFI2 ">Su</p>
+</div>
+</div>
+<div  id="Flex_0jjkg3-gk" data-vp="" class="lay_LwpBc pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<button  id="CtxB_8pmB5-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_VbWce3 intr_pYXAl3 "aria-label="September 28, 2026">
+<p  id="Text_h3nXn2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo ">28</p>
+
+</button>
+<button  id="CtxB_aK40h1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_QpB5B2 intr_pYXAl3 "aria-label="September 29, 2026">
+<p  id="Text_1L30m-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo ">29</p>
+
+</button>
+<button  id="CtxB_Wcss01-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_ZJH211 intr_pYXAl3 "aria-label="September 30, 2026">
+<p  id="Text_UJR3T2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo ">30</p>
+
+</button>
+<button  id="CtxB_lXodO2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_6gbMh3 intr_pYXAl3 "aria-label="October 1, 2026">
+<p  id="Text_RZ2qz1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL "> 1</p>
+
+</button>
+<button  id="CtxB_bDYqM3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_RwtY71 intr_pYXAl3 "aria-label="October 2, 2026">
+<p  id="Text_tYAjO2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL "> 2</p>
+
+</button>
+<button  id="CtxB_5qpUz3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_cseEV1 intr_pYXAl3 "aria-label="October 3, 2026">
+<p  id="Text_50L1r2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL "> 3</p>
+
+</button>
+<button  id="CtxB_WVLI71-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_gSqov3 intr_pYXAl3 "aria-label="October 4, 2026">
+<p  id="Text_9Akve2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL "> 4</p>
+
+</button>
+<button  id="CtxB_s3t6M3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_n0h371 intr_pYXAl3 "aria-label="October 5, 2026">
+<p  id="Text_GbKgN-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL "> 5</p>
+
+</button>
+<button  id="CtxB_b5jPw3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_qhUy51 intr_pYXAl3 "aria-label="October 6, 2026">
+<p  id="Text_8rBBI2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL "> 6</p>
+
+</button>
+<button  id="CtxB_5sCrF-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_nkOWs2 intr_pYXAl3 "aria-label="October 7, 2026">
+<p  id="Text_wcmga4-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL "> 7</p>
+
+</button>
+<button  id="CtxB_Sw2LE2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_IKfFd intr_pYXAl3 "aria-label="October 8, 2026">
+<p  id="Text_4OPlf3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL "> 8</p>
+
+</button>
+<button  id="CtxB_cT8vF1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_YEgd1 intr_pYXAl3 "aria-label="October 9, 2026">
+<p  id="Text_Ug3mT-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL "> 9</p>
+
+</button>
+<button  id="CtxB_5sVo91-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_tC7Wf2 intr_pYXAl3 "aria-label="October 10, 2026">
+<p  id="Text_JonF84-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">10</p>
+
+</button>
+<button  id="CtxB_5mMI01-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_4esB22 intr_pYXAl3 "aria-label="October 11, 2026">
+<p  id="Text_WcwCN2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">11</p>
+
+</button>
+<button  id="CtxB_rPerj3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_zCc2p2 intr_pYXAl3 "aria-label="October 12, 2026">
+<p  id="Text_cKqWB1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">12</p>
+
+</button>
+<button  id="CtxB_napRt-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_1SCvB4 intr_pYXAl3 "aria-label="October 13, 2026">
+<p  id="Text_UM4yy3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">13</p>
+
+</button>
+<button  id="CtxB_cWCvg1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_yshfL2 intr_pYXAl3 "aria-label="October 14, 2026">
+<p  id="Text_7HWx31-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">14</p>
+
+</button>
+<button  id="CtxB_MGkcC4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_rLmht2 intr_pYXAl3 "aria-label="October 15, 2026">
+<p  id="Text_K2yam2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">15</p>
+
+</button>
+<button  id="CtxB_eFtCj3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_OYEcE2 intr_pYXAl3 "aria-label="October 16, 2026">
+<p  id="Text_yqGGH3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">16</p>
+
+</button>
+<button  id="CtxB_QqwLt2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_wrXQk2 intr_pYXAl3 "aria-label="October 17, 2026">
+<p  id="Text_Zdcww-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">17</p>
+
+</button>
+<button  id="CtxB_t63LR-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_Ovzxe4 intr_pYXAl3 "aria-label="October 18, 2026">
+<p  id="Text_13w0Y-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">18</p>
+
+</button>
+<button  id="CtxB_6hZ7C4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_xkOoE2 intr_pYXAl3 "aria-label="October 19, 2026">
+<p  id="Text_12JYJ1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">19</p>
+
+</button>
+<button  id="CtxB_v2wYF1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_BbsBR intr_pYXAl3 "aria-label="October 20, 2026">
+<p  id="Text_CJXFJ-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">20</p>
+
+</button>
+<button  id="CtxB_h2uij1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_SpTsm1 intr_pYXAl3 "aria-label="October 21, 2026">
+<p  id="Text_awDoq2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">21</p>
+
+</button>
+<button  id="CtxB_NwS7v3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_ashPE4 intr_pYXAl3 "aria-label="October 22, 2026">
+<p  id="Text_OTwr72-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">22</p>
+
+</button>
+<button  id="CtxB_w6PaE-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_sXISK intr_a3jqB2 "aria-label="October 23, 2026">
+<p  id="Text_kVINF2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">23</p>
+
+</button>
+<button  id="CtxB_ao9bZ3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_C1UWs3 intr_pYXAl3 "aria-label="October 24, 2026">
+<p  id="Text_HWl0n-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">24</p>
+
+</button>
+<button  id="CtxB_7w6j73-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_LjVZk3 intr_pYXAl3 "aria-label="October 25, 2026">
+<p  id="Text_7t2WQ3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">25</p>
+
+</button>
+<button  id="CtxB_7vUz72-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_EvNcv2 intr_pYXAl3 "aria-label="October 26, 2026">
+<p  id="Text_gT83J-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">26</p>
+
+</button>
+<button  id="CtxB_ZuySG-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_OvkAc1 intr_pYXAl3 "aria-label="October 27, 2026">
+<p  id="Text_Ailpy2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">27</p>
+
+</button>
+<button  id="CtxB_mc5Yf-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_3ZoLv2 intr_pYXAl3 "aria-label="October 28, 2026">
+<p  id="Text_QWspn1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">28</p>
+
+</button>
+<button  id="CtxB_PMH6l3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_3fN2z intr_pYXAl3 "aria-label="October 29, 2026">
+<p  id="Text_2uT983-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">29</p>
+
+</button>
+<button  id="CtxB_uyLpK2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_OCvFK2 intr_pYXAl3 "aria-label="October 30, 2026">
+<p  id="Text_Qdy843-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">30</p>
+
+</button>
+<button  id="CtxB_ZZGi54-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_g7cZP1 intr_pYXAl3 "aria-label="October 31, 2026">
+<p  id="Text_Sl2L64-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">31</p>
+
+</button>
+<button  id="CtxB_1n5lD4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_Ed7aR4 intr_pYXAl3 "aria-label="November 1, 2026">
+<p  id="Text_sZP2Y3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo "> 1</p>
+
+</button>
+<button  id="CtxB_bhP4C2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_MrgIc2 intr_pYXAl3 "aria-label="November 2, 2026">
+<p  id="Text_4iL5h-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo "> 2</p>
+
+</button>
+<button  id="CtxB_s2o2X1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_PCBGG3 intr_pYXAl3 "aria-label="November 3, 2026">
+<p  id="Text_TSZYh2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo "> 3</p>
+
+</button>
+<button  id="CtxB_jzA7d-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_U6Jtb4 intr_pYXAl3 "aria-label="November 4, 2026">
+<p  id="Text_fg1aU-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo "> 4</p>
+
+</button>
+<button  id="CtxB_5Emi84-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_nEcDh1 intr_pYXAl3 "aria-label="November 5, 2026">
+<p  id="Text_Pfqcx3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo "> 5</p>
+
+</button>
+<button  id="CtxB_eK7D2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_7DKd34 intr_pYXAl3 "aria-label="November 6, 2026">
+<p  id="Text_4i0dB1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo "> 6</p>
+
+</button>
+<button  id="CtxB_tblkT3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_SoZrG2 intr_pYXAl3 "aria-label="November 7, 2026">
+<p  id="Text_QSg3Q4-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo "> 7</p>
+
+</button>
+<button  id="CtxB_jBAyL3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_x5EBa1 intr_pYXAl3 "aria-label="November 8, 2026">
+<p  id="Text_wOSMl3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo "> 8</p>
+
+</button>
+</div>
+</div>
+</div>
+</div>
+<div  id="Flex_tDQAh-gk" data-vp="" class="lay_DLEtj3 pos_e8wtf3 mapa_rPfvm1 vis_UwCOT2 ">
+<div  id="Flex_BcDJn-gk" data-vp="" class="lay_DLEtj3 pos_e8wtf3 mapa_cLPMR vis_HkXHJ2 ">
+<div  id="Flex_r0YPC3-gk" data-vp="" class="lay_DgBhg2 pos_e8wtf3 mapa_jigL04 vis_PMQ7Z1 ">
+<div  id="Flex_w35m22-gk" data-vp="" class="lay_yIkX62 pos_e8wtf3 mapa_rPfvm1 vis_XslkZ1 ">
+<p  id="Text_Bi6DK1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_m5hh3 ">Basic DatePicker</p>
+</div>
+</div>
+<div  id="Flex_HRCMM3-gk" data-vp="" class="lay_q8rEj1 pos_e8wtf3 mapa_CrkEb2 vis_4dMax2 ">
+<div  id="Flex_kX7yv3-gk" data-vp="" class="lay_CenWL3 pos_t0s233 mapa_CrkEb2 vis_PMQ7Z1 ">
+<div  id="Flex_rrPTf2-gk" data-vp="" class="lay_PVCm32 pos_e8wtf3 mapa_Fls5t vis_PMQ7Z1 ">
+<div  id="Flex_oxdIZ2-gk" data-vp="" class="lay_7RewZ3 pos_t0s233 mapa_CrkEb2 vis_PMQ7Z1 ">
+<div  id="Flex_8gIIE-gk" data-vp="" style="transform: translate3d(0px, 0px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_fB4Ke3-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">1</p>
+<div  id="Flex_2aZ8J-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_F3IKJ3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">const</p>
+<p  id="Text_ms6af1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> Vapor = @import(</p>
+<p  id="Text_1dxPO4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_G7FES2 ">&quot;vapor&quot;</p>
+<p  id="Text_qBV7t3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">);</p>
+</div>
+</div>
+<div  id="Flex_q9SPJ2-gk" data-vp="" style="transform: translate3d(0px, 22.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_v9T8X3-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">2</p>
+<div  id="Flex_Hf3wG2-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_Ci6HO1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">const</p>
+<p  id="Text_Fcqcb4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> DateTime = Vapor.DateTime;</p>
+</div>
+</div>
+<div  id="Flex_qBBCX2-gk" data-vp="" style="transform: translate3d(0px, 45px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_vp1NW4-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">3</p>
+<div  id="Flex_BHTx84-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_iq4sB3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">const</p>
+<p  id="Text_JRSDn-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> DatePicker = @import(</p>
+<p  id="Text_Ram5V3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_G7FES2 ">&quot;opaque-ui&quot;</p>
+<p  id="Text_lLXyQ3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">).DatePicker;</p>
+</div>
+</div>
+<div  id="Flex_eEToX3-gk" data-vp="" style="transform: translate3d(0px, 67.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_hnbb21-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">4</p>
+<div  id="Flex_wZxWe4-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+</div>
+</div>
+<div  id="Flex_9jV9i-gk" data-vp="" style="transform: translate3d(0px, 90px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_xvLvK3-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">5</p>
+<div  id="Flex_15l5u2-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_gFBdJ2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">var</p>
+<p  id="Text_Ohoz62-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> basic_picker: DatePicker = undefined;</p>
+</div>
+</div>
+<div  id="Flex_N7rM13-gk" data-vp="" style="transform: translate3d(0px, 112.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_tc4ZB4-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">6</p>
+<div  id="Flex_v7Vru3-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+</div>
+</div>
+<div  id="Flex_8W8Wp3-gk" data-vp="" style="transform: translate3d(0px, 135px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_WQuxu3-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">7</p>
+<div  id="Flex_kQMov2-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_u4FQr1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">pub</p>
+<p  id="Text_3TFyd-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> </p>
+<p  id="Text_HgW9Y1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">fn</p>
+<p  id="Text_G6m9c3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> </p>
+<p  id="Text_prAZx3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r2QxG2 ">init</p>
+<p  id="Text_ZnwoH2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">() void {</p>
+</div>
+</div>
+<div  id="Flex_8ffgT2-gk" data-vp="" style="transform: translate3d(0px, 157.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_GTqKs3-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">8</p>
+<div  id="Flex_9CKJz3-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_4mHkj1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">    basic_picker.</p>
+<p  id="Text_Ev9Db2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r2QxG2 ">init</p>
+<p  id="Text_QajHH1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">();</p>
+</div>
+</div>
+<div  id="Flex_KoVF42-gk" data-vp="" style="transform: translate3d(0px, 180px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_3g3MO3-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">9</p>
+<div  id="Flex_Afzwx1-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_za1fK4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">}</p>
+</div>
+</div>
+<div  id="Flex_bSCOj1-gk" data-vp="" style="transform: translate3d(0px, 202.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_0e2JR4-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">10</p>
+<div  id="Flex_6lOaj2-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+</div>
+</div>
+<div  id="Flex_9ZhVn3-gk" data-vp="" style="transform: translate3d(0px, 225px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_bxU3b1-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">11</p>
+<div  id="Flex_3ohzG3-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_lrloF3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">pub</p>
+<p  id="Text_6EdBi3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> </p>
+<p  id="Text_781cM-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">fn</p>
+<p  id="Text_jUouf2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> </p>
+<p  id="Text_0Vx2L3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r2QxG2 ">render</p>
+<p  id="Text_27lpy2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">() void {</p>
+</div>
+</div>
+<div  id="Flex_clUiE4-gk" data-vp="" style="transform: translate3d(0px, 247.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_vjeWt3-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">12</p>
+<div  id="Flex_WpiGU-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_femym1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">    basic_picker.</p>
+<p  id="Text_aF8Y4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r2QxG2 ">render</p>
+<p  id="Text_u0YJV1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">();</p>
+</div>
+</div>
+<div  id="Flex_MDxry3-gk" data-vp="" style="transform: translate3d(0px, 270px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_ter5D3-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">13</p>
+<div  id="Flex_7AZXf4-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_z5kXg-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">}</p>
+</div>
+</div>
+<div  id="Flex_9ZVon2-gk" data-vp="" style="transform: translate3d(0px, 292.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_10Oa63-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">14</p>
+<div  id="Flex_0sPHY-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div  id="Flex_tvqSD1-gk" data-vp="" class="lay_j1WNg1 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_UXpFF1-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_j0VVX2 vis_T9885 ">Event-Driven Selection</p>
+<p  id="Text_kaa154-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_p5bbH2 vis_RpDVK4 ">Hook into specific lifecycle events like year changes or month navigation.</p>
+<div  id="Flex_48ziN2-gk" data-vp="" class="lay_q6jDz2 pos_e8wtf3 mapa_3RP2h2 vis_pe16U2 ">
+<div  id="Flex_AXrSG3-gk" data-vp="" class="lay_3owrm pos_e8wtf3 mapa_x8DNe2 vis_WlwWl2 ">
+<div  id="Flex_gvw2I-gk" data-vp="" class="lay_D9PVT pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<button  id="CtxB_2Twss2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_XVDLv2 "aria-label="Previous Month">
+<i  id="Icon_9FRgi1-gk" data-vp="" class="bi bi-chevron-left lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_B5Xbx2 ">
+</i>
+</button>
+<p  id="Text_pM1aD4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">August 1991</p>
+
+<button  id="CtxB_nXMdw-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_XVDLv2 "aria-label="Next Month">
+<i  id="Icon_T9jcO4-gk" data-vp="" class="bi bi-chevron-right lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_vH8IV3 ">
+</i>
+</button>
+</div>
+<div  id="Flex_uFhaZ1-gk" data-vp="" class="lay_nX7gU1 pos_e8wtf3 mapa_jdMNN4 vis_PMQ7Z1 ">
+<div  id="Flex_l97Xm-gk" data-vp="" class="lay_1wHVY1 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<div  id="Flex_tV9YB4-gk" data-vp="" class="lay_NLYYg pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<div  id="Flex_DnRcB-gk" data-vp="" class="lay_i0bZ63 pos_t0s233 mapa_CrkEb2 vis_PMQ7Z1 ">
+<div  id="Flex_5SmOR3-gk" data-vp="" class="lay_tupWc4 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<button  id="CtxB_t4vJY4-gk" data-vp="" class="lay_ipwPq1 pos_e8wtf3 mapa_RM5YV3 vis_mSTWs3 intr_KRI5U4 ">
+<div  id="Flex_7dByE-gk" data-vp="" class="lay_LfISh3 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_uwnlI4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_RM5YV3 vis_nX1y53 ">August</p>
+<i  id="Icon_CpzWP1-gk" data-vp="" class="bi bi-chevron-down lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_mNNga2 ">
 </i>
 </div>
 </button>
 </div>
-<div  id="Flex_3m2et1-gk" data-vp="" class="lay_AEgkh1 pos_4MMng3 mapa_CrkEb2 vis_SWFkJ2 tran_akFuA3 ">
-
-
-</div>
-
-
+<div  id="Flex_AswWP-gk" data-vp="" class="lay_AEgkh1 pos_4MMng3 mapa_CrkEb2 vis_PMQ7Z1 tran_akFuA3 ">
 </div>
 </div>
 </div>
-<div  id="Flex_akGeO4-gk" data-vp="" class="lay_421ks2 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<div  id="Flex_6a2l11-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<p  id="Text_rkW1i2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_e2pne2 ">Mo</p>
+<div  id="Flex_iMLs4-gk" data-vp="" class="lay_8i5ad4 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<div  id="Flex_SBNAq-gk" data-vp="" class="lay_i0bZ63 pos_t0s233 mapa_CrkEb2 vis_PMQ7Z1 ">
+<div  id="Flex_ofPqW4-gk" data-vp="" class="lay_tupWc4 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<button  id="CtxB_QzZsr2-gk" data-vp="" class="lay_ipwPq1 pos_e8wtf3 mapa_RM5YV3 vis_83dbM intr_KRI5U4 ">
+<div  id="Flex_9dOJp-gk" data-vp="" class="lay_LfISh3 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_iTqxp-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_RM5YV3 vis_nX1y53 ">1991</p>
+<i  id="Icon_8apzU-gk" data-vp="" class="bi bi-chevron-down lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_mNNga2 ">
+</i>
 </div>
-<div  id="Flex_Kv9Ih2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<p  id="Text_VegO53-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_e2pne2 ">Tu</p>
+</button>
 </div>
-<div  id="Flex_Hqu1p2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<p  id="Text_29n8E1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_e2pne2 ">We</p>
-</div>
-<div  id="Flex_4l98x1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<p  id="Text_uCCUZ4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_e2pne2 ">Th</p>
-</div>
-<div  id="Flex_1IJNs-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<p  id="Text_Ifwd92-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_e2pne2 ">Fr</p>
-</div>
-<div  id="Flex_Q7WDJ2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<p  id="Text_pfrD81-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_e2pne2 ">Sa</p>
-</div>
-<div  id="Flex_4198q-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<p  id="Text_4sX823-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_e2pne2 ">Su</p>
-</div>
-</div>
-<div  id="Flex_4oC7z2-gk" data-vp="" class="lay_LwpBc pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 ">
-<button  id="CtxB_Cq5lx2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_ALril1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 ">29</p>
-
-</button>
-<button  id="CtxB_vRNT34-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_FiFpa1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 ">30</p>
-
-</button>
-<button  id="CtxB_TdkCZ1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_1BETA1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 ">31</p>
-
-</button>
-<button  id="CtxB_ID79G4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_221Sn1 intr_rPyZc1 "aria-label="Select Date">
-<p  id="Text_fChIo1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl "> 1</p>
-
-</button>
-<button  id="CtxB_aY2Tz2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_rQ93F1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl "> 2</p>
-
-</button>
-<button  id="CtxB_fpwkf4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_Ie3OK2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl "> 3</p>
-
-</button>
-<button  id="CtxB_h7dPT1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_ee8Y14-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl "> 4</p>
-
-</button>
-<button  id="CtxB_UjNBm2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_0Lb5R3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl "> 5</p>
-
-</button>
-<button  id="CtxB_UVwFL3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_OrRmF2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl "> 6</p>
-
-</button>
-<button  id="CtxB_eyuqU3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_xyZL5-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl "> 7</p>
-
-</button>
-<button  id="CtxB_QuSZE2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_I8cT82-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl "> 8</p>
-
-</button>
-<button  id="CtxB_uV2nG2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_HUTNP2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl "> 9</p>
-
-</button>
-<button  id="CtxB_fgT0G4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_242A7-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">10</p>
-
-</button>
-<button  id="CtxB_4NTJT4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_Wedxw2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">11</p>
-
-</button>
-<button  id="CtxB_f3X8H4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_1h5sS3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">12</p>
-
-</button>
-<button  id="CtxB_dcBOB3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_m8MOQ4-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">13</p>
-
-</button>
-<button  id="CtxB_nPkz04-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_kwwG-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">14</p>
-
-</button>
-<button  id="CtxB_y1luP3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_wFEsu1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">15</p>
-
-</button>
-<button  id="CtxB_Nn0I44-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_EwIa8-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">16</p>
-
-</button>
-<button  id="CtxB_3XQnR-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_tjTWk3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">17</p>
-
-</button>
-<button  id="CtxB_B8p0l3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_J81gy3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">18</p>
-
-</button>
-<button  id="CtxB_1qvYu3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_kNhfU3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">19</p>
-
-</button>
-<button  id="CtxB_qxw9Q4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_yJuit-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">20</p>
-
-</button>
-<button  id="CtxB_ZwBxb2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_n9AsL1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">21</p>
-
-</button>
-<button  id="CtxB_TKTA71-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_AiFL12-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">22</p>
-
-</button>
-<button  id="CtxB_N1dJF4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_eZtAA4-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">23</p>
-
-</button>
-<button  id="CtxB_Q86AZ-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_bGtZo3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">24</p>
-
-</button>
-<button  id="CtxB_UqMIW4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_3o7zo2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">25</p>
-
-</button>
-<button  id="CtxB_nvmLN2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_zKfOC1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">26</p>
-
-</button>
-<button  id="CtxB_jEbki1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_qMuWJ3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">27</p>
-
-</button>
-<button  id="CtxB_7tOth3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_5TsR53-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">28</p>
-
-</button>
-<button  id="CtxB_s0xet-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_NugK71-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">29</p>
-
-</button>
-<button  id="CtxB_BUEHG4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_y9aCR2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">30</p>
-
-</button>
-<button  id="CtxB_4bGQ31-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_xwOnO4-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_guzhl ">31</p>
-
-</button>
-<button  id="CtxB_8bIpT4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_TVYts-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 "> 1</p>
-
-</button>
-<button  id="CtxB_7DVL42-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_HDZQD2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 "> 2</p>
-
-</button>
-<button  id="CtxB_spb5j1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_kncuG3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 "> 3</p>
-
-</button>
-<button  id="CtxB_qHoP3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_X5c4a-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 "> 4</p>
-
-</button>
-<button  id="CtxB_TLH1c2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_7WYRP1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 "> 5</p>
-
-</button>
-<button  id="CtxB_FVdjo2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_GZ5UM2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 "> 6</p>
-
-</button>
-<button  id="CtxB_n8Z6c3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_f6NpZ4-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 "> 7</p>
-
-</button>
-<button  id="CtxB_9qVfN4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_CYhGQ3 intr_knrET1 "aria-label="Select Date">
-<p  id="Text_vrYFt1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_sHQqE4 "> 8</p>
-
-</button>
+<div  id="Flex_ol8t51-gk" data-vp="" class="lay_AEgkh1 pos_4MMng3 mapa_CrkEb2 vis_PMQ7Z1 tran_akFuA3 ">
 </div>
 </div>
 </div>
 </div>
-<div  id="Flex_ZufZx3-gk" data-vp="" class="lay_DLEtj3 pos_e8wtf3 mapa_rPfvm1 vis_8DQU01 ">
-<div  id="Flex_UOMIa1-gk" data-vp="" class="lay_DLEtj3 pos_e8wtf3 mapa_cLPMR vis_HP0lq2 ">
-<div  id="Flex_DIPJM2-gk" data-vp="" class="lay_DgBhg2 pos_e8wtf3 mapa_jigL04 vis_SWFkJ2 ">
-<div  id="Flex_FYRCM3-gk" data-vp="" class="lay_yIkX62 pos_e8wtf3 mapa_rPfvm1 vis_dLRup3 ">
-<p  id="Text_N51N13-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_4XeJX2 ">Event-Driven Selection</p>
+<div  id="Flex_QIIbT1-gk" data-vp="" class="lay_421ks2 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<div  id="Flex_wgsnE4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_IICZt-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_TqhFI2 ">Mo</p>
+</div>
+<div  id="Flex_ug1oz1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_Jn4dF2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_TqhFI2 ">Tu</p>
+</div>
+<div  id="Flex_iGftm2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_wP5Bc3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_TqhFI2 ">We</p>
+</div>
+<div  id="Flex_m0EQ62-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_8CzKG4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_TqhFI2 ">Th</p>
+</div>
+<div  id="Flex_cTym04-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_rwISP-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_TqhFI2 ">Fr</p>
+</div>
+<div  id="Flex_Dfote2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_mHduC1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_TqhFI2 ">Sa</p>
+</div>
+<div  id="Flex_2GIxD-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_RUA5s-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_TqhFI2 ">Su</p>
 </div>
 </div>
-<div  id="Flex_X8X3S-gk" data-vp="" class="lay_q8rEj1 pos_e8wtf3 mapa_CrkEb2 vis_yqiWn1 ">
-<div  id="Flex_xZROq3-gk" data-vp="" class="lay_CenWL3 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
-<div  id="Flex_oAoVt1-gk" data-vp="" class="lay_PVCm32 pos_e8wtf3 mapa_Fls5t vis_SWFkJ2 ">
-<div  id="Flex_0LgSv2-gk" data-vp="" class="lay_Nmnrt3 pos_t0s233 mapa_CrkEb2 vis_SWFkJ2 ">
-<div  id="Flex_fhX8H2-gk" data-vp="" style="transform: translate3d(0px, 0px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_PZYxz1 ">
-<p  id="Text_xNOl63-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_0Vauq1 ">1</p>
-<div  id="Flex_IUItv-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_9PJMM2 ">
-<p  id="Text_hpig8-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_UzKGL ">const</p>
-<p  id="Text_6VRU03-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r6t7A3 "> Vapor = @import(</p>
-<p  id="Text_0h0fu-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_YfxKa4 ">"vapor"</p>
-<p  id="Text_eQVFU2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r6t7A3 ">);</p>
+<div  id="Flex_N8Aew-gk" data-vp="" class="lay_LwpBc pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<button  id="CtxB_UHS7V-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_25Du64 intr_pYXAl3 "aria-label="July 29, 1991">
+<p  id="Text_lFYOJ2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo ">29</p>
+
+</button>
+<button  id="CtxB_9TWMr-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_4Hc0y intr_pYXAl3 "aria-label="July 30, 1991">
+<p  id="Text_mOtIg1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo ">30</p>
+
+</button>
+<button  id="CtxB_H6NJL4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_e44LG4 intr_pYXAl3 "aria-label="July 31, 1991">
+<p  id="Text_MOooF3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo ">31</p>
+
+</button>
+<button  id="CtxB_8nZm94-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_7wqqw intr_a3jqB2 "aria-label="August 1, 1991">
+<p  id="Text_nuE0m-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL "> 1</p>
+
+</button>
+<button  id="CtxB_hiJCb1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_lLM4e3 intr_pYXAl3 "aria-label="August 2, 1991">
+<p  id="Text_dnCdc4-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL "> 2</p>
+
+</button>
+<button  id="CtxB_GBEVJ1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_LPZBm3 intr_pYXAl3 "aria-label="August 3, 1991">
+<p  id="Text_rhc0Z1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL "> 3</p>
+
+</button>
+<button  id="CtxB_01fdV4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_KPw7J1 intr_pYXAl3 "aria-label="August 4, 1991">
+<p  id="Text_GydNe4-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL "> 4</p>
+
+</button>
+<button  id="CtxB_ZgCm94-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_gEGk22 intr_pYXAl3 "aria-label="August 5, 1991">
+<p  id="Text_mZeZC4-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL "> 5</p>
+
+</button>
+<button  id="CtxB_SfdLf-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_DV4xb3 intr_pYXAl3 "aria-label="August 6, 1991">
+<p  id="Text_UuQKQ1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL "> 6</p>
+
+</button>
+<button  id="CtxB_9JL3o3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_ghy1s1 intr_pYXAl3 "aria-label="August 7, 1991">
+<p  id="Text_yV92U-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL "> 7</p>
+
+</button>
+<button  id="CtxB_hQh9k1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_aLLUW3 intr_pYXAl3 "aria-label="August 8, 1991">
+<p  id="Text_WTwwK-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL "> 8</p>
+
+</button>
+<button  id="CtxB_ncsEd2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_UQznb2 intr_pYXAl3 "aria-label="August 9, 1991">
+<p  id="Text_pUcKL1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL "> 9</p>
+
+</button>
+<button  id="CtxB_l6hHV4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_5Y7mI3 intr_pYXAl3 "aria-label="August 10, 1991">
+<p  id="Text_ZMIBh-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">10</p>
+
+</button>
+<button  id="CtxB_dANor-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_yvslD2 intr_pYXAl3 "aria-label="August 11, 1991">
+<p  id="Text_wtV8t3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">11</p>
+
+</button>
+<button  id="CtxB_5OAm43-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_y1bip2 intr_pYXAl3 "aria-label="August 12, 1991">
+<p  id="Text_XYSRd3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">12</p>
+
+</button>
+<button  id="CtxB_dltBh2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_cnLjJ3 intr_pYXAl3 "aria-label="August 13, 1991">
+<p  id="Text_twI321-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">13</p>
+
+</button>
+<button  id="CtxB_F7XXM3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_gQxxi intr_pYXAl3 "aria-label="August 14, 1991">
+<p  id="Text_AAyCY3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">14</p>
+
+</button>
+<button  id="CtxB_6uvYp1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_ngSCd3 intr_pYXAl3 "aria-label="August 15, 1991">
+<p  id="Text_dZWIc-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">15</p>
+
+</button>
+<button  id="CtxB_aHq7v-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_kqw1j1 intr_pYXAl3 "aria-label="August 16, 1991">
+<p  id="Text_SVLNV2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">16</p>
+
+</button>
+<button  id="CtxB_PR0rc3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_cNQbL intr_pYXAl3 "aria-label="August 17, 1991">
+<p  id="Text_vfqRs-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">17</p>
+
+</button>
+<button  id="CtxB_EbLWx3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_QXmZf intr_pYXAl3 "aria-label="August 18, 1991">
+<p  id="Text_LbiGr1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">18</p>
+
+</button>
+<button  id="CtxB_XKx1j-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_Wr4t11 intr_pYXAl3 "aria-label="August 19, 1991">
+<p  id="Text_pRA0c-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">19</p>
+
+</button>
+<button  id="CtxB_qJqEJ-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_A4LJb1 intr_pYXAl3 "aria-label="August 20, 1991">
+<p  id="Text_advsD4-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">20</p>
+
+</button>
+<button  id="CtxB_oJc8p-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_Lffxw intr_pYXAl3 "aria-label="August 21, 1991">
+<p  id="Text_21l911-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">21</p>
+
+</button>
+<button  id="CtxB_QLXWt-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_4dygQ2 intr_pYXAl3 "aria-label="August 22, 1991">
+<p  id="Text_vEaLK1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">22</p>
+
+</button>
+<button  id="CtxB_GV2fW3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_j6Fl44 intr_pYXAl3 "aria-label="August 23, 1991">
+<p  id="Text_neDlu-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">23</p>
+
+</button>
+<button  id="CtxB_Cwntq2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_Q7q7B intr_pYXAl3 "aria-label="August 24, 1991">
+<p  id="Text_AsaYe3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">24</p>
+
+</button>
+<button  id="CtxB_kQBxm1-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_sqTzc3 intr_pYXAl3 "aria-label="August 25, 1991">
+<p  id="Text_9W6o62-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">25</p>
+
+</button>
+<button  id="CtxB_c4c634-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_gtJWH4 intr_pYXAl3 "aria-label="August 26, 1991">
+<p  id="Text_5ILtX2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">26</p>
+
+</button>
+<button  id="CtxB_okfL72-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_z1Ma81 intr_pYXAl3 "aria-label="August 27, 1991">
+<p  id="Text_TjlSu-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">27</p>
+
+</button>
+<button  id="CtxB_IH6dL4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_YcXEG4 intr_pYXAl3 "aria-label="August 28, 1991">
+<p  id="Text_LJGYn1-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">28</p>
+
+</button>
+<button  id="CtxB_BZsQw-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_vigVu3 intr_pYXAl3 "aria-label="August 29, 1991">
+<p  id="Text_PeyNr3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">29</p>
+
+</button>
+<button  id="CtxB_kiOh53-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_vjvlM2 intr_pYXAl3 "aria-label="August 30, 1991">
+<p  id="Text_vlf6i3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">30</p>
+
+</button>
+<button  id="CtxB_LvN4v2-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_b9FD53 intr_pYXAl3 "aria-label="August 31, 1991">
+<p  id="Text_1aw8G4-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_zLcxL ">31</p>
+
+</button>
+<button  id="CtxB_bSoz8-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_VhkN03 intr_pYXAl3 "aria-label="September 1, 1991">
+<p  id="Text_K3UBK2-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo "> 1</p>
+
+</button>
+<button  id="CtxB_AMzh63-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_2dRCV2 intr_pYXAl3 "aria-label="September 2, 1991">
+<p  id="Text_3ABoK3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo "> 2</p>
+
+</button>
+<button  id="CtxB_vXLeJ4-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_VUj4z2 intr_pYXAl3 "aria-label="September 3, 1991">
+<p  id="Text_rUN6Y-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo "> 3</p>
+
+</button>
+<button  id="CtxB_Kiyvf-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_AFuVE4 intr_pYXAl3 "aria-label="September 4, 1991">
+<p  id="Text_xZyeu3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo "> 4</p>
+
+</button>
+<button  id="CtxB_7jzF12-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_S0bel1 intr_pYXAl3 "aria-label="September 5, 1991">
+<p  id="Text_q1tjw-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo "> 5</p>
+
+</button>
+<button  id="CtxB_vnFIh-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_IFMiK1 intr_pYXAl3 "aria-label="September 6, 1991">
+<p  id="Text_hroVv-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo "> 6</p>
+
+</button>
+<button  id="CtxB_Snetl3-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_ea9DV1 intr_pYXAl3 "aria-label="September 7, 1991">
+<p  id="Text_tYlos3-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo "> 7</p>
+
+</button>
+<button  id="CtxB_AKh154-gk" data-vp="" class="lay_Z9MwV3 pos_e8wtf3 mapa_dydCF vis_F1NDN3 intr_pYXAl3 "aria-label="September 8, 1991">
+<p  id="Text_HATta-gk" data-vp="" class="lay_f9Iec pos_e8wtf3 mapa_CrkEb2 vis_6qYFo "> 8</p>
+
+</button>
 </div>
 </div>
-<div  id="Flex_aEAo24-gk" data-vp="" style="transform: translate3d(0px, 22.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_PZYxz1 ">
-<p  id="Text_IBDXV-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_0Vauq1 ">2</p>
-<div  id="Flex_SkugY1-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_9PJMM2 ">
-<p  id="Text_h5YG73-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_UzKGL ">const</p>
-<p  id="Text_gfo7f1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r6t7A3 "> DateTime = Vapor.DateTime;</p>
 </div>
 </div>
-<div  id="Flex_v6ab94-gk" data-vp="" style="transform: translate3d(0px, 45px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_PZYxz1 ">
-<p  id="Text_7EppQ1-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_0Vauq1 ">3</p>
-<div  id="Flex_4DG2g1-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_9PJMM2 ">
-<p  id="Text_JOCzi-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_UzKGL ">const</p>
-<p  id="Text_loAJu-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r6t7A3 "> DatePicker = @import(</p>
-<p  id="Text_CzGls1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_YfxKa4 ">"opaque-ui"</p>
-<p  id="Text_yKtjN4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r6t7A3 ">).DatePicker;</p>
+<div  id="Flex_jgAko-gk" data-vp="" class="lay_DLEtj3 pos_e8wtf3 mapa_rPfvm1 vis_UwCOT2 ">
+<div  id="Flex_mtVWa2-gk" data-vp="" class="lay_DLEtj3 pos_e8wtf3 mapa_cLPMR vis_HkXHJ2 ">
+<div  id="Flex_en3mK1-gk" data-vp="" class="lay_DgBhg2 pos_e8wtf3 mapa_jigL04 vis_PMQ7Z1 ">
+<div  id="Flex_dIkoc-gk" data-vp="" class="lay_yIkX62 pos_e8wtf3 mapa_rPfvm1 vis_XslkZ1 ">
+<p  id="Text_WAt0j1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_m5hh3 ">Event-Driven Selection</p>
 </div>
 </div>
-<div  id="Flex_pNo6E-gk" data-vp="" style="transform: translate3d(0px, 67.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_PZYxz1 ">
-<p  id="Text_iROJg-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_0Vauq1 ">4</p>
-<div  id="Flex_P8URo3-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_9PJMM2 ">
+<div  id="Flex_7yiPH3-gk" data-vp="" class="lay_q8rEj1 pos_e8wtf3 mapa_CrkEb2 vis_4dMax2 ">
+<div  id="Flex_wsMsM2-gk" data-vp="" class="lay_CenWL3 pos_t0s233 mapa_CrkEb2 vis_PMQ7Z1 ">
+<div  id="Flex_uZM7k2-gk" data-vp="" class="lay_PVCm32 pos_e8wtf3 mapa_Fls5t vis_PMQ7Z1 ">
+<div  id="Flex_1bgsk1-gk" data-vp="" class="lay_tnxGL3 pos_t0s233 mapa_CrkEb2 vis_PMQ7Z1 ">
+<div  id="Flex_zdvxg-gk" data-vp="" style="transform: translate3d(0px, 0px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_HGXsH1-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">1</p>
+<div  id="Flex_dY23v2-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_V3HZD2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">const</p>
+<p  id="Text_dP6VA4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> Vapor = @import(</p>
+<p  id="Text_y19wW2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_G7FES2 ">&quot;vapor&quot;</p>
+<p  id="Text_pf4to1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">);</p>
 </div>
 </div>
-<div  id="Flex_jLl4x1-gk" data-vp="" style="transform: translate3d(0px, 90px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_PZYxz1 ">
-<p  id="Text_pHfUv-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_0Vauq1 ">5</p>
-<div  id="Flex_AYlMn2-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_9PJMM2 ">
-<p  id="Text_sDdNB-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_UzKGL ">var</p>
-<p  id="Text_f0QeV4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r6t7A3 "> event_picker: DatePicker = undefined;</p>
+<div  id="Flex_0UfkY-gk" data-vp="" style="transform: translate3d(0px, 22.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_yTOWg4-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">2</p>
+<div  id="Flex_k5mDR-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_0dfMC1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">const</p>
+<p  id="Text_pAMU33-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> DateTime = Vapor.DateTime;</p>
+</div>
+</div>
+<div  id="Flex_Sh9831-gk" data-vp="" style="transform: translate3d(0px, 45px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_8kJda3-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">3</p>
+<div  id="Flex_pwkN81-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_fLMx92-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">const</p>
+<p  id="Text_jrrrQ4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> DatePicker = @import(</p>
+<p  id="Text_YGmQ72-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_G7FES2 ">&quot;opaque-ui&quot;</p>
+<p  id="Text_WzrGp1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">).DatePicker;</p>
+</div>
+</div>
+<div  id="Flex_4K0Qv1-gk" data-vp="" style="transform: translate3d(0px, 67.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_WhZS24-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">4</p>
+<div  id="Flex_HRDGl1-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+</div>
+</div>
+<div  id="Flex_duQwB-gk" data-vp="" style="transform: translate3d(0px, 90px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_x7ruQ1-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">5</p>
+<div  id="Flex_Iw4Fu1-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_DdZnp-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">var</p>
+<p  id="Text_qpzgP-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> event_picker: DatePicker = undefined;</p>
+</div>
+</div>
+<div  id="Flex_awMll2-gk" data-vp="" style="transform: translate3d(0px, 112.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_MEqYt-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">6</p>
+<div  id="Flex_gmoeO-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+</div>
+</div>
+<div  id="Flex_nKC6Q4-gk" data-vp="" style="transform: translate3d(0px, 135px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_qrjdv-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">7</p>
+<div  id="Flex_7Doey3-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_Wmend-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">pub</p>
+<p  id="Text_Y9P5Y2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> </p>
+<p  id="Text_j1l8m2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">fn</p>
+<p  id="Text_OfFuW2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> </p>
+<p  id="Text_xsSZG1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r2QxG2 ">init</p>
+<p  id="Text_akLDA3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">() void {</p>
+</div>
+</div>
+<div  id="Flex_1ieDo2-gk" data-vp="" style="transform: translate3d(0px, 157.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_HtdeH3-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">8</p>
+<div  id="Flex_P6tnw3-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_QJN6P1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">    </p>
+<p  id="Text_0sjQG4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_2VfXk1 ">// Instance 2: Event Driven (Your specific logic)</p>
+</div>
+</div>
+<div  id="Flex_wXi9y2-gk" data-vp="" style="transform: translate3d(0px, 180px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_36rqo3-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">9</p>
+<div  id="Flex_vX72S2-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_9iNw42-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">    event_picker.start_date = DateTime.</p>
+<p  id="Text_S8zVT1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r2QxG2 ">fromMonth</p>
+<p  id="Text_lFpp13-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">(</p>
+<p  id="Text_mkM0X-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">8</p>
+<p  id="Text_KCB9J1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">, </p>
+<p  id="Text_WhezW-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">1991</p>
+<p  id="Text_hqN8A4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">);</p>
+</div>
+</div>
+<div  id="Flex_4eaii3-gk" data-vp="" style="transform: translate3d(0px, 202.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_XfGSF3-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">10</p>
+<div  id="Flex_89E6G2-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_kMUyr3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">    event_picker.</p>
+<p  id="Text_oSYPL-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r2QxG2 ">init</p>
+<p  id="Text_SK2mC-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">();</p>
+</div>
+</div>
+<div  id="Flex_LQfkz3-gk" data-vp="" style="transform: translate3d(0px, 225px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_osdcN1-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">11</p>
+<div  id="Flex_lWAY22-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_gWNnY4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">    event_picker.on_date_select = onDateSelect;</p>
+</div>
+</div>
+<div  id="Flex_q4ZmR3-gk" data-vp="" style="transform: translate3d(0px, 247.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_qctlZ2-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">12</p>
+<div  id="Flex_kYWsM1-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_Fe4W12-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">    event_picker.on_year_select = onYearSelect;</p>
+</div>
+</div>
+<div  id="Flex_WZ3qn2-gk" data-vp="" style="transform: translate3d(0px, 270px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_T6C7P4-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">13</p>
+<div  id="Flex_HeAW71-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_Joy6F2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">    event_picker.on_month_select = onMonthSelect;</p>
+</div>
+</div>
+<div  id="Flex_MC8JJ2-gk" data-vp="" style="transform: translate3d(0px, 292.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_POIOB3-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">14</p>
+<div  id="Flex_lTELT3-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_S3Q2z-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">    event_picker.on_next_month = onNextMonth;</p>
+</div>
+</div>
+<div  id="Flex_BVeri3-gk" data-vp="" style="transform: translate3d(0px, 315px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_nFDZy-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">15</p>
+<div  id="Flex_k3XDB2-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_0ftPV1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">    event_picker.on_prev_month = onPrevMonth;</p>
+</div>
+</div>
+<div  id="Flex_3b9714-gk" data-vp="" style="transform: translate3d(0px, 337.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_9TUCS1-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">16</p>
+<div  id="Flex_KYBHm2-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_pRzzM4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">}</p>
+</div>
+</div>
+<div  id="Flex_50QCS-gk" data-vp="" style="transform: translate3d(0px, 360px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_plNYg1-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">17</p>
+<div  id="Flex_kNiLi-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+</div>
+</div>
+<div  id="Flex_RYc4z1-gk" data-vp="" style="transform: translate3d(0px, 382.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_F8CBF-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">18</p>
+<div  id="Flex_iIb8s1-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_uTlVn2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_2VfXk1 ">// ============================================================================</p>
+</div>
+</div>
+<div  id="Flex_ntZtf4-gk" data-vp="" style="transform: translate3d(0px, 405px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_qj9fQ4-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">19</p>
+<div  id="Flex_jtBH64-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_9Agd92-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_2VfXk1 ">// CALLBACKS</p>
+</div>
+</div>
+<div  id="Flex_FmPoj2-gk" data-vp="" style="transform: translate3d(0px, 427.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_dtFuz2-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">20</p>
+<div  id="Flex_LmfmI4-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_gkKYG2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_2VfXk1 ">// ============================================================================</p>
+</div>
+</div>
+<div  id="Flex_pbmiz3-gk" data-vp="" style="transform: translate3d(0px, 450px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_4NXHL3-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">21</p>
+<div  id="Flex_epG4w2-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+</div>
+</div>
+<div  id="Flex_9NIr9-gk" data-vp="" style="transform: translate3d(0px, 472.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_MoSOC1-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">22</p>
+<div  id="Flex_9dcFJ1-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_NyyIP4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">fn</p>
+<p  id="Text_Z2Gw03-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> </p>
+<p  id="Text_qEVtq1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r2QxG2 ">onDateSelect</p>
+<p  id="Text_PTmfN1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">(_: *DatePicker, date: DateTime) void {</p>
+</div>
+</div>
+<div  id="Flex_IdOOe-gk" data-vp="" style="transform: translate3d(0px, 495px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_qSmBs2-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">23</p>
+<div  id="Flex_1LHKv2-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_10vg51-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">    </p>
+<p  id="Text_Crv1W-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">const</p>
+<p  id="Text_z53b9-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> format = date.</p>
+<p  id="Text_KZIfd3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r2QxG2 ">formatDate</p>
+<p  id="Text_vomNA1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">(Vapor.</p>
+<p  id="Text_9g3Mg-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r2QxG2 ">arena</p>
+<p  id="Text_p2KiC3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">(.frame)) </p>
+<p  id="Text_tFm9e3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">catch</p>
+<p  id="Text_nXuZQ4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> </p>
+<p  id="Text_plEEf2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">unreachable</p>
+<p  id="Text_IhqYg4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">;</p>
+</div>
+</div>
+<div  id="Flex_lOrGh-gk" data-vp="" style="transform: translate3d(0px, 517.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_7d9ed3-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">24</p>
+<div  id="Flex_gCBeU1-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_eyYT43-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">    Vapor.</p>
+<p  id="Text_BeWNC1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r2QxG2 ">alert</p>
+<p  id="Text_sjpDA-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">(</p>
+<p  id="Text_7Ou1m3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_G7FES2 ">&quot;Date selected: {s}&quot;</p>
+<p  id="Text_EKzsu2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">, .{format});</p>
+</div>
+</div>
+<div  id="Flex_Orrds-gk" data-vp="" style="transform: translate3d(0px, 540px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_dY0gX-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">25</p>
+<div  id="Flex_B9tEF3-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_t7MfF-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">}</p>
+</div>
+</div>
+<div  id="Flex_nznIE4-gk" data-vp="" style="transform: translate3d(0px, 562.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_KAwcT-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">26</p>
+<div  id="Flex_uvVlc4-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+</div>
+</div>
+<div  id="Flex_KXZ1D2-gk" data-vp="" style="transform: translate3d(0px, 585px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_Lz3KI1-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">27</p>
+<div  id="Flex_bim1N2-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_4hkbg2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">fn</p>
+<p  id="Text_iNpa82-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> </p>
+<p  id="Text_CafzG1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r2QxG2 ">onYearSelect</p>
+<p  id="Text_YoL8N2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">(year: i32) void {</p>
+</div>
+</div>
+<div  id="Flex_yaFDD1-gk" data-vp="" style="transform: translate3d(0px, 607.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_Iyjc7-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">28</p>
+<div  id="Flex_plc863-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_f2ti11-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">    Vapor.</p>
+<p  id="Text_atBum1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r2QxG2 ">alert</p>
+<p  id="Text_C1QZl2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">(</p>
+<p  id="Text_utFNO-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_G7FES2 ">&quot;Year selected: {d}&quot;</p>
+<p  id="Text_3dCqq-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">, .{year});</p>
+</div>
+</div>
+<div  id="Flex_JeeGD2-gk" data-vp="" style="transform: translate3d(0px, 630px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_HvPcy-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">29</p>
+<div  id="Flex_dx7mf2-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_3oziQ-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">}</p>
+</div>
+</div>
+<div  id="Flex_Z97rr3-gk" data-vp="" style="transform: translate3d(0px, 652.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_WkUOk-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">30</p>
+<div  id="Flex_IMyJ5-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_PBdeY3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">fn</p>
+<p  id="Text_B1cjl2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> </p>
+<p  id="Text_HdJBa3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r2QxG2 ">onMonthSelect</p>
+<p  id="Text_2e0Ir1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">(month: i32) void {</p>
+</div>
+</div>
+<div  id="Flex_ZL0Z54-gk" data-vp="" style="transform: translate3d(0px, 675px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_yKvPB3-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">31</p>
+<div  id="Flex_g8kWJ2-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_cPgHn1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">    Vapor.</p>
+<p  id="Text_0Dsym-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r2QxG2 ">alert</p>
+<p  id="Text_gkWe53-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">(</p>
+<p  id="Text_htjj94-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_G7FES2 ">&quot;Month selected: {d}&quot;</p>
+<p  id="Text_vyokm-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">, .{month});</p>
+</div>
+</div>
+<div  id="Flex_v6RW74-gk" data-vp="" style="transform: translate3d(0px, 697.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_Iv1Gw3-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">32</p>
+<div  id="Flex_y6bUg4-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_ODGNN3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">}</p>
+</div>
+</div>
+<div  id="Flex_2YX0r1-gk" data-vp="" style="transform: translate3d(0px, 720px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_VVPfc3-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">33</p>
+<div  id="Flex_O9u2I1-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_fXiTI2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">fn</p>
+<p  id="Text_q2DCy-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> </p>
+<p  id="Text_t8fv83-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r2QxG2 ">onNextMonth</p>
+<p  id="Text_vFJ584-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">() void {</p>
+</div>
+</div>
+<div  id="Flex_11rSU-gk" data-vp="" style="transform: translate3d(0px, 742.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_e2KJC2-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">34</p>
+<div  id="Flex_SXgWY3-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_F8aDY1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">    Vapor.</p>
+<p  id="Text_b92pZ2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r2QxG2 ">alert</p>
+<p  id="Text_dW2mt-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">(</p>
+<p  id="Text_tVeaK2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_G7FES2 ">&quot;Next Month&quot;</p>
+<p  id="Text_GaMix3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">, .{});</p>
+</div>
+</div>
+<div  id="Flex_SaoRK1-gk" data-vp="" style="transform: translate3d(0px, 765px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_DoxdQ-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">35</p>
+<div  id="Flex_qfJ1k-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_zqehW2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">}</p>
+</div>
+</div>
+<div  id="Flex_DMbKG1-gk" data-vp="" style="transform: translate3d(0px, 787.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_7Jaxm1-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">36</p>
+<div  id="Flex_wjfXo2-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_Lv40t2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">fn</p>
+<p  id="Text_AqGSJ3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> </p>
+<p  id="Text_445zg-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r2QxG2 ">onPrevMonth</p>
+<p  id="Text_J9pFa4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">() void {</p>
+</div>
+</div>
+<div  id="Flex_b0Sdn3-gk" data-vp="" style="transform: translate3d(0px, 810px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_0LXFM2-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">37</p>
+<div  id="Flex_21t4D4-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_A0LXs2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">    Vapor.</p>
+<p  id="Text_Gu2no1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r2QxG2 ">alert</p>
+<p  id="Text_vY7cl-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">(</p>
+<p  id="Text_FXgFC3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_G7FES2 ">&quot;Prev Month&quot;</p>
+<p  id="Text_62yUE1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">, .{});</p>
+</div>
+</div>
+<div  id="Flex_hks1A-gk" data-vp="" style="transform: translate3d(0px, 832.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_UEGwu3-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">38</p>
+<div  id="Flex_nb4k01-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_zFNlY2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">}</p>
+</div>
+</div>
+<div  id="Flex_ZG4fr1-gk" data-vp="" style="transform: translate3d(0px, 855px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_leaDj1-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">39</p>
+<div  id="Flex_CKrqu3-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+</div>
+</div>
+<div  id="Flex_veXLW3-gk" data-vp="" style="transform: translate3d(0px, 877.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_X73rn-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">40</p>
+<div  id="Flex_az7lU-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_pLvss2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">pub</p>
+<p  id="Text_SToPN4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> </p>
+<p  id="Text_KEj4p-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_CWXNq3 ">fn</p>
+<p  id="Text_gKjlg1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 "> </p>
+<p  id="Text_wzFXF1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r2QxG2 ">render</p>
+<p  id="Text_8mmSS2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">() void {</p>
+</div>
+</div>
+<div  id="Flex_IIyOj1-gk" data-vp="" style="transform: translate3d(0px, 900px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_z47fP4-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">41</p>
+<div  id="Flex_wQBpM2-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_c3JPp3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">    event_picker.</p>
+<p  id="Text_4lFJU3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_r2QxG2 ">render</p>
+<p  id="Text_KnI7r-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">();</p>
+</div>
+</div>
+<div  id="Flex_69zAf3-gk" data-vp="" style="transform: translate3d(0px, 922.5px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_njuOa4-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">42</p>
+<div  id="Flex_0jMKo2-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
+<p  id="Text_S4jVW3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_02aNZ1 ">}</p>
+</div>
+</div>
+<div  id="Flex_jteWO1-gk" data-vp="" style="transform: translate3d(0px, 945px, 0px);" class="lay_5T1361 pos_EzcyX4 mapa_CrkEb2 vis_hyiu14 ">
+<p  id="Text_ymYBz1-gk" data-vp="" class="lay_yMYoc2 pos_e8wtf3 mapa_CrkEb2 vis_Srq792 ">43</p>
+<div  id="Flex_cwaxK3-gk" data-vp="" class="lay_4PUDp2 pos_e8wtf3 mapa_t79Oh3 vis_KEn011 ">
 </div>
 </div>
 </div>
@@ -993,24 +1318,24 @@ linear-gradient(to top right, rgba(var(--tint)), rgba(var(--background)) 20%, rg
 </div>
 </div>
 </div>
-<p  id="Text_k5oqT3-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_sT3Sn vis_C0cOX1 ">API Reference</p>
-<p  id="Text_LyL7R-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_j0VVX2 vis_dxEbU ">Event Callbacks</p>
-<p  id="Text_n1SV24-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_p5bbH2 vis_j9g222 ">DatePicker exposes optional function pointers for fine-grained control.</p>
-<ul  id="List_ryUPe3-gk" data-vp="" class="lay_9dAhY4 pos_e8wtf3 mapa_v8rv64 vis_yRqmj3 ">
-<li  id="List_QVDXN2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 "">
-<p  id="Text_cYBBO1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_l1xzy3 ">.on_date_select = fn(DateTime) void</p>
+<p  id="Text_ehUEZ2-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_sT3Sn vis_7KE9Z1 ">API Reference</p>
+<p  id="Text_M9UQt-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_j0VVX2 vis_T9885 ">Event Callbacks</p>
+<p  id="Text_rGnu62-gk" data-vp="" class="lay_1I8dE4 pos_e8wtf3 mapa_p5bbH2 vis_RpDVK4 ">DatePicker exposes optional function pointers for fine-grained control.</p>
+<ul  id="List_HBczu1-gk" data-vp="" class="lay_9dAhY4 pos_e8wtf3 mapa_v8rv64 vis_l14Yw2 ">
+<li  id="List_JPSKO2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_IcHSP1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_5sFpH2 ">.on_date_select = fn(DateTime) void</p>
 </li>
-<li  id="List_OnRQE1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 "">
-<p  id="Text_vY4sY2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_l1xzy3 ">.on_year_select = fn(i32) void</p>
+<li  id="List_3koCG4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_btPN34-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_5sFpH2 ">.on_year_select = fn(i32) void</p>
 </li>
-<li  id="List_nNOaX2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 "">
-<p  id="Text_LtIxT-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_l1xzy3 ">.on_month_select = fn(i32) void</p>
+<li  id="List_kypjH1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_lXdjF2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_5sFpH2 ">.on_month_select = fn(i32) void</p>
 </li>
-<li  id="List_WcEIX4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 "">
-<p  id="Text_sVooJ3-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_l1xzy3 ">.on_next_month = fn() void</p>
+<li  id="List_89hNC1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_jBFeq1-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_5sFpH2 ">.on_next_month = fn() void</p>
 </li>
-<li  id="List_WXaRQ4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_SWFkJ2 "">
-<p  id="Text_9bb6v2-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_l1xzy3 ">.on_prev_month = fn() void</p>
+<li  id="List_rSzIL-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
+<p  id="Text_AOPOV4-gk" data-vp="" class="lay_jXzf62 pos_e8wtf3 mapa_CrkEb2 vis_5sFpH2 ">.on_prev_month = fn() void</p>
 </li>
 </ul>
 </div>
@@ -1019,7 +1344,9 @@ linear-gradient(to top right, rgba(var(--tint)), rgba(var(--background)) 20%, rg
 
 
 
-<div  id="opaque-toast-stack" data-vp="" class="lay_eGDG91 pos_AUI0J mapa_CrkEb2 vis_PZYxz1 ">
+<div  id="opaque-toast-stack" data-vp="" class="lay_eGDG91 pos_AUI0J mapa_CrkEb2 vis_hyiu14 ">
+</div>
+<div  id="Flex_mljX03-gk" data-vp="" class="lay_Owo7D2 pos_e8wtf3 mapa_CrkEb2 vis_PMQ7Z1 ">
 </div>
 </main>
 </body>
