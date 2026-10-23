@@ -23,7 +23,7 @@ const Stack = Vapor.Stack;
 const Text = Vapor.Text;
 const Icon = Vapor.Icon;
 const TextFmt = Vapor.TextFmt;
-const ButtonCtx = Vapor.Button;
+const Button = Vapor.Button;
 
 // ── Component Imports (adjust paths to your project) ─────────────────
 const Opaque = @import("opaque-ui");
@@ -321,7 +321,7 @@ fn renderHeaders() void {
                 });
 
                 // Toggle
-                ButtonCtx(toggleHeader, .{hi})
+                Button(toggleHeader, .{hi})
                     .size(.squarePx(28))
                     .pointer()
                     .layout(.center)
@@ -334,7 +334,7 @@ fn renderHeaders() void {
                 });
 
                 // Remove
-                ButtonCtx(removeHeader, .{hi})
+                Button(removeHeader, .{hi})
                     .ariaLabel("Remove header")
                     .size(.squarePx(28))
                     .pointer()
@@ -348,7 +348,7 @@ fn renderHeaders() void {
         }
 
         // Add header button
-        ButtonCtx(addHeader, .{})
+        Button(addHeader, .{})
             .padding(.xy(8, 4))
             .border(.thin(.palette(.border_color_light)))
             .pointer()
@@ -534,7 +534,7 @@ pub fn render() void {
             });
 
             // Send button
-            ButtonCtx(submitRequest, .{})
+            Button(submitRequest, .{})
                 .height(.px(36))
                 .padding(.xy(16, 0))
                 .background(.palette(.tint))
