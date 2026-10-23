@@ -336,7 +336,7 @@ pub fn render() void {
                     .children({
                     command_palette.render();
                 });
-                RedirectLink(.{ .url = "https://github.com/vic-Rokx/vapor", .aria_label = "redirect link to tether github repo" })
+                RedirectLink(.{ .url = "https://github.com/senet-toolbox/vapor-ui", .aria_label = "redirect link to vapor-ui repo" })
                     .class("nav-item")
                     .size(.hwPx(36, 36))
                     .layout(.center)
@@ -354,24 +354,24 @@ pub fn render() void {
                         .font(18, 700, .white)
                         .end();
                 });
-                RedirectLink(.{ .url = "https://github.com/vic-Rokx/vapor", .aria_label = "redirect link to discord" })
-                    .class("nav-item")
-                    .size(.hwPx(36, 36))
-                    .layout(.center)
-                    .background(.transparentize(.black, 0.8))
-                    .border(.round(.black, .all(8)))
-                    .pointer()
-                    .hover(.{
-                        .background = .yellow,
-                        .text_color = .black,
-                    })
-                    .children({
-                    Icon(.discord)
-                        .class("nav-item-icon")
-                        .inheritHover(&.{.text_color})
-                        .font(18, 700, .white)
-                        .end();
-                });
+                // RedirectLink(.{ .url = "https://github.com/vic-Rokx/vapor", .aria_label = "redirect link to discord" })
+                //     .class("nav-item")
+                //     .size(.hwPx(36, 36))
+                //     .layout(.center)
+                //     .background(.transparentize(.black, 0.8))
+                //     .border(.round(.black, .all(8)))
+                //     .pointer()
+                //     .hover(.{
+                //         .background = .yellow,
+                //         .text_color = .black,
+                //     })
+                //     .children({
+                //     Icon(.discord)
+                //         .class("nav-item-icon")
+                //         .inheritHover(&.{.text_color})
+                //         .font(18, 700, .white)
+                //         .end();
+                // });
 
                 Button(toggleTheme, .{})
                     .ariaLabel("toggle theme")

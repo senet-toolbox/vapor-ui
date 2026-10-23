@@ -2,12 +2,11 @@
     .name = .vapor,
     .version = "1.2.1",
     .fingerprint = 0x3bb57d3cbbb608a8, // Changing this has security and trust implications.
-    .minimum_zig_version = "0.15.2",
+    .minimum_zig_version = "0.16.0",
     .dependencies = .{
         .vapor = .{
-            .path = "../vapor",
-            // .url = "https://github.com/senet-toolbox/vapor/archive/refs/tags/v1.2.3.tar.gz",
-            // .hash = "vapor-1.2.2-VGoNddUrGABQqrRX2eETDt7oNhNfi3jGV_ARc07GnlMZ",
+            .url = "https://github.com/senet-toolbox/vapor/archive/refs/tags/v3.2.1.tar.gz",
+            .hash = "vapor-3.2.1-VGoNdfgSFAAVCA-8uVYek48d0rNwGphnAMHMZDb7wDmj",
         },
         .vaporize = .{
             .path = "../vaporize",
