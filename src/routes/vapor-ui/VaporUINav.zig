@@ -337,8 +337,8 @@ pub fn render() void {
                 });
             });
             Row().style(&.{ .layout = .right_center }).children({
-                Button(openMenu, .{})
-                    .ariaLabel("open menu")
+                Button(openSearch, .{})
+                    .ariaLabel("search components")
                     .style(&.{
                         .size = .hw(.px(36), .px(48)),
                         .visual = .bg(.palette(.background)),
@@ -360,10 +360,12 @@ pub fn render() void {
                     }).end();
                 });
 
-                Button(openMenu, .{}).style(&.{
-                    .size = .hw(.px(36), .px(48)),
-                    .visual = .bg(.palette(.background)),
-                }).children({
+                Button(openMenu, .{})
+                    .ariaLabel(if (menu) "close menu" else "open menu")
+                    .style(&.{
+                        .size = .hw(.px(36), .px(48)),
+                        .visual = .bg(.palette(.background)),
+                    }).children({
                     if (menu) {
                         Icon(.x_lg).style(&.{
                             .id = "close-menu",
@@ -378,7 +380,51 @@ pub fn render() void {
                 });
             });
         });
+        if (menu) MobileMenu();
     }
+}
+
+fn closeMenu(_: *Vapor.Event) void {
+    menu = false;
+}
+
+/// The phone menu: the site's sections and every component page, under the
+/// top bar. Choosing one closes it.
+fn MobileMenu() void {
+    const current_path = Vapor.currentPath();
+    Stack().id("mobile-menu").style(&.{
+        .position = .{ .type = .fixed, .top = .px(80), .left = .percent(0), .right = .percent(0), .bottom = .px(0), .z_index = 998 },
+        .padding = .{ .top = 8, .bottom = 48, .left = 16, .right = 16 },
+        .scroll = .scrollY(),
+        .visual = .{ .background = .palette(.background) },
+    }).children({
+        MenuSection("Pages");
+        for (urls) |url| MenuLink(url.url, url.title[6..], current_path);
+        MenuSection("Components");
+        for (ComponentsNav.items) |item| MenuLink(item.value, item.label, current_path);
+    });
+}
+
+fn MenuSection(title: []const u8) void {
+    Text(title)
+        .font(12, 500, .hex("#71717a"))
+        .fontFamily("IBM Plex Mono,monospace")
+        .margin(.{ .top = 16, .bottom = 4 })
+        .end();
+}
+
+fn MenuLink(url: []const u8, label: []const u8, current_path: []const u8) void {
+    const active = std.mem.eql(u8, current_path, url);
+    Link(.{ .url = url, .aria_label = label })
+        .onEvent(.click, closeMenu, .{})
+        .width(.percent(100))
+        .padding(.xy(4, 12))
+        .textDecoration(.none)
+        .children({
+        Text(label)
+            .font(16, if (active) 600 else 400, if (active) .palette(.tint) else .palette(.text_color))
+            .end();
+    });
 }
 
 const Styles = struct {

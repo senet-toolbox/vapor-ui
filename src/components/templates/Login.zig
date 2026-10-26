@@ -36,34 +36,15 @@ const key =
     \\<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-key-icon lucide-key"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/></svg>
 ;
 
+// The showcase has no backend, so the forms say so. In your app, send
+// `details` to your server here, e.g.
+//   Vapor.Fetch.fetch("/api/login", .{ .method = .POST, .body = payload, .body_type = .json })
 fn submit() void {
-    if (KeyStone.isAuthenticated()) {
-        std.log.info("Already logged in", .{});
-    } else {
-        std.log.info("Logging in", .{});
-    }
+    Opaque.Toast.info(.{ .title = "Demo only", .description = "This login form is not connected to a backend." });
 }
 
 fn createAccount() void {
-    const payload = utils.stringify(details, .frame) catch unreachable;
-    fetch("http://localhost:8080/user", .{
-        .method = .POST,
-        .credentials = "include",
-        .body = payload,
-        .body_type = .json,
-    }).handle(createdAccount, .{});
-}
-
-fn createdAccount(resp: Vapor.Fetch.Result) void {
-    if (resp.isOk()) {
-        std.log.info("Account created {s}", .{resp.ok.body});
-    }
-}
-
-fn validateSession(resp: Vapor.Fetch.Result) void {
-    if (resp.isOk()) {
-        std.log.info("Session validated {s}", .{resp.ok.body});
-    }
+    Opaque.Toast.info(.{ .title = "Demo only", .description = "This sign-up form is not connected to a backend." });
 }
 
 fn loginWithProvider(provider: KeyStone.Provider) void {
@@ -107,30 +88,6 @@ fn AuthBtn(args: KeyStone.Provider, icon: Vapor.IconTokens) void {
             .font(18, 700, if (active) .black else .palette(.text))
             .end();
     });
-}
-
-const fetch = Vapor.Fetch.fetch;
-fn payment() void {
-    fetch("http://localhost:8080/checkout", .{
-        .method = .POST,
-        .credentials = "include",
-        .headers = .{
-            .content_type = "application/x-www-form-urlencoded",
-        },
-    }).handle(handlePayment, .{});
-}
-
-fn handlePayment(resp: Vapor.Fetch.Result) void {
-    switch (resp) {
-        .ok => |data| {
-            std.log.infoln("Payment data {any}", .{data.body});
-            Vapor.redirect(data.body);
-        },
-        .err => |err| {
-            std.log.infoln("Failed to fetch payment data: {s}", .{err.message});
-        },
-    }
-    // Vapor.cycle();
 }
 
 fn onChange(evt: *Vapor.Event) void {

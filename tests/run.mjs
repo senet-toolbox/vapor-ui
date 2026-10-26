@@ -286,6 +286,10 @@ function makePage(cdp, origin) {
     },
     evaluate,
     waitFor,
+    // Resizes the page; the app reads its width when it loads, so goto after.
+    async viewport(width, height, mobile = false) {
+      await cdp.send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile });
+    },
     async goto(path) {
       await cdp.send("Page.navigate", { url: origin + path });
       await waitFor(`document.readyState === "complete"`, "page load");
@@ -1022,6 +1026,13 @@ const tests = {
       await p.goto(path);
       assert(!(await p.evaluate(sidebar)), `${path} has no sidebar`);
     }
+  },
+
+  async "auth: the demo forms say they have no backend"(p) {
+    await p.goto("/ui/auth");
+    // The first "Login" is the tab; the second is the form's button.
+    await p.clickText("Login", 1);
+    await p.waitText("This login form is not connected to a backend.");
   },
 
   async "nav: every link in the nav and sidebar leads to a page"(p) {

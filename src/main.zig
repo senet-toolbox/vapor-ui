@@ -28,6 +28,7 @@ pub export fn init() void {
 }
 
 pub const std_options = std.Options{
-    .log_level = .debug,
+    // Debug logs stay in development; visitors' consoles get warnings only.
+    .log_level = if (@import("builtin").mode == .Debug) .debug else .warn,
     .logFn = Vapor.lib.log,
 };
