@@ -14,7 +14,7 @@ const ListItem = Vapor.ListItem;
 const CtxButton = Vapor.Button;
 const RedirectLink = Vapor.RedirectLink;
 const ButtonCtx = Vapor.Button;
-const UiNav = @import("../../vapor-ui/VaporUINav.zig");
+const ComponentsNav = @import("ComponentsNav.zig");
 
 pub fn init() void {
     Vapor.Page(.{ .src = @src() }, render, null);
@@ -64,7 +64,7 @@ pub fn render() void {
             .wrap(.wrap)
             .listStyle(.none)
             .children({
-            for (UiNav.menu_items) |item| {
+            for (ComponentsNav.items) |item| {
                 ListItem()
                     .duration(100)
                     .pointer()

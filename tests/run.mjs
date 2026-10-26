@@ -8,6 +8,8 @@
 //                                       name contains text)
 //   node tests/run.mjs --dump /ui/x    (lists what a page offers to click)
 //   node tests/run.mjs --serve         (serve the site on :8091 to poke at)
+//   node tests/run.mjs --release       (against release/, as a static host
+//                                       serves it; `zig build test-release`)
 //
 // No npm dependencies: Node >= 22 provides fetch and WebSocket. Chrome is found
 // via $CHROME, then the usual install locations.
@@ -19,10 +21,12 @@ import { tmpdir } from "node:os";
 import { dirname, extname, join, normalize, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const siteDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const projectDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
 const flags = new Set(args.filter((a) => a.startsWith("--")));
 const positional = args.filter((a) => !a.startsWith("--"));
+const release = flags.has("--release");
+const siteDir = release ? join(projectDir, "release") : projectDir;
 
 // ── server ──────────────────────────────────────────────────────────────────
 
@@ -39,7 +43,20 @@ const mime = {
   ".json": "application/json",
 };
 
+// release/ as a static host serves it: the file, else the directory's
+// index.html, else the fallback for paths no file covers: app.html when the
+// pages are prerendered, index.html when the site is client-rendered.
+function serveRelease(req, res) {
+  const path = decodeURIComponent(new URL(req.url, "http://x").pathname);
+  const file = normalize(join(siteDir, path));
+  if (!file.startsWith(siteDir)) return res.writeHead(400).end();
+  const found = [file, join(file, "index.html"), join(siteDir, "app.html"), join(siteDir, "index.html")].find((f) => existsSync(f) && statSync(f).isFile());
+  res.writeHead(200, { "content-type": mime[extname(found)] ?? "application/octet-stream" });
+  res.end(readFileSync(found));
+}
+
 function serve(req, res) {
+  if (release) return serveRelease(req, res);
   let path = decodeURIComponent(new URL(req.url, "http://x").pathname);
   if (path === "/bundle.min.js" || path === "/browser.min.js") path = "/zig-out/bin" + path;
   const file = normalize(join(siteDir, path));
@@ -51,7 +68,7 @@ function serve(req, res) {
   }
   // Routes are client-side: every extensionless path gets the app shell.
   res.writeHead(200, { "content-type": mime[".html"] });
-  res.end(readFileSync(join(siteDir, "template.html")));
+  res.end(readFileSync(join(projectDir, "template.html")));
 }
 
 // ── chrome + CDP ────────────────────────────────────────────────────────────
@@ -426,7 +443,7 @@ const kanbanCardButton = (title, label) => `(() => {
 
 const tests = {
   async "accordion: a header opens its panel and closes it again"(p) {
-    await p.goto("/ui/accordion");
+    await p.goto("/ui/components/accordion");
     const body = "We stand behind our products with a 30-day return policy. If you're not satisfied, simply return the item in its original condition for a full refund.";
     await p.waitText(body, { gone: true });
     await p.clickText("Return Policy");
@@ -436,14 +453,14 @@ const tests = {
   },
 
   async "accordion: a custom panel's own buttons work"(p) {
-    await p.goto("/ui/accordion");
+    await p.goto("/ui/components/accordion");
     await p.waitText("Open Account Settings", { gone: true });
     await p.clickText("Security Settings");
     await p.waitText("Open Account Settings");
   },
 
   async "accordion: triggers report open/closed, items never overlap, closed panels leave the tab order"(p) {
-    await p.goto("/ui/accordion");
+    await p.goto("/ui/components/accordion");
     const trigger = (t) => `(() => { ${finders} return __ui.byText(${JSON.stringify(t)})[0]?.closest("button[aria-expanded]"); })()`;
     assert(await p.evaluate(`${trigger("Security Settings")}?.getAttribute("aria-expanded")`) === "false", "starts collapsed");
     // A closed panel's buttons cannot take focus (visibility: hidden).
@@ -461,7 +478,7 @@ const tests = {
   },
 
   async "alert: opens on its trigger and Cancel closes it"(p) {
-    await p.goto("/ui/alert");
+    await p.goto("/ui/components/alert");
     await p.waitText("Are you sure?", { gone: true });
     await p.clickText("Trigger Confirmation");
     await p.waitText("Are you sure?");
@@ -475,7 +492,7 @@ const tests = {
   },
 
   async "switch: toggles its state and calls back"(p) {
-    await p.goto("/ui/switch");
+    await p.goto("/ui/components/switch");
     assert(await p.ariaOf("test-switch", "role") === "switch", "the switch has role=switch");
     assert(await p.ariaOf("test-switch", "aria-checked") === "false", "it starts off");
     await p.clickLabel("test-switch");
@@ -487,7 +504,7 @@ const tests = {
   },
 
   async "checkbox: toggles its state and calls back"(p) {
-    await p.goto("/ui/checkbox");
+    await p.goto("/ui/components/checkbox");
     assert(await p.ariaOf("test-checkbox", "role") === "checkbox", "the checkbox has role=checkbox");
     assert(await p.ariaOf("test-checkbox", "aria-checked") === "false", "it starts unchecked");
     await p.clickLabel("test-checkbox");
@@ -496,7 +513,7 @@ const tests = {
   },
 
   async "radio: one choice at a time, starting on the default"(p) {
-    await p.goto("/ui/radio");
+    await p.goto("/ui/components/radio");
     const checked = async () => JSON.stringify(await p.evaluate(`(() => { ${finders} return [...document.querySelectorAll("[role=radio]")].filter((e) => __ui.visible(e) && e.getAttribute("aria-checked") === "true").map((e) => e.textContent.trim()); })()`));
     assert(await checked() === '["Default"]', `starts on Default (got ${await checked()})`);
     await p.waitText("Density: default");
@@ -510,7 +527,7 @@ const tests = {
   },
 
   async "dialog: opens, filters as you type, closes on Escape"(p) {
-    await p.goto("/ui/dialog");
+    await p.goto("/ui/components/dialog");
     const dialogOpen = `(() => { ${finders} return [...document.querySelectorAll("[role=dialog]")].some((e) => __ui.visible(e)); })()`;
     await p.waitFor(`!${dialogOpen}`, "no dialog at first");
     await p.clickLabel("open basic dialog");
@@ -526,7 +543,7 @@ const tests = {
   },
 
   async "dialog: a click outside closes it"(p) {
-    await p.goto("/ui/dialog");
+    await p.goto("/ui/components/dialog");
     const dialogOpen = `(() => { ${finders} return [...document.querySelectorAll("[role=dialog]")].some((e) => __ui.visible(e)); })()`;
     await p.clickLabel("open basic dialog");
     await p.waitFor(dialogOpen, "the dialog to open");
@@ -535,7 +552,7 @@ const tests = {
   },
 
   async "dialog: arrow keys move the highlight and Enter picks"(p) {
-    await p.goto("/ui/dialog");
+    await p.goto("/ui/components/dialog");
     // What a screen reader announces: the option the search box names as
     // its aria-activedescendant.
     const active = `(() => { const box = document.querySelector("[role=combobox][aria-activedescendant]"); const e = box && document.getElementById(box.getAttribute("aria-activedescendant")); return e ? e.textContent.trim() : null; })()`;
@@ -556,7 +573,7 @@ const tests = {
   },
 
   async "drawer: opens from each side and closes on Escape"(p) {
-    await p.goto("/ui/drawer");
+    await p.goto("/ui/components/drawer");
     const sides = [
       ["Open Bottom", "Simple Drawer Content", (b) => b.bottom > b.vh * 0.5],
       ["Open Left", "Simple Drawer Content", (b) => b.right < b.vw * 0.5],
@@ -578,7 +595,7 @@ const tests = {
   },
 
   async "drawer: the backdrop and the close button close it"(p) {
-    await p.goto("/ui/drawer");
+    await p.goto("/ui/components/drawer");
     await p.clickText("Open Right (Details)");
     await p.waitText("Transaction Details");
     await p.clickLabel("Close details");
@@ -590,7 +607,7 @@ const tests = {
   },
 
   async "toast: shows in its corner, announced, and its close button dismisses it"(p) {
-    await p.goto("/ui/toasts");
+    await p.goto("/ui/components/toasts");
     await p.clickText("Save Successful");
     await p.waitText("Document Saved");
     const box = await p.boxOf("Document Saved");
@@ -602,7 +619,7 @@ const tests = {
   },
 
   async "toast: closes on its own, and hovering the stack holds it"(p) {
-    await p.goto("/ui/toasts");
+    await p.goto("/ui/components/toasts");
     await p.clickText("Save Successful");
     await p.waitText("Document Saved");
     await p.waitText("Document Saved", { gone: true, timeout: 6000 });
@@ -615,7 +632,7 @@ const tests = {
   },
 
   async "toast: dismissing one by keyboard leaves the others their full time"(p) {
-    await p.goto("/ui/toasts");
+    await p.goto("/ui/components/toasts");
     // A, then B (dismissed from the keyboard), then C. B's timer must not
     // take another toast with it.
     await p.clickText("Save Successful");
@@ -642,7 +659,7 @@ const tests = {
   },
 
   async "tooltip: shows on hover and focus, hides on leave and Escape"(p) {
-    await p.goto("/ui/tooltip");
+    await p.goto("/ui/components/tooltip");
     const tip = "This is a tooltip";
     await p.waitText(tip, { gone: true });
     await p.hoverText("Hover Me");
@@ -667,7 +684,7 @@ const tests = {
   },
 
   async "tooltip: custom triggers and custom content"(p) {
-    await p.goto("/ui/tooltip");
+    await p.goto("/ui/components/tooltip");
     await p.hoverText("Custom Tooltip");
     await p.waitText("This is a custom trigger tooltip");
     await p.mouseTo(700, 880);
@@ -677,7 +694,7 @@ const tests = {
   },
 
   async "select: pick an option with the pointer"(p) {
-    await p.goto("/ui/select");
+    await p.goto("/ui/components/select");
     // The first select on the page: Pending / Success / Error.
     const trigger = `[...document.querySelectorAll("[aria-haspopup=listbox]")].filter((e) => __ui.visible(e))[0]`;
     await p.waitText("Pending", { gone: true });
@@ -694,7 +711,7 @@ const tests = {
   },
 
   async "select: trigger and options expose their state; Escape closes"(p) {
-    await p.goto("/ui/select");
+    await p.goto("/ui/components/select");
     const trigger = `(() => { ${finders} return [...document.querySelectorAll("[aria-haspopup=listbox]")].filter((e) => __ui.visible(e))[0]; })()`;
     assert(await p.evaluate(`${trigger}?.getAttribute("aria-expanded")`) === "false", "the trigger reads collapsed");
     assert(await p.evaluate(`${trigger}?.textContent.trim()`) === "Select", "the trigger is named by its placeholder");
@@ -710,7 +727,7 @@ const tests = {
   },
 
   async "select: custom and detached triggers report the choice"(p) {
-    await p.goto("/ui/select");
+    await p.goto("/ui/components/select");
     // An icon-only trigger, named for screen readers.
     await p.clickLabel("More actions");
     await p.clickText("Item 3");
@@ -723,7 +740,7 @@ const tests = {
   },
 
   async "command palette: Ctrl or Cmd + its key toggles it, Escape resets"(p) {
-    await p.goto("/ui/commandpalette");
+    await p.goto("/ui/components/commandpalette");
     // An open palette floats its label up out of the field.
     const raised = `(() => { ${finders} return (__ui.byText("Search...")[0]?.getAttribute("style") ?? "").includes("translateY(-70%)"); })()`;
     await p.waitFor(`!${raised}`, "the palette to start closed");
@@ -738,7 +755,7 @@ const tests = {
   },
 
   async "command palette: revisiting the page leaves no listeners behind"(p) {
-    await p.goto("/ui/commandpalette");
+    await p.goto("/ui/components/commandpalette");
     const before = await p.listenerCount("keydown");
     for (let i = 0; i < 4; i++) {
       await p.clickText("Accordion");
@@ -751,7 +768,7 @@ const tests = {
   },
 
   async "combobox: several choices, search filters, Escape closes"(p) {
-    await p.goto("/ui/combobox");
+    await p.goto("/ui/components/combobox");
     const trigger = `(() => { ${finders} return [...document.querySelectorAll("[aria-haspopup=listbox]")].filter((e) => __ui.visible(e))[0]; })()`;
     const selected = `(() => { ${finders} return [...document.querySelectorAll("[role=option][aria-selected=true]")].filter((e) => __ui.visible(e)).map((e) => e.textContent.trim()); })()`;
     assert(await p.evaluate(`${trigger}?.getAttribute("aria-expanded")`) === "false", "starts collapsed");
@@ -773,7 +790,7 @@ const tests = {
   },
 
   async "datepicker: days are named by date; picking, paging and changing year"(p) {
-    await p.goto("/ui/datepicker");
+    await p.goto("/ui/components/datepicker");
     // The second picker starts on August 1991.
     const pressed = (label) => `(document.querySelector('[aria-label="${label}"]')?.getAttribute("aria-pressed") ?? null)`;
     await p.clickLabel("August 15, 1991");
@@ -792,7 +809,7 @@ const tests = {
   },
 
   async "slider: keys, a press on the track and a drag set the value"(p) {
-    await p.goto("/ui/slider");
+    await p.goto("/ui/components/slider");
     const handle = `document.querySelector('[role=slider][aria-label="Volume"]')`;
     const now = (v) => `Number(${handle}?.getAttribute("aria-valuenow")) === ${v}`;
     await p.waitFor(now(40), "the slider to start at 40");
@@ -816,7 +833,7 @@ const tests = {
   },
 
   async "carousel: arrows, dots and a swipe change the slide"(p) {
-    await p.goto("/ui/carousel");
+    await p.goto("/ui/components/carousel");
     const titles = ["Slide One", "Slide Two", "Slide Three", "Slide Four", "Slide Five"];
     // The slide on show: the one whose title the viewport does not clip.
     const shown = `(() => { ${finders} return ${JSON.stringify(titles)}.filter((t) => __ui.byText(t).length > 0); })()`;
@@ -841,7 +858,7 @@ const tests = {
   },
 
   async "sidebar: groups fold away, items mark the current one"(p) {
-    await p.goto("/ui/sidebar");
+    await p.goto("/ui/components/sidebar");
     const group = (t) => `[...document.querySelectorAll("button[aria-expanded]")].find((e) => e.textContent.trim() === ${JSON.stringify(t)})`;
     const item = (t) => `[...document.querySelectorAll("button[aria-pressed]")].find((e) => e.textContent.trim() === ${JSON.stringify(t)})`;
     assert(await p.evaluate(`${group("Projects")}?.getAttribute("aria-expanded")`) === "true", "the Projects group starts open");
@@ -862,7 +879,7 @@ const tests = {
   },
 
   async "tabs: clicking and arrow keys switch the chart, focus follows"(p) {
-    await p.goto("/ui/chart");
+    await p.goto("/ui/components/chart");
     const selected = `[...document.querySelectorAll("[role=tab][aria-selected=true]")].map((e) => e.textContent.trim())`;
     const isSelected = (t) => `JSON.stringify(${selected}) === ${JSON.stringify(JSON.stringify([t]))}`;
     await p.waitFor(isSelected("Line Charts"), "Line Charts selected at first");
@@ -885,7 +902,7 @@ const tests = {
   },
 
   async "table: sort both ways, select rows, page through"(p) {
-    await p.goto("/ui/table");
+    await p.goto("/ui/components/table");
     // The sortable table: the one with a sort button on Amount.
     const sortBtn = `[...document.querySelectorAll("[aria-label^='Sort by Amount']")][0]`;
     const grid = `${sortBtn}.closest("[role=grid]")`;
@@ -917,7 +934,7 @@ const tests = {
   },
 
   async "table: searching a column filters the rows"(p) {
-    await p.goto("/ui/table");
+    await p.goto("/ui/components/table");
     const btn = `document.querySelector("[aria-label^='Search by Email']")`;
     const grid = `${btn}.closest("[role=grid]")`;
     const emails = `[...${grid}.querySelectorAll("[role=row]")].map((r) => r.textContent.match(/[a-z]+@example\\.com/)?.[0]).filter(Boolean)`;
@@ -932,7 +949,7 @@ const tests = {
   },
 
   async "text field: labels lead to their inputs, passwords are hidden"(p) {
-    await p.goto("/ui/textfield");
+    await p.goto("/ui/components/textfield");
     const inputFor = (label) => `(() => { ${finders} const l = __ui.byText(${JSON.stringify(label)}).find((e) => e.tagName === "LABEL"); return l && document.getElementById(l.htmlFor); })()`;
     assert(await p.evaluate(`${inputFor("Password")}?.type`) === "password", "the password field hides what is typed");
     assert(await p.evaluate(`${inputFor("Email")}?.type`) === "email", "the email field is an email input");
@@ -954,7 +971,7 @@ const tests = {
   },
 
   async "progress: the bar runs to 100% and replays; the circle toggles"(p) {
-    await p.goto("/ui/progress");
+    await p.goto("/ui/components/progress");
     // The progressbar beside each control.
     const barOf = (label) => `(() => { ${finders} let n = __ui.byText(${JSON.stringify(label)})[0]; while (n && !n.querySelector("[role=progressbar]")) n = n.parentElement; return Number(n?.querySelector("[role=progressbar]")?.getAttribute("aria-valuenow")); })()`;
     const startAt = await p.evaluate(barOf("Start Animation"));
@@ -971,7 +988,7 @@ const tests = {
   },
 
   async "marquee: scrolls, and pauses while the pointer is over it"(p) {
-    await p.goto("/ui/marquee");
+    await p.goto("/ui/components/marquee");
     const group = `[...document.querySelectorAll(".marquee-group")].find((g) => g.getBoundingClientRect().height > 0)`;
     await p.evaluate(`${group}.scrollIntoView({ block: "center" })`);
     await sleep(200);
@@ -989,7 +1006,7 @@ const tests = {
   },
 
   async "button: every button has a name; a loading one says it is busy"(p) {
-    await p.goto("/ui/button");
+    await p.goto("/ui/components/button");
     const unnamed = await p.evaluate(`(() => { ${finders} return [...document.querySelectorAll("button")].filter((b) => __ui.visible(b) && !b.getAttribute("aria-label") && !b.textContent.trim()).length; })()`);
     assert(unnamed === 0, `${unnamed} visible buttons with no name`);
     await p.clickLabel("Next");
@@ -997,8 +1014,60 @@ const tests = {
     assert(JSON.stringify(busy) === '["true","true"]', `the loading button reads busy and disabled (${JSON.stringify(busy)})`);
   },
 
+  async "components: the sidebar is on component pages only"(p) {
+    const sidebar = `!!document.querySelector('[aria-label="navigate to /ui/components/accordion"]')`;
+    await p.goto("/ui/components/tabs");
+    assert(await p.evaluate(sidebar), "a component page has the sidebar");
+    for (const path of ["/", "/ui/components", "/ui/templates", "/ui/auth", "/ui/payment"]) {
+      await p.goto(path);
+      assert(!(await p.evaluate(sidebar)), `${path} has no sidebar`);
+    }
+  },
+
+  async "nav: every link in the nav and sidebar leads to a page"(p) {
+    await p.goto("/ui/components/accordion");
+    const links = await p.evaluate(`[...new Set([...document.querySelectorAll("a[href^='/']")].map((a) => new URL(a.href).pathname))]`);
+    assert(links.length > 10, `found only ${links.length} links`);
+    const missing = [];
+    for (const path of links) {
+      await p.goto(path);
+      if (await p.evaluate(`!!document.getElementById("vapor-not-found")`)) missing.push(path);
+    }
+    assert(missing.length === 0, `links with no page: ${missing.join(", ")}`);
+  },
+
+  async "tabs: each example switches its panel, and arrow keys move the selection"(p) {
+    await p.goto("/ui/components/tabs");
+    await p.waitText("Change your name, email and avatar.");
+    await p.clickText("Password");
+    await p.waitText("Update your password. You will be signed out of other devices.");
+    await p.press("ArrowRight");
+    await p.waitText("Choose which emails and push notifications you receive.");
+    await p.waitFor(`document.activeElement?.textContent.trim() === "Notifications"`, "focus to follow the selected tab");
+
+    await p.waitText("Selected: Activity");
+    await p.clickText("Settings");
+    await p.waitText("Selected: Settings");
+
+    await p.waitText("128 visits today");
+    await p.clickText("Weekly");
+    await p.waitText("904 visits this week");
+  },
+
+  async "auth: the login card switches to account creation"(p) {
+    await p.goto("/ui/auth");
+    await p.waitText("Login into Acorn");
+    await p.clickText("Create Account");
+    await p.waitText("Create Acorn Account");
+  },
+
+  async "payment: the pricing cards show every plan"(p) {
+    await p.goto("/ui/payment");
+    for (const text of ["Ryven Pricing", "$0", "$29", "$79"]) await p.waitText(text);
+  },
+
   async "every page: each control has a name"(p) {
-    const pages = ["/", "/ui/accordion", "/ui/alert", "/ui/button", "/ui/carousel", "/ui/chart", "/ui/checkbox", "/ui/combobox", "/ui/commandpalette", "/ui/components", "/ui/datepicker", "/ui/dialog", "/ui/drawer", "/ui/marquee", "/ui/progress", "/ui/radio", "/ui/select", "/ui/sidebar", "/ui/slider", "/ui/switch", "/ui/table", "/ui/templates", "/ui/textfield", "/ui/toasts", "/ui/tooltip"];
+    const pages = ["/", "/ui/components/accordion", "/ui/components/alert", "/ui/components/button", "/ui/components/carousel", "/ui/components/chart", "/ui/components/checkbox", "/ui/components/combobox", "/ui/components/commandpalette", "/ui/components", "/ui/components/datepicker", "/ui/components/dialog", "/ui/components/drawer", "/ui/components/marquee", "/ui/components/progress", "/ui/components/radio", "/ui/components/select", "/ui/components/sidebar", "/ui/components/slider", "/ui/components/switch", "/ui/components/table", "/ui/components/tabs", "/ui/templates", "/ui/components/textfield", "/ui/components/toasts", "/ui/components/tooltip", "/ui/auth", "/ui/payment"];
     const problems = [];
     for (const path of pages) {
       await p.goto(path);
@@ -1010,7 +1079,7 @@ const tests = {
   },
 
   async "table: a row's action menu runs the action on that row"(p) {
-    await p.goto("/ui/table");
+    await p.goto("/ui/components/table");
     // The first action menu on the page belongs to the With Actions table.
     const menu = `[...document.querySelectorAll("[role=gridcell] [aria-haspopup=listbox]")][0]`;
     await p.evaluate(`${menu}.scrollIntoView({ block: "center" })`);
@@ -1022,7 +1091,7 @@ const tests = {
   },
 
   async "carousel: a bounded one disables the arrow at each end"(p) {
-    await p.goto("/ui/carousel");
+    await p.goto("/ui/components/carousel");
     // Carousels in page order: basic, compact, bounded.
     const prev = `document.querySelectorAll('[aria-label="Previous slide"]')[2]`;
     const next = `document.querySelectorAll('[aria-label="Next slide"]')[2]`;
@@ -1093,7 +1162,7 @@ const tests = {
   },
 
   async "drawer: opening and closing leaves no listeners behind"(p) {
-    await p.goto("/ui/drawer");
+    await p.goto("/ui/components/drawer");
     const before = await p.listenerCount("keydown");
     for (let i = 0; i < 5; i++) {
       await p.clickText("Open Bottom");
@@ -1108,7 +1177,12 @@ const tests = {
 
 // ── main ────────────────────────────────────────────────────────────────────
 
-if (!existsSync(join(siteDir, "zig-out/bin/vapor.wasm")) || !existsSync(join(siteDir, "zig-out/bin/bundle.min.js"))) {
+if (release) {
+  if (!existsSync(join(siteDir, "index.html"))) {
+    console.error("missing release/index.html; run `zig build release` (or `zig build test-release`)");
+    process.exit(2);
+  }
+} else if (!existsSync(join(siteDir, "zig-out/bin/vapor.wasm")) || !existsSync(join(siteDir, "zig-out/bin/bundle.min.js"))) {
   console.error("missing zig-out/bin/vapor.wasm or bundle.min.js; run `zig build` (or `zig build test-ui`)");
   process.exit(2);
 }

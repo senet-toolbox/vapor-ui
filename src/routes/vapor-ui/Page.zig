@@ -23,30 +23,34 @@ const Footer = @import("Footer.zig");
 const VaporUINav = @import("VaporUINav.zig");
 
 // Pages
-const ChartPage = @import("../../routes/ui/chart/ChartPage.zig");
-const ButtonPage = @import("../../routes/ui/button/ButtonPage.zig");
-const CommandPalettePage = @import("../../routes/ui/commandpalette/CommandPalettePage.zig");
-const ComboBoxPage = @import("../../routes/ui/combobox/ComboboxPage.zig");
-const AccordionPage = @import("../../routes/ui/accordion/AccordionPage.zig");
-const SelectPage = @import("../../routes/ui/select/SelectPage.zig");
-const TablePage = @import("../../routes/ui/table/TablePage.zig");
-const DialogPage = @import("../../routes/ui/dialog/DialogPage.zig");
-const AlertPage = @import("../../routes/ui/alert/AlertPage.zig");
-const DatePickerPage = @import("../../routes/ui/datepicker/DatePickerPage.zig");
-const DrawerPage = @import("../../routes/ui/drawer/DrawerPage.zig");
-const ToastPage = @import("../../routes/ui/toasts/ToastPage.zig");
-const TextFieldPage = @import("../../routes/ui/textfield/TextFieldPage.zig");
-const ToolTipPage = @import("../../routes/ui/tooltip/ToolTipPage.zig");
-const SwitchPage = @import("../../routes/ui/switch/SwitchPage.zig");
-const ProgressPage = @import("../../routes/ui/progress/ProgressPage.zig");
-const SideBarPage = @import("../../routes/ui/sidebar/SideBarPage.zig");
-const SliderPage = @import("../../routes/ui/slider/SliderPage.zig");
+const ChartPage = @import("../../routes/ui/components/chart/ChartPage.zig");
+const ButtonPage = @import("../../routes/ui/components/button/ButtonPage.zig");
+const CommandPalettePage = @import("../../routes/ui/components/commandpalette/CommandPalettePage.zig");
+const ComboBoxPage = @import("../../routes/ui/components/combobox/ComboboxPage.zig");
+const AccordionPage = @import("../../routes/ui/components/accordion/AccordionPage.zig");
+const SelectPage = @import("../../routes/ui/components/select/SelectPage.zig");
+const TablePage = @import("../../routes/ui/components/table/TablePage.zig");
+const DialogPage = @import("../../routes/ui/components/dialog/DialogPage.zig");
+const AlertPage = @import("../../routes/ui/components/alert/AlertPage.zig");
+const DatePickerPage = @import("../../routes/ui/components/datepicker/DatePickerPage.zig");
+const DrawerPage = @import("../../routes/ui/components/drawer/DrawerPage.zig");
+const ToastPage = @import("../../routes/ui/components/toasts/ToastPage.zig");
+const TextFieldPage = @import("../../routes/ui/components/textfield/TextFieldPage.zig");
+const ToolTipPage = @import("../../routes/ui/components/tooltip/ToolTipPage.zig");
+const SwitchPage = @import("../../routes/ui/components/switch/SwitchPage.zig");
+const ProgressPage = @import("../../routes/ui/components/progress/ProgressPage.zig");
+const SideBarPage = @import("../../routes/ui/components/sidebar/SideBarPage.zig");
+const SliderPage = @import("../../routes/ui/components/slider/SliderPage.zig");
 const ComponentsPage = @import("../../routes/ui/components/ComponentsPage.zig");
+const ComponentsNav = @import("../../routes/ui/components/ComponentsNav.zig");
 const TemplatesPage = @import("../../routes/ui/templates/TemplatesPage.zig");
-const CarouselPage = @import("../../routes/ui/carousel/CarouselPage.zig");
-const MarqueePage = @import("../../routes/ui/marquee/MarqueePage.zig");
-const CheckBoxPage = @import("../../routes/ui/checkbox/CheckBoxPage.zig");
-const RadioPage = @import("../../routes/ui/radio/RadioPage.zig");
+const CarouselPage = @import("../../routes/ui/components/carousel/CarouselPage.zig");
+const MarqueePage = @import("../../routes/ui/components/marquee/MarqueePage.zig");
+const CheckBoxPage = @import("../../routes/ui/components/checkbox/CheckBoxPage.zig");
+const RadioPage = @import("../../routes/ui/components/radio/RadioPage.zig");
+const TabsPage = @import("../../routes/ui/components/tabs/TabsPage.zig");
+const AuthPage = @import("../../routes/ui/auth/AuthPage.zig");
+const PaymentPage = @import("../../routes/ui/payment/PaymentPage.zig");
 
 const Toast = Opaque.Toast;
 const Chat = @import("../../components//templates/Chat.zig");
@@ -131,6 +135,10 @@ pub fn init() void {
     SideBarPage.init();
     SliderPage.init();
     ComponentsPage.init();
+    ComponentsNav.init();
+    TabsPage.init();
+    AuthPage.init();
+    PaymentPage.init();
 }
 
 fn layout(page: *const fn () void) void {

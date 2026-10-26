@@ -18,45 +18,19 @@ const Theme = @import("theme");
 const Graphic = Vapor.Graphic;
 const Opaque = @import("opaque-ui");
 const OverlayManager = Opaque.OverlayManager;
-const Item = Opaque.Item;
 
 const CommandPalette = Opaque.CommandPalette;
 const ComboBoxDialog = Opaque.ComboBoxDialog;
 
-pub const MenuItem = Item([]const u8);
+const ComponentsNav = @import("../ui/components/ComponentsNav.zig");
 
 var command_palette: CommandPalette = .{};
 pub var combobox_dialog: ComboBoxDialog([]const u8) = undefined;
 
-pub var menu_items = [_]MenuItem{
-    MenuItem{ .value = "/ui/accordion", .label = "Accordion", .icon = .arrow_right, .link = "/ui/accordion" },
-    MenuItem{ .value = "/ui/alert", .label = "Alert", .icon = .arrow_right, .link = "/ui/alert" },
-    MenuItem{ .value = "/ui/button", .label = "Button", .icon = .arrow_right, .link = "/ui/button" },
-    MenuItem{ .value = "/ui/carousel", .label = "Carousel", .icon = .arrow_right, .link = "/ui/carousel" },
-    MenuItem{ .value = "/ui/chart", .label = "Chart", .icon = .arrow_right, .link = "/ui/chart" },
-    MenuItem{ .value = "/ui/combobox", .label = "Combobox", .icon = .arrow_right, .link = "/ui/combobox" },
-    MenuItem{ .value = "/ui/commandpalette", .label = "CommandPalette", .icon = .arrow_right, .link = "/ui/commandpalette" },
-    MenuItem{ .value = "/ui/datepicker", .label = "DatePicker", .icon = .arrow_right, .link = "/ui/datepicker" },
-    MenuItem{ .value = "/ui/dialog", .label = "Dialog", .icon = .arrow_right, .link = "/ui/dialog" },
-    MenuItem{ .value = "/ui/drawer", .label = "Drawer", .icon = .arrow_right, .link = "/ui/drawer" },
-    MenuItem{ .value = "/ui/marquee", .label = "Marquee", .icon = .arrow_right, .link = "/ui/marquee" },
-    // MenuItem{ .value = "/ui/group", .label = "Group", .icon = .arrow_right, .link = "/ui/group" },
-    MenuItem{ .value = "/ui/select", .label = "Select", .icon = .arrow_right, .link = "/ui/select" },
-    MenuItem{ .value = "/ui/sidebar", .label = "Sidebar", .icon = .arrow_right, .link = "/ui/sidebar" },
-    MenuItem{ .value = "/ui/slider", .label = "Slider", .icon = .arrow_right, .link = "/ui/slider" },
-    MenuItem{ .value = "/ui/switch", .label = "Switch", .icon = .arrow_right, .link = "/ui/switch" },
-    MenuItem{ .value = "/ui/table", .label = "Table", .icon = .arrow_right, .link = "/ui/table" },
-    MenuItem{ .value = "/ui/tabs", .label = "Tabs", .icon = .arrow_right, .link = "/ui/tabs" },
-    MenuItem{ .value = "/ui/textfield", .label = "TextField", .icon = .arrow_right, .link = "/ui/textfield" },
-    MenuItem{ .value = "/ui/toasts", .label = "Toasts", .icon = .arrow_right, .link = "/ui/toasts" },
-    MenuItem{ .value = "/ui/tooltip", .label = "Tooltip", .icon = .arrow_right, .link = "/ui/tooltip" },
-    MenuItem{ .value = "/ui/progress", .label = "Progress Bar/Circle", .icon = .arrow_right, .link = "/ui/progress" },
-};
-
 var nav: Vapor.Element = .{};
 
 pub fn init() void {
-    combobox_dialog = .fromItems(&menu_items);
+    combobox_dialog = .fromItems(&ComponentsNav.items);
     combobox_dialog.on_select = onSelect;
     combobox_dialog.on_close = closePalette;
     command_palette.on_click = openSearch;
@@ -230,25 +204,11 @@ pub fn clickEvent(_: *[]const u8, evt: *Vapor.Event) void {
 pub fn goto(url: []const u8) void {
     Vapor.navigate(url);
     Vapor.scrollTo(0, 0);
-    const uuid = Vapor.fmtln("menu-{s}", .{url});
-    Vapor.scrollIntoView(uuid, .{ .block = .start });
+    ComponentsNav.reveal(url);
 }
 
-var mounted: bool = false;
-var current_menu_item: ?MenuItem = null;
 fn mount() void {
-    mounted = true;
     Vapor.scrollTo(0, 0);
-    // this runs after the vaporize is mounter
-    const current_path = Vapor.currentPath();
-    current_menu_item = null;
-    for (menu_items) |item| {
-        if (std.mem.eql(u8, current_path, item.value)) {
-            current_menu_item = item;
-            break;
-        }
-    }
-
     switch (Theme.mode) {
         .dark => {
             setAttribute("starDisc", "transform", "translate(22, -13)");
@@ -260,24 +220,11 @@ fn mount() void {
             setAttribute("starDisc", "transform", "translate(0, 0)");
         },
     }
-
-    if (current_menu_item == null) return;
-    const uuid = Vapor.fmtln("menu-{s}", .{current_menu_item.?.value});
-    Vapor.scrollIntoView(uuid, .{ .block = .start });
-    Vapor.onPopState(handlePopState);
-}
-
-fn handlePopState() void {
-    const current_path = Vapor.currentPath();
-    Vapor.scrollTo(0, 0);
-    const uuid = Vapor.fmtln("menu-{s}", .{current_path});
-    Vapor.scrollIntoView(uuid, .{ .block = .start });
 }
 
 const theme_svg = @embedFile("nightswitch.svg");
 
 pub fn render() void {
-    const current_path = Vapor.currentPath();
     Vapor.onMount(mount, .{});
     if (Vapor.isDesktop()) {
         Row().id("nav").style(&.{
@@ -367,70 +314,6 @@ pub fn render() void {
                 });
             });
         });
-        if (!std.mem.eql(u8, current_path, "/") and !std.mem.eql(u8, current_path, "/ui/components") and !std.mem.eql(u8, current_path, "/ui/templates")) {
-            Row().style(&.{
-                .position = .{ .type = .fixed, .top = .px(60), .left = .percent(2), .z_index = 999 },
-                .size = .hw(.percent(100), .mobileDesktopPercent(100, 14)),
-            }).children({
-                List().style(&.{
-                    .list_style = .none,
-                    .direction = .column,
-                    .padding = .{ .top = 16, .bottom = 64, .left = 8, .right = 8 },
-                    .child_gap = 12,
-                    .size = .hw(.percent(95), .percent(100)),
-                    .scroll = .scrollY(),
-                    .show_scrollbar = false,
-                    .layout = .{},
-                }).children({
-                    for (menu_items) |item| {
-                        const uuid = Vapor.fmtln("menu-{s}", .{item.value});
-                        const active = std.mem.eql(u8, current_path, item.value);
-                        // const inline_style = if (active)
-                        //     \\background:
-                        //     \\linear-gradient(rgba(var(--background)), rgba(var(--background))) padding-box,
-                        //     \\linear-gradient(to top right, rgba(var(--tint)), rgba(var(--background)) 20%, rgba(var(--background)) 80%, rgba(var(--tint))) border-box;
-                        // else
-                        //     "";
-                        ListItem()
-                            .id(uuid)
-                            .border(.sharp(.all(1), .transparent))
-                            // .inlineStyle("{s}", .{inline_style})
-                            .background(if (active) .transparentize(.palette(.tint), 0.1) else .transparent)
-                            .size(.hw(.fit, .percent(100)))
-                            .hoverBackground(if (active) .transparentize(.palette(.tint), 0.1) else .palette(.highlight_color))
-                            .border(.right(1, if (active) .palette(.tint) else .transparent))
-                            .layer(if (active) .dot(0.5, 6, .transparentize(.palette(.tint), 0.3)) else null)
-                            .children({
-                            Link(.{ .url = item.value, .aria_label = Vapor.fmtln("navigate to {s}", .{item.value}) })
-                                .ariaLabel(Vapor.fmtln("navigate to {s}", .{item.value}))
-                                .style(&.{
-                                    .visual = .{
-                                        .text_decoration = .none,
-                                        .cursor = .pointer,
-                                        .background = .transparent,
-                                    },
-                                    .size = .w(.percent(100)),
-                                    .layout = .left_center,
-                                    .child_gap = 12,
-                                    .padding = .xy(8, 10),
-                                })
-                                .children({
-                                // Icon(item.icon).style(&.{
-                                //     // .visual = .{ .text_color = if (std.mem.eql(u8, current_path, item.value)) .palette(.tint) else .palette(.text_color) },
-                                // });
-                                Text(item.label).style(&.{
-                                    .visual = .{
-                                        .text_color = if (std.mem.eql(u8, current_path, item.value)) .palette(.tint) else .palette(.text_color),
-                                        .font_size = 14,
-                                    },
-                                    .font_family = "Montserrat",
-                                }).end();
-                            });
-                        });
-                    }
-                });
-            });
-        }
     } else {
         Row().style(&.{
             .layout = .x_between_center,
