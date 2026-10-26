@@ -625,9 +625,11 @@ pub fn init() void {
 // ============================================================================
 
 fn renderNavigation() void {
+    // The side nav needs more room than a phone has.
     Stack()
         .width(.px(240))
         .height(.percent(100))
+        .hideOn(.mobile)
         .padding(.all(20))
         .spacing(24)
         .children({
@@ -751,6 +753,7 @@ fn renderHeader() void {
         .width(.percent(100))
         .height(.px(72))
         .padding(.horizontal(28))
+        .responsive(.mobile, .{ .padding = .horizontal(12) })
         .background(Theme.bg_base)
         .layout(.x_between_center)
         .children({
@@ -917,6 +920,7 @@ fn renderDashboardView() void {
         .width(.percent(100))
         .height(.percent(100))
         .padding(.all(28))
+        .responsive(.mobile, .{ .padding = .all(8) })
         .spacing(28)
         .scroll(.scrollY())
         .children({

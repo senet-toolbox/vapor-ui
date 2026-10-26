@@ -80,12 +80,12 @@ fn onPopState() void {
 }
 
 fn Sidebar() void {
-    if (!Vapor.isDesktop()) return;
     const current_path = Vapor.currentPath();
+    // Phones reach these pages from the menu instead.
     Row().id("components-sidebar").style(&.{
         .position = .{ .type = .fixed, .top = .px(60), .left = .percent(2), .z_index = 999 },
         .size = .hw(.percent(100), .mobileDesktopPercent(100, 14)),
-    }).children({
+    }).hideOn(.mobile).children({
         Vapor.onMount(mount, .{});
         List().style(&.{
             .list_style = .none,

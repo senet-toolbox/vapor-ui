@@ -226,14 +226,16 @@ const theme_svg = @embedFile("nightswitch.svg");
 
 pub fn render() void {
     Vapor.onMount(mount, .{});
-    if (Vapor.isDesktop()) {
+    // Both bars render and CSS shows the one for the screen size, so a
+    // prerendered page has the right one on phones too.
+    {
         Row().id("nav").style(&.{
             .position = .nav,
             .size = .hw(.px(60), .grow),
             .layout = .x_between_center,
             .padding = .horizontal(50),
             .visual = .{ .blur = 2 },
-        }).children({
+        }).hideOn(.mobile).children({
             Row().style(&.{
                 .size = .{ .height = .px(50) },
                 .direction = .row,
@@ -314,7 +316,8 @@ pub fn render() void {
                 });
             });
         });
-    } else {
+    }
+    {
         Row().style(&.{
             .layout = .x_between_center,
             .child_gap = 8,
@@ -324,7 +327,7 @@ pub fn render() void {
             .visual = .{
                 .background = .palette(.background),
             },
-        }).children({
+        }).showOn(.mobile).children({
             Row().style(&.{ .layout = .left_center }).children({
                 Link(.{ .url = "/", .aria_label = "home page of tether" }).style(&.{
                     .visual = .{ .text_decoration = .none },

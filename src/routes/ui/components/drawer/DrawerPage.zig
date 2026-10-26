@@ -1,5 +1,6 @@
 const std = @import("std");
 const Vapor = @import("vapor");
+const Hero = @import("../../../../components/Hero.zig").Hero;
 const Text = Vapor.Text;
 const TextFmt = Vapor.TextFmt;
 const Row = Vapor.Row;
@@ -238,25 +239,11 @@ fn render() void {
         .direction(.column)
         .children({
         // Hero
-        Vapor.Stack()
-            .layout(.center)
-            .height(.px(512))
-            .width(.percent(100))
-            .children({
-            Text("drawer-ui ⇒").style(&.{
-                .visual = .font(12, 500, .hex("#6f6f6f")),
-                .font_family = "IBM Plex Mono,monospace",
-            }).end();
-            Text("drawer-ui")
-                .font(72, 700, .palette(.text_color))
-                .end();
-            Text("Slide-out surfaces for secondary content and complex workflows.")
-                .font(16, 300, .palette(.text_color))
-                .end();
-        });
+        Hero("drawer-ui", "Slide-out surfaces for secondary content and complex workflows.");
 
         Stack()
             .width(.percent(50))
+            .responsive(.mobile, .{ .size = .w(.percent(92)) })
             .height(.percent(100))
             .spacing(12)
             .padding(.{ .bottom = 120 })

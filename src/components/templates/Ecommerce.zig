@@ -519,10 +519,11 @@ fn renderNavBar() void {
                 .end();
         });
 
-        // Navigation links - clean, minimal
+        // Navigation links - clean, minimal (phones get the brand and cart)
         Row()
             .layout(.center)
             .spacing(32)
+            .hideOn(.mobile)
             .children({
             renderNavLink("store", "/ui/templates", true);
             renderNavLink("products", "/ui/templates", false);
@@ -576,6 +577,7 @@ fn renderHero() void {
         .background(Theme.bg_cream)
         .layout(.x_between_center)
         .padding(.horizontal(48))
+        .responsive(.mobile, .{ .padding = .all(16), .layout = .center })
         .pos(.relative)
         .children({
         Vapor.Image(.{ .src = "/assets/koii.webp" })
@@ -586,12 +588,13 @@ fn renderHero() void {
             .height(.percent(100))
             .end();
 
-        // Left side - product teasers / scattered elements
+        // Left side - product teasers / scattered elements (not on phones)
         Row()
             .width(.px(360))
             .height(.percent(100))
             .layout(.center)
             .pos(.relative)
+            .hideOn(.mobile)
             .children({
             // Product silhouette placeholder
             Row()
@@ -608,12 +611,13 @@ fn renderHero() void {
             });
         });
 
-        // Center - decorative elements
+        // Center - decorative elements (not on phones)
         Row()
             .width(.grow)
             .height(.percent(100))
             .layout(.center)
             .pos(.relative)
+            .hideOn(.mobile)
             .children({
             // // Orange fan/badge graphic placeholder
             // Row()
@@ -630,9 +634,10 @@ fn renderHero() void {
             // });
         });
 
-        // Right side - product info card
+        // Right side - product info card, the whole width on phones
         Row()
             .width(.px(360))
+            .responsive(.mobile, .{ .size = .w(.percent(100)) })
             .padding(.all(24))
             .background(Theme.bg_cream)
             .pos(.relative)
@@ -722,9 +727,10 @@ fn renderProductGrid() void {
 fn renderProductCard(product: *const Product) void {
     // const is_hovered = hovered_product_id != null and hovered_product_id.? == product.id;
 
-    // Each card takes roughly 1/3 of width
+    // Four to a row on wide screens, one on phones.
     Row()
         .width(.percent(25))
+        .responsive(.mobile, .{ .size = .w(.percent(100)) })
         .padding(.all(24))
         .background(Theme.bg_base)
         .direction(.column)

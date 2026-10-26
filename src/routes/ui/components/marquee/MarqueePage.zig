@@ -1,5 +1,6 @@
 const std = @import("std");
 const Vapor = @import("vapor");
+const Hero = @import("../../../../components/Hero.zig").Hero;
 const Text = Vapor.Text;
 const Row = Vapor.Row;
 const Stack = Vapor.Stack;
@@ -165,26 +166,12 @@ pub fn render() void {
         .children({
 
         // Hero
-        Vapor.Stack()
-            .layout(.center)
-            .height(.px(512))
-            .width(.percent(100))
-            .children({
-            Text("marquee-ui ⇒").style(&.{
-                .visual = .font(12, 500, .hex("#6f6f6f")),
-                .font_family = "IBM Plex Mono,monospace",
-            }).end();
-            Text("marquee-ui")
-                .font(72, 700, .palette(.text_color))
-                .end();
-            Text("Auto-scrolling marquee with left, right, up, and down motion. Configurable speed, gap, and item count.")
-                .font(16, 300, .palette(.text_color))
-                .end();
-        });
+        Hero("marquee-ui", "Auto-scrolling marquee with left, right, up, and down motion. Configurable speed, gap, and item count.");
 
         // Content
         Stack()
             .width(.px(800))
+            .responsive(.mobile, .{ .size = .w(.percent(92)) })
             .spacing(12)
             .padding(.{ .bottom = 120 })
             .children({

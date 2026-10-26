@@ -1,5 +1,6 @@
 const std = @import("std");
 const Vapor = @import("vapor");
+const Hero = @import("../../../../components/Hero.zig").Hero;
 const Text = Vapor.Text;
 const Row = Vapor.Row;
 const Stack = Vapor.Stack;
@@ -76,6 +77,7 @@ fn codeSnippet(code: []const u8) void {
         .width(.percent(100))
         .padding(.all(16))
         .background(Theme.code_bg)
+        .scroll(.scrollX())
         .border(.round(Theme.border, .all(8)))
         .children({
         Text(code)
@@ -97,26 +99,12 @@ pub fn render() void {
         .children({
 
         // Hero
-        Vapor.Stack()
-            .layout(.center)
-            .height(.px(512))
-            .width(.percent(100))
-            .children({
-            Text("carousel-ui ⇒").style(&.{
-                .visual = .font(12, 500, .hex("#6f6f6f")),
-                .font_family = "IBM Plex Mono,monospace",
-            }).end();
-            Text("carousel-ui")
-                .font(72, 700, .palette(.text_color))
-                .end();
-            Text("Click + swipe carousel. Prev / next arrows, dot indicators, drag to swipe.")
-                .font(16, 300, .palette(.text_color))
-                .end();
-        });
+        Hero("carousel-ui", "Click + swipe carousel. Prev / next arrows, dot indicators, drag to swipe.");
 
         // Content
         Stack()
             .width(.px(800))
+            .responsive(.mobile, .{ .size = .w(.percent(92)) })
             .spacing(12)
             .padding(.{ .bottom = 120 })
             .children({

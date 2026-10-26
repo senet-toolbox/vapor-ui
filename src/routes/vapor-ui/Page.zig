@@ -216,6 +216,7 @@ pub fn render() void {
         Stack()
             .spacing(24)
             .width(.percent(90))
+            .responsive(.mobile, .{ .size = .w(.percent(92)) })
             .children({
             const index = Tabs.create("vapor-ui", &.{ "Components", "Templates", "Kanban", "Authentication", "Payments", "Chat" })
                 .default(stored_tab)
@@ -245,6 +246,7 @@ pub fn render() void {
                         Row()
                             .direction(.column)
                             .width(.percent(50))
+                            .responsive(.mobile, .{ .size = .w(.percent(92)) })
                             .children({
                             login.render();
                         });

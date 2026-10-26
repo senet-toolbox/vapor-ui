@@ -1110,9 +1110,11 @@ pub fn init() void {
 // =============================================================================
 
 fn renderSidebar() void {
+    // Beside the chat on wide screens; above it, full width, on phones.
     Stack()
         .width(.px(320))
         .height(.percent(100))
+        .responsive(.mobile, .{ .size = .hw(.px(280), .percent(100)) })
         .border(.right(1, .palette(.border_color_light)))
         .children({
         // Header
@@ -2148,6 +2150,7 @@ pub fn render() void {
     Row()
         .width(.percent(100))
         .height(.percent(100))
+        .responsive(.mobile, .{ .direction = .column })
         .margin(.{ .bottom = 128 })
         .background(Theme.bg_base)
         .layout(.top_left)

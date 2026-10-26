@@ -4,6 +4,7 @@ const Chat = @import("../../../components/templates/Chat.zig");
 const ApiClient = @import("../../../components/templates/ApiClient.zig");
 const std = @import("std");
 const Vapor = @import("vapor");
+const Hero = @import("../../../components/Hero.zig").Hero;
 const Text = Vapor.Text;
 const Row = Vapor.Row;
 const Stack = Vapor.Stack;
@@ -117,26 +118,12 @@ fn render() void {
         .layout(.top_center)
         .children({
         // Hero
-        Vapor.Stack()
-            .layout(.center)
-            .height(.px(512))
-            .width(.percent(100))
-            .children({
-            Text("templates-ui ⇒").style(&.{
-                .visual = .font(12, 500, .hex("#6f6f6f")),
-                .font_family = "IBM Plex Mono,monospace",
-            }).end();
-            Text("templates-ui")
-                .font(72, 700, .palette(.text_color))
-                .end();
-            Text("A collection of ready-to-use templates components built on top of Vapor, copy and paste into your apps.")
-                .font(16, 300, .palette(.text_color))
-                .end();
-        });
+        Hero("templates-ui", "A collection of ready-to-use templates components built on top of Vapor, copy and paste into your apps.");
 
         // Content
         Stack()
             .width(.percent(90))
+            .responsive(.mobile, .{ .size = .w(.percent(92)) })
             .height(.percent(100))
             .spacing(12)
             .padding(.{ .bottom = 120 })

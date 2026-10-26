@@ -1,4 +1,5 @@
 const Vapor = @import("vapor");
+const Hero = @import("../../../../components/Hero.zig").Hero;
 const Row = Vapor.Row;
 const Text = Vapor.Text;
 const Stack = Vapor.Stack;
@@ -231,26 +232,12 @@ pub fn render() void {
         .layout(.top_center)
         .direction(.column)
         .children({
-        Vapor.Stack()
-            .layout(.center)
-            .height(.px(512))
-            .width(.percent(100))
-            .children({
-            Text("charts-ui ⇒").style(&.{
-                .visual = .font(12, 500, .hex("#6f6f6f")),
-                .font_family = "IBM Plex Mono,monospace",
-            }).end();
-            Text("Charts-ui")
-                .font(72, 700, .palette(.text_color))
-                .end();
-            Text("A collection of ready-to-use chart components built on top of Vapor. From basic charts to rich data displays, copy and paste into your apps.")
-                .font(16, 300, .palette(.text_color))
-                .end();
-        });
+        Hero("charts-ui", "A collection of ready-to-use chart components built on top of Vapor. From basic charts to rich data displays, copy and paste into your apps.");
 
         Stack()
             .spacing(24)
             .width(.percent(60))
+            .responsive(.mobile, .{ .size = .w(.percent(92)) })
             .children({
             const index = Tabs.NavBar("chart_tabs", &.{ "Line Charts", "Bar Charts", "Pie Charts", "Area Charts" });
             switch (index) {

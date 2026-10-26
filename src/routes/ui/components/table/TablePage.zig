@@ -1,6 +1,7 @@
 // table_page.zig
 const std = @import("std");
 const Vapor = @import("vapor");
+const Hero = @import("../../../../components/Hero.zig").Hero;
 const Text = Vapor.Text;
 const Row = Vapor.Row;
 const Stack = Vapor.Stack;
@@ -126,26 +127,12 @@ pub fn render() void {
         .children({
 
         // Hero
-        Vapor.Stack()
-            .layout(.center)
-            .height(.px(512))
-            .width(.percent(100))
-            .children({
-            Text("table-ui ⇒").style(&.{
-                .visual = .font(12, 500, .hex("#6f6f6f")),
-                .font_family = "IBM Plex Mono,monospace",
-            }).end();
-            Text("table-ui")
-                .font(72, 700, .palette(.text_color))
-                .end();
-            Text("A powerful, feature-rich data table component built on top of Vapor with sorting, filtering, pagination, and row actions.")
-                .font(16, 300, .palette(.text_color))
-                .end();
-        });
+        Hero("table-ui", "A powerful, feature-rich data table component built on top of Vapor with sorting, filtering, pagination, and row actions.");
 
         // Content
         Stack()
             .width(.percent(50))
+            .responsive(.mobile, .{ .size = .w(.percent(92)) })
             .height(.percent(100))
             .spacing(12)
             .padding(.{ .bottom = 120 })
@@ -212,6 +199,7 @@ pub fn render() void {
                 .width(.percent(100))
                 .padding(.all(16))
                 .background(Theme.code_bg)
+                .scroll(.scrollX())
                 .border(.round(Theme.border, .all(8)))
                 .children({
                 Text(
@@ -233,6 +221,7 @@ pub fn render() void {
                 .width(.percent(100))
                 .padding(.all(16))
                 .background(Theme.code_bg)
+                .scroll(.scrollX())
                 .border(.round(Theme.border, .all(8)))
                 .children({
                 Text(
@@ -254,6 +243,7 @@ pub fn render() void {
                 .width(.percent(100))
                 .padding(.all(16))
                 .background(Theme.code_bg)
+                .scroll(.scrollX())
                 .border(.round(Theme.border, .all(8)))
                 .children({
                 Text(
@@ -279,6 +269,7 @@ pub fn render() void {
                 .width(.percent(100))
                 .padding(.all(16))
                 .background(Theme.code_bg)
+                .scroll(.scrollX())
                 .border(.round(Theme.border, .all(8)))
                 .children({
                 Text(
@@ -301,6 +292,7 @@ pub fn render() void {
                 .width(.percent(100))
                 .padding(.all(16))
                 .background(Theme.code_bg)
+                .scroll(.scrollX())
                 .border(.round(Theme.border, .all(8)))
                 .children({
                 Text(
@@ -321,6 +313,7 @@ pub fn render() void {
                 .width(.percent(100))
                 .padding(.all(16))
                 .background(Theme.code_bg)
+                .scroll(.scrollX())
                 .border(.round(Theme.border, .all(8)))
                 .children({
                 Text(
@@ -339,6 +332,7 @@ pub fn render() void {
                 .width(.percent(100))
                 .padding(.all(16))
                 .background(Theme.code_bg)
+                .scroll(.scrollX())
                 .border(.round(Theme.border, .all(8)))
                 .children({
                 Text(
@@ -357,6 +351,7 @@ pub fn render() void {
                 .width(.percent(100))
                 .padding(.all(16))
                 .background(Theme.code_bg)
+                .scroll(.scrollX())
                 .border(.round(Theme.border, .all(8)))
                 .children({
                 Text(
@@ -386,6 +381,7 @@ pub fn render() void {
                 .width(.percent(100))
                 .padding(.all(16))
                 .background(Theme.code_bg)
+                .scroll(.scrollX())
                 .border(.round(Theme.border, .all(8)))
                 .children({
                 Text(

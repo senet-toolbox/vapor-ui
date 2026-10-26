@@ -51,17 +51,20 @@ pub fn render() void {
             .children({
             Text("Components")
                 .font(72, 700, .palette(.text_color))
+                .responsive(.mobile, .{ .visual = .{ .font_size = 40 } })
                 .end();
             Text("Components are the building blocks of your application. They are reusable, composable, and customizable.")
                 .font(16, 300, .palette(.text_color))
                 .end();
         });
+        // Columns of names on wide screens; one list on phones.
         List()
             .layout(.flex)
             .direction(.column)
             .height(.px(720))
             .spacing(64)
             .wrap(.wrap)
+            .responsive(.mobile, .{ .size = .h(.fit), .flex_wrap = .nowrap, .spacing = 28 })
             .listStyle(.none)
             .children({
             for (ComponentsNav.items) |item| {

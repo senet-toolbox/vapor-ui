@@ -252,6 +252,7 @@ pub fn render() void {
         .layout(.center)
         .spacing(32)
         .padding(.all(48))
+        .responsive(.mobile, .{ .padding = .all(8) })
         .fontFamily("Montserrat, sans-serif")
         .children({
         // Header section
@@ -269,11 +270,13 @@ pub fn render() void {
         });
 
         // Pricing cards row
+        // Three across on wide screens, stacked on phones.
         Row()
             .width(.percent(90))
             .layout(.center)
             .spacing(24)
             .columns(3)
+            .responsive(.mobile, .{ .direction = .column, .size = .w(.percent(100)) })
             .children({
             for (&plans) |*plan| {
                 PricingCard(plan);

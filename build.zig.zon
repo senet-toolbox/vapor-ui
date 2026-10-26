@@ -5,16 +5,16 @@
     .minimum_zig_version = "0.16.0",
     .dependencies = .{
         .vapor = .{
-            .url = "https://github.com/senet-toolbox/vapor/archive/refs/tags/v3.4.1.tar.gz",
-            .hash = "vapor-3.4.1-VGoNdfpzFACgYTLUOTjAjoKzmsqn0rllRnhcyoZKJUuW",
+            .url = "https://github.com/senet-toolbox/vapor/archive/refs/tags/v3.5.0.tar.gz",
+            .hash = "vapor-3.5.0-VGoNdaGEFABwyOKb2WRyuc65CKOIQ-V52BS2_tVLbelT",
         },
         .vaporize = .{
             .url = "https://github.com/senet-toolbox/vaporize/archive/refs/tags/v1.1.0.tar.gz",
             .hash = "vaporize-0.0.0-EPBNpxwSDQCgMMJFFgfKJlljRdxjxrG7FgxCxvwy4UvG",
         },
         .opaque_ui = .{
-            .url = "https://github.com/senet-toolbox/opaque/archive/refs/tags/v0.1.2.tar.gz",
-            .hash = "opaque_ui-0.0.0-UtoLhGyNFwDYijLTO2lEZlSc3XsRELG91yADJJnDHAAH",
+            .url = "https://github.com/senet-toolbox/opaque/archive/refs/tags/v0.1.3.tar.gz",
+            .hash = "opaque_ui-0.0.0-UtoLhJKPFwAZIBvepe7kSjJH8aagtY5WAYdwVTazpaYz",
         },
     },
 

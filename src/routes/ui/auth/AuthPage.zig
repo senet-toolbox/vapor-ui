@@ -1,5 +1,6 @@
 // page.zig
 const Vapor = @import("vapor");
+const Hero = @import("../../../components/Hero.zig").Hero;
 const Text = Vapor.Text;
 const Row = Vapor.Row;
 const Stack = Vapor.Stack;
@@ -56,26 +57,12 @@ pub fn render() void {
         .children({
 
         // Hero
-        Vapor.Stack()
-            .layout(.center)
-            .height(.px(512))
-            .width(.percent(100))
-            .children({
-            Text("auth-ui ⇒").style(&.{
-                .visual = .font(12, 500, .hex("#6f6f6f")),
-                .font_family = "IBM Plex Mono,monospace",
-            }).end();
-            Text("auth-ui")
-                .font(72, 700, .palette(.text_color))
-                .end();
-            Text("Login and sign-up forms with validation and OAuth sign-in, ready to wire to your backend.")
-                .font(16, 300, .palette(.text_color))
-                .end();
-        });
+        Hero("auth-ui", "Login and sign-up forms with validation and OAuth sign-in, ready to wire to your backend.");
 
         // Content
         Stack()
             .width(.percent(50))
+            .responsive(.mobile, .{ .size = .w(.percent(92)) })
             .height(.percent(100))
             .spacing(12)
             .padding(.{ .bottom = 120 })

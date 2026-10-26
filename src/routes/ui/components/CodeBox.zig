@@ -20,11 +20,13 @@ pub fn CodeBox(code: *SyntaxHighlighter, title: []const u8) void {
             .radius(.all(10))
             .padding(.xy(8, 16))
             .children({
-            if (Vapor.isDesktop()) {
+            {
+                // The file tab; phones go straight to the code.
                 Row()
                     .width(.percent(100))
                     .height(.percent(6))
                     .padding(.horizontal(24))
+                    .hideOn(.mobile)
                     .children({
                     Row()
                         .padding(.all(8))
@@ -40,9 +42,10 @@ pub fn CodeBox(code: *SyntaxHighlighter, title: []const u8) void {
                     });
                 });
             }
+            // Long lines scroll inside the box instead of widening the page.
             Center().width(.percent(100))
                 .height(.expand)
-                .scroll(.scrollY())
+                .scroll(.scroll())
                 .border(.round(.hex("#383735"), .all(6)))
                 .background(.hex("#282828"))
                 .children({

@@ -445,6 +445,8 @@ const kanbanCardButton = (title, label) => `(() => {
   return null;
 })()`;
 
+const COMPONENT_PAGES = ["accordion", "alert", "button", "carousel", "chart", "checkbox", "combobox", "commandpalette", "datepicker", "dialog", "drawer", "marquee", "progress", "radio", "select", "sidebar", "slider", "switch", "table", "tabs", "textfield", "toasts", "tooltip"].map((n) => `/ui/components/${n}`);
+
 const tests = {
   async "accordion: a header opens its panel and closes it again"(p) {
     await p.goto("/ui/components/accordion");
@@ -1025,6 +1027,75 @@ const tests = {
     for (const path of ["/", "/ui/components", "/ui/templates", "/ui/auth", "/ui/payment"]) {
       await p.goto(path);
       assert(!(await p.evaluate(sidebar)), `${path} has no sidebar`);
+    }
+  },
+
+  async "phone: every page fits a 390px screen without sideways scrolling"(p) {
+    const pages = ["/", "/ui/components", "/ui/templates", "/ui/auth", "/ui/payment", ...COMPONENT_PAGES];
+    const tooWide = `(() => {
+      if (document.documentElement.scrollWidth <= innerWidth + 1 && innerWidth <= 391) return null;
+      // What sticks out: elements past the screen's edge with no child that
+      // does, and no ancestor that clips or scrolls them, or pins them (a
+      // fixed bar only stretches with the page).
+      const contained = (e) => {
+        for (let a = e; a && a.id !== "contents"; a = a.parentElement) {
+          const cs = getComputedStyle(a);
+          if (cs.position === "fixed") return true;
+          if (a !== e && cs.overflowX !== "visible") return true;
+        }
+        return false;
+      };
+      const out = [];
+      for (const e of document.querySelectorAll("#contents *")) {
+        const r = e.getBoundingClientRect();
+        if (r.right <= 392 || r.width === 0 || contained(e)) continue;
+        if ([...e.children].some((c) => c.getBoundingClientRect().right > 392 && !contained(c))) continue;
+        out.push(e.tagName.toLowerCase() + "#" + e.id + " " + Math.round(r.right) + "px " + JSON.stringify((e.textContent || "").trim().slice(0, 24)));
+      }
+      return "page is " + document.documentElement.scrollWidth + "px: " + out.slice(0, 4).join(", ");
+    })()`;
+    const problems = [];
+    await p.viewport(390, 844, true);
+    try {
+      for (const path of pages) {
+        await p.goto(path);
+        const wide = await p.evaluate(tooWide);
+        if (wide) problems.push(`${path}: ${wide}`);
+      }
+    } finally {
+      await p.viewport(1440, 900);
+    }
+    assert(problems.length === 0, `pages wider than a phone:\n        ${problems.join("\n        ")}`);
+  },
+
+  async "phone: the dashboard chart survives a narrow screen"(p) {
+    // Its width minus its margins underflowed and the app panicked.
+    await p.viewport(390, 844, true);
+    try {
+      // A panic would fail the test as a page error.
+      await p.goto("/ui/templates");
+      await p.waitText("templates-ui");
+      await sleep(500);
+    } finally {
+      await p.viewport(1440, 900);
+    }
+  },
+
+  async "phone: the menu lists every page and closes on a choice, search opens"(p) {
+    await p.viewport(390, 844, true);
+    try {
+      await p.goto("/");
+      await p.waitText("Tabs", { gone: true });
+      await p.clickLabel("open menu");
+      for (const text of ["Components", "Templates", "Authentication", "Payments", "Accordion", "Tabs", "Progress Bar/Circle"]) await p.waitText(text);
+      await p.clickText("Tabs");
+      await p.waitFor(`location.pathname === "/ui/components/tabs"`, "the tabs page");
+      await p.waitFor(`!document.getElementById("mobile-menu")`, "the menu to close");
+      await p.waitText("Change your name, email and avatar.");
+      await p.clickLabel("search components");
+      await p.waitFor(`!!document.querySelector('[role=dialog], dialog[open]')`, "the search dialog");
+    } finally {
+      await p.viewport(1440, 900);
     }
   },
 

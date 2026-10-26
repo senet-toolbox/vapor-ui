@@ -742,11 +742,13 @@ pub fn View() void {
     Vapor.Stack()
         .width(.percent(100))
         .children({
+        // Two columns of examples on wide screens, one on phones.
         Vapor.Row()
             .width(.percent(100))
             .spacing(16)
             .padding(.all(32))
             .columns(2)
+            .responsive(.mobile, .{ .direction = .column, .padding = .all(8) })
             .children({
             Vapor.Stack()
                 .width(.expand)
@@ -765,6 +767,7 @@ pub fn View() void {
                     .layout(.top_center)
                     .width(.percent(100))
                     .spacing(16)
+                    .responsive(.mobile, .{ .direction = .column, .padding = .all(0) })
                     .children({
                     date_picker.render();
                     Stack()
