@@ -68,7 +68,7 @@ const plans = [_]PricingPlan{
     .{
         .tier = .premium,
         .name = "Premium",
-        .price = "79",
+        .price = "$79",
         .period = "/month",
         .description = "For large organizations with custom needs",
         .features = &.{
@@ -102,7 +102,10 @@ fn PricingCard(plan: *const PricingPlan) void {
     // const is_hovered = hovered_tier != null and hovered_tier.? == plan.tier;
     const is_highlighted = plan.highlighted;
 
-    const text_color: Vapor.Types.Color = if (is_highlighted) .palette(.background) else .palette(.text);
+    // The highlighted card is a translucent tint over the page, so the theme's
+    // own text colour reads on it in light and dark.
+    const text_color: Vapor.Types.Color = .palette(.text);
+    const cta_text_color: Vapor.Types.Color = if (is_highlighted) .white else .palette(.text);
 
     Stack()
         .pos(.relative)
@@ -139,13 +142,15 @@ fn PricingCard(plan: *const PricingPlan) void {
                 Row()
                     .pos(.{ .top = .px(-16), .type = .absolute })
                     .height(.px(32))
-                    .width(.percent(40))
+                    .width(.fit)
+                    .padX(12)
                     .layout(.center)
                     .background(.palette(.tint))
                     .border(.thin(.palette(.tint)))
                     .children({
                     Text("Most Popular")
-                        .font(16, 200, .palette(.background))
+                        .font(16, 200, .white)
+                        .whiteSpace(.nowrap)
                         .fontFamily("IBM Plex Sans,monospace")
                         .end();
                 });
@@ -198,7 +203,7 @@ fn PricingCard(plan: *const PricingPlan) void {
                     .spacing(10)
                     .children({
                     Vapor.Icon(.check)
-                        .font(16, 700, if (is_highlighted) .palette(.tint) else .palette(.text))
+                        .font(16, 700, text_color)
                         .end();
                     Text(feature)
                         .font(14, 300, text_color)
@@ -231,7 +236,7 @@ fn PricingCard(plan: *const PricingPlan) void {
                     // .text = .palette(.background),
                     .transform = .scaleDecimal(1.02),
                 })
-                .font(16, 500, text_color)
+                .font(16, 500, cta_text_color)
                 .children({
                 Text(plan.cta_text)
                     .font(16, 300, null)

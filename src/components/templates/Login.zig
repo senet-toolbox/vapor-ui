@@ -192,8 +192,8 @@ pub fn render(login: *Login) void {
                     Button(submit, .{})
                         .width(.percent(100))
                         .animation("glitch")
-                        .background(.transparentize(.black, 0.8))
-                        .border(.round(.black, .all(8)))
+                        .background(.palette(.text_color))
+                        .border(.round(.palette(.text_color), .all(8)))
                         .padding(.xy(8, 6))
                         .pointer()
                         .children({
@@ -233,17 +233,17 @@ pub fn render(login: *Login) void {
                     .children({
                     Button(createAccount, .{})
                         .animation("glitch")
-                        .background(.transparentize(.black, 0.8))
-                        .border(.round(.black, .all(8)))
+                        .background(.palette(.text_color))
+                        .border(.round(.palette(.text_color), .all(8)))
                         .padding(.all(6))
                         .pointer()
                         .children({
                         Text("Create Account")
-                            .font(16, 300, .palette(.text))
+                            .font(16, 300, .palette(.background))
                             .fontFamily("IBM Plex Sans,monospace")
                             .end();
                         Vapor.Icon(.person_rolodex)
-                            .font(16, 700, .palette(.text))
+                            .font(16, 700, .palette(.background))
                             .end();
                     });
                 });
