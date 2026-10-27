@@ -1070,6 +1070,24 @@ const tests = {
     assert(problems.length === 0, `pages wider than a phone:\n        ${problems.join("\n        ")}`);
   },
 
+  async "phone: a tab opened by a click gets its phone layout"(p) {
+    // The phone rules of what a click brings in lost to its base rules:
+    // the dashboard kept its side nav and was wider than the screen.
+    await p.viewport(390, 844, true);
+    try {
+      await p.goto("/");
+      await p.clickText("Components");
+      await p.clickText("Templates");
+      await p.waitText("Recent Transactions");
+      await sleep(300);
+      const width = await p.evaluate(`document.documentElement.scrollWidth`);
+      assert(width <= 390, `the page is ${width}px wide`);
+      await p.waitText("Analytics", { gone: true });
+    } finally {
+      await p.viewport(1440, 900);
+    }
+  },
+
   async "phone: the dashboard chart survives a narrow screen"(p) {
     // Its width minus its margins underflowed and the app panicked.
     await p.viewport(390, 844, true);
