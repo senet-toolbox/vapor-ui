@@ -1087,10 +1087,18 @@ const tests = {
     })`);
     await p.clickText("Payments");
     const widths = await sample;
+    // Its hover rounds the corners, which should animate too.
+    const animates = await p.evaluate(`(() => {
+      let e = [...document.querySelectorAll("p")].find((e) => e.textContent.trim() === "Premium");
+      while (e && getComputedStyle(e).transitionDuration === "0s") e = e.parentElement;
+      return e ? getComputedStyle(e).transitionProperty : "";
+    })()`);
     // The tab is remembered; leave the one the other tests expect.
     await p.clickText("Components");
     assert(widths.length > 0, "the pricing cards never showed");
     assert(new Set(widths).size === 1, `a pricing card's width changed as it appeared: ${widths.join(" ")}`);
+    const names = animates.split(", ");
+    assert(names.includes("border-radius") && !names.includes("width"), `a pricing card animates: ${animates}`);
   },
 
   async "prerendered tabs and progress keep their ids when the app takes over"(p) {
