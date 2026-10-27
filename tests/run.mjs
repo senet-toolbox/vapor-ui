@@ -1070,6 +1070,22 @@ const tests = {
     assert(problems.length === 0, `pages wider than a phone:\n        ${problems.join("\n        ")}`);
   },
 
+  async "prerendered tabs and progress keep their ids when the app takes over"(p) {
+    // Their ids were memory addresses, which differ between the generator
+    // and the browser, so every such element was rebuilt. A client-rendered
+    // build has no prerendered ids, and nothing to compare.
+    for (const path of ["/", "/ui/components/progress", "/ui/components/tabs"]) {
+      await p.goto(path);
+      const missing = await p.evaluate(`(async () => {
+        const pick = (root) => [...root.querySelectorAll("[id^=tab-],[id^=bar-],[id^=progress-]")].map((e) => e.id);
+        const html = await (await fetch(location.href)).text();
+        const live = new Set(pick(document));
+        return pick(new DOMParser().parseFromString(html, "text/html")).filter((id) => !live.has(id)).join(", ");
+      })()`);
+      assert(missing === "", `${path}: prerendered ids gone after takeover: ${missing}`);
+    }
+  },
+
   async "phone: a tab opened by a click gets its phone layout"(p) {
     // The phone rules of what a click brings in lost to its base rules:
     // the dashboard kept its side nav and was wider than the screen.
