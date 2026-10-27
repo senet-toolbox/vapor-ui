@@ -9,12 +9,12 @@
             .hash = "vapor-3.5.2-VGoNddqMFABReKGR2dzuF7GjK3Dq_Ip2WzBWfl_k8NEd",
         },
         .vaporize = .{
-            .url = "https://github.com/senet-toolbox/vaporize/archive/refs/tags/v1.1.0.tar.gz",
-            .hash = "vaporize-0.0.0-EPBNpxwSDQCgMMJFFgfKJlljRdxjxrG7FgxCxvwy4UvG",
+            .url = "https://github.com/senet-toolbox/vaporize/archive/refs/tags/v1.1.1.tar.gz",
+            .hash = "vaporize-0.0.0-EPBNpxwSDQAjDjtMSYFWm0kHn_YVWxzrAAy454krdOTs",
         },
         .opaque_ui = .{
-            .url = "https://github.com/senet-toolbox/opaque/archive/refs/tags/v0.1.4.tar.gz",
-            .hash = "opaque_ui-0.0.0-UtoLhL2TFwBLu6IiYIrl0YelvY398Z9Xwhjni98uAIGx",
+            .url = "https://github.com/senet-toolbox/opaque/archive/refs/tags/v0.1.5.tar.gz",
+            .hash = "opaque_ui-0.0.0-UtoLhL2TFwD_DLPOyxsEvWhyMNIFW96tuKmvk4gXoauK",
         },
     },
 
