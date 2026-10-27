@@ -180,6 +180,8 @@ var input_3: []const u8 = "";
 
 const items: [3]*[]const u8 = .{ &input_1, &input_2, &input_3 };
 
+const panel_ids = [_][]const u8{ "home-components", "home-templates", "home-kanban", "home-authentication", "home-payments", "home-chat" };
+
 pub fn render() void {
     // var r = Row();
     // r.children({
@@ -228,45 +230,53 @@ pub fn render() void {
                 .default(stored_tab)
                 .onClick(setTab)
                 .render();
-            switch (index) {
-                0 => {
-                    Row()
-                        .a11y(.tabPanel("Components")) // Add this - references the tab button
-                        .id("tabpanel-Components")
-                        .size(.full)
-                        .children({
-                        View();
-                    });
-                },
-                1 => {
-                    Templates.render();
-                },
-                2 => {
-                    board_a.render();
-                },
-                3 => {
-                    Row()
-                        .width(.percent(100))
-                        .layout(.center)
-                        .children({
+            // Each tab's content under an id of its own, so its elements are
+            // only ever reused by the same tab: switching tabs builds the new
+            // content rather than restyling the old tab's elements into it.
+            Stack()
+                .id(panel_ids[index])
+                .width(.percent(100))
+                .children({
+                switch (index) {
+                    0 => {
                         Row()
-                            .direction(.column)
-                            .width(.percent(50))
-                            .responsive(.mobile, .{ .size = .w(.percent(92)) })
+                            .a11y(.tabPanel("Components")) // Add this - references the tab button
+                            .id("tabpanel-Components")
+                            .size(.full)
                             .children({
-                            login.render();
+                            View();
                         });
-                    });
-                },
-                4 => {
-                    Payment.render();
-                },
-                5 => {
-                    Chat.render();
-                },
+                    },
+                    1 => {
+                        Templates.render();
+                    },
+                    2 => {
+                        board_a.render();
+                    },
+                    3 => {
+                        Row()
+                            .width(.percent(100))
+                            .layout(.center)
+                            .children({
+                            Row()
+                                .direction(.column)
+                                .width(.percent(50))
+                                .responsive(.mobile, .{ .size = .w(.percent(92)) })
+                                .children({
+                                login.render();
+                            });
+                        });
+                    },
+                    4 => {
+                        Payment.render();
+                    },
+                    5 => {
+                        Chat.render();
+                    },
 
-                else => {},
-            }
+                    else => {},
+                }
+            });
         });
     });
 }

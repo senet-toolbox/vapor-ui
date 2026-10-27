@@ -240,9 +240,12 @@ pub fn render() void {
             .responsive(.mobile, .{ .size = .w(.percent(92)) })
             .children({
             const index = Tabs.NavBar("chart_tabs", &.{ "Line Charts", "Bar Charts", "Pie Charts", "Area Charts" });
+            // An id per tab, so one chart's elements are never reused for
+            // another chart (which would not measure itself again).
             switch (index) {
                 0 => {
                     Row()
+                        .id("chart-panel-line")
                         .width(.percent(100))
                         .children({
                         chart.render();
@@ -250,6 +253,7 @@ pub fn render() void {
                 },
                 1 => {
                     Row()
+                        .id("chart-panel-bar")
                         .width(.percent(100))
                         .children({
                         requests_chart.render();
@@ -257,6 +261,7 @@ pub fn render() void {
                 },
                 2 => {
                     Row()
+                        .id("chart-panel-pie")
                         .width(.percent(100))
                         .children({
                         pie_chart.render();
@@ -264,6 +269,7 @@ pub fn render() void {
                 },
                 3 => {
                     Row()
+                        .id("chart-panel-area")
                         .width(.percent(100))
                         .children({
                         area_chart.render();

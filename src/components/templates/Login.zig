@@ -102,9 +102,10 @@ pub fn render(login: *Login) void {
     const apple = KeyStone.keystone.clients.apple;
     const auth_providers = if (google != null or github != null or apple != null) true else false;
     Vapor.Spacer(24).end();
+    // An id per form, so switching builds the other form fresh.
     switch (active_index) {
         0 => {
-            Card().children({
+            Card().id("login-form").children({
                 Stack()
                     .width(.percent(100))
                     .spacing(8)
@@ -165,7 +166,7 @@ pub fn render(login: *Login) void {
             });
         },
         1 => {
-            Card().children({
+            Card().id("create-account-form").children({
                 Stack()
                     .width(.percent(100))
                     .spacing(8)

@@ -1070,10 +1070,36 @@ const tests = {
     assert(problems.length === 0, `pages wider than a phone:\n        ${problems.join("\n        ")}`);
   },
 
+  async "home: switching tabs shows the new tab at its size, not animating to it"(p) {
+    // The Chat tab's elements were reused for the pricing cards, whose
+    // transition then animated them from the chat's sizes.
+    await p.goto("/");
+    await p.clickText("Chat");
+    await p.waitText("Messages");
+    const sample = p.evaluate(`new Promise((done) => {
+      const out = []; const t0 = performance.now();
+      const tick = () => {
+        const card = [...document.querySelectorAll("p")].find((e) => e.textContent.trim() === "Premium")?.parentElement;
+        if (card) out.push(Math.round(card.getBoundingClientRect().width));
+        if (performance.now() - t0 < 400) requestAnimationFrame(tick); else done(out);
+      };
+      requestAnimationFrame(tick);
+    })`);
+    await p.clickText("Payments");
+    const widths = await sample;
+    // The tab is remembered; leave the one the other tests expect.
+    await p.clickText("Components");
+    assert(widths.length > 0, "the pricing cards never showed");
+    assert(new Set(widths).size === 1, `a pricing card's width changed as it appeared: ${widths.join(" ")}`);
+  },
+
   async "prerendered tabs and progress keep their ids when the app takes over"(p) {
     // Their ids were memory addresses, which differ between the generator
     // and the browser, so every such element was rebuilt. A client-rendered
     // build has no prerendered ids, and nothing to compare.
+    // The home page remembers its tab; it is prerendered on the first.
+    await p.goto("/");
+    await p.clickText("Components");
     for (const path of ["/", "/ui/components/progress", "/ui/components/tabs"]) {
       await p.goto(path);
       const missing = await p.evaluate(`(async () => {
