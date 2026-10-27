@@ -110,7 +110,6 @@ fn PricingCard(plan: *const PricingPlan) void {
     Stack()
         .pos(.relative)
         .width(.expand)
-        .height(.fit)
         .padding(.all(16))
         .spacing(12)
         .layout(.top_left)
@@ -135,7 +134,9 @@ fn PricingCard(plan: *const PricingPlan) void {
         .children({
         // Badge for highlighted plan
         if (is_highlighted) {
+            // Out of the flow, so the card's text lines up with the others.
             Row()
+                .pos(.{ .top = .px(0), .left = .px(0), .type = .absolute })
                 .width(.percent(100))
                 .layout(.center)
                 .children({
@@ -214,10 +215,12 @@ fn PricingCard(plan: *const PricingPlan) void {
         });
 
         // CTA Button
+        // At the bottom of the card, so the buttons line up across cards.
         Row()
             .width(.percent(100))
             .padding(.{ .top = 16 })
             .layout(.center)
+            .inlineStyle("margin-top: auto;", .{})
             .children({
             Button(onSelectPlan, .{plan.tier})
                 .shadow(Vapor.Types.Shadow.init().dropSpread(0, 2, 4, 2, .transparentize(.black, 0.1)))
@@ -227,8 +230,7 @@ fn PricingCard(plan: *const PricingPlan) void {
                     .palette(.tint)
                 else
                     .transparent)
-                // .border(.simple(if (is_highlighted) .palette(.tint) else .palette(.text)))
-                .radius(.all(99))
+                .border(.round(if (is_highlighted) .palette(.tint) else .palette(.border_color_light), .all(99)))
                 .pointer()
                 .duration(150)
                 .hover(.{
@@ -262,21 +264,27 @@ pub fn render() void {
             .children({
             Text("Ryven Pricing")
                 .font(42, 700, .palette(.text))
+                .responsive(.mobile, .{ .visual = .{ .font_size = 32 } })
                 .end();
             Text("Replace Sentry, Supabase, Postman, and more with Ryven. Choose the plan that fits your needs. Upgrade or downgrade at any time.")
                 .font(16, 300, .palette(.text))
                 .fontFamily("IBM Plex Sans,monospace")
+                .layout(.center)
+                .inlineStyle("max-width: 640px;", .{})
                 .end();
         });
 
         // Pricing cards row
         // Three across on wide screens, stacked on phones.
+        // Cards stretch to the tallest. Side by side from 1024px; one above
+        // the other, at one width, below.
         Row()
-            .width(.percent(90))
-            .layout(.center)
+            .width(.percent(100))
+            .inlineStyle("max-width: 1100px;", .{})
             .spacing(24)
-            .columns(3)
-            .responsive(.mobile, .{ .direction = .column, .size = .w(.percent(100)) })
+            .responsive(.mobile, .{ .direction = .column })
+            .responsive(.tablet, .{ .direction = .column })
+            .responsive(.desktop, .{ .direction = .row })
             .children({
             for (&plans) |*plan| {
                 PricingCard(plan);
@@ -291,6 +299,7 @@ pub fn render() void {
             Text("Free plan includes 14-day free trial · No credit card required")
                 .font(14, 300, .palette(.text))
                 .fontFamily("IBM Plex Sans,monospace")
+                .layout(.center)
                 .end();
             Row()
                 .layout(.center)

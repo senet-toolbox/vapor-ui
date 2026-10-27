@@ -148,7 +148,7 @@ pub fn render(login: *Login) void {
                     .children({
                     Button(submit, .{})
                         .width(.percent(100))
-                        .animation("glitch")
+                        .hover(.{ .animation = "glitch" })
                         .background(.palette(.text_color))
                         .border(.round(.palette(.text_color), .all(8)))
                         .padding(.xy(8, 6))
@@ -189,7 +189,7 @@ pub fn render(login: *Login) void {
                     .width(.percent(100))
                     .children({
                     Button(createAccount, .{})
-                        .animation("glitch")
+                        .hover(.{ .animation = "glitch" })
                         .background(.palette(.text_color))
                         .border(.round(.palette(.text_color), .all(8)))
                         .padding(.all(6))

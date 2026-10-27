@@ -98,7 +98,10 @@ fn openMenu() void {
 }
 const Url = struct {
     url: []const u8,
+    /// "[1] Components" in the desktop bar.
     title: []const u8,
+    /// "Components" in the phone menu.
+    label: []const u8,
 };
 const urls: [4]Url = .{
     // .{
@@ -107,19 +110,23 @@ const urls: [4]Url = .{
     // },
     .{
         .url = "/ui/components",
-        .title = "[1] = Components",
+        .title = "[1] Components",
+        .label = "Components",
     },
     .{
         .url = "/ui/templates",
-        .title = "[2] = Templates",
+        .title = "[2] Templates",
+        .label = "Templates",
     },
     .{
         .url = "/ui/auth",
-        .title = "[3] = Authentication",
+        .title = "[3] Authentication",
+        .label = "Authentication",
     },
     .{
         .url = "/ui/payment",
-        .title = "[4] = Payments",
+        .title = "[4] Payments",
+        .label = "Payments",
     },
 };
 
@@ -130,7 +137,7 @@ inline fn routes() void {
             Link(.{ .url = url.url, .aria_label = url.title }).style(&.{
                 .visual = .{ .text_decoration = .none },
             }).children({
-                Text(url.title).style(&.{ .visual = .font(16, 300, .palette(.text_color)), .font_family = "IBM Plex Mono,monospace" }).end();
+                Text(url.title).style(&.{ .visual = .font(14, 300, .palette(.text_color)), .font_family = "IBM Plex Mono,monospace" }).end();
             });
         });
     }
@@ -227,15 +234,16 @@ const theme_svg = @embedFile("nightswitch.svg");
 pub fn render() void {
     Vapor.onMount(mount, .{});
     // Both bars render and CSS shows the one for the screen size, so a
-    // prerendered page has the right one on phones too.
+    // prerendered page has the right one on phones too. The full bar needs
+    // desktop width; phones and tablets get the menu.
     {
         Row().id("nav").style(&.{
             .position = .nav,
             .size = .hw(.px(60), .grow),
             .layout = .x_between_center,
-            .padding = .horizontal(50),
+            .padding = .horizontal(32),
             .visual = .{ .blur = 2 },
-        }).hideOn(.mobile).children({
+        }).showOn(.desktop).children({
             Row().style(&.{
                 .size = .{ .height = .px(50) },
                 .direction = .row,
@@ -250,7 +258,7 @@ pub fn render() void {
                     }).children({
                     Center().style(&.{
                         .size = .{ .width = .px(84) },
-                        .margin = .{ .right = 30 },
+                        .margin = .{ .right = 24 },
                         .transition = .{ .duration = 100 },
                         .interactive = .{ .hover = .{ .transform = .scale() } },
                         .visual = .{ .text_color = .palette(.text_color) },
@@ -267,7 +275,7 @@ pub fn render() void {
                     });
                 });
                 List().style(&.{
-                    .child_gap = 32,
+                    .child_gap = 24,
                     .layout = .center,
                     .size = .hw(.percent(100), .percent(100)),
                 }).children({
@@ -277,11 +285,11 @@ pub fn render() void {
 
             Center().style(&.{
                 .child_gap = 8,
-                .size = .w(.percent(30)),
             }).children({
+                // Scales with the window, so the bar fits from 1024px.
                 Row()
-                    .width(.percent(70))
-                    .margin(.{ .right = 12 })
+                    .inlineStyle("width: clamp(150px, 16vw, 260px);", .{})
+                    .margin(.{ .right = 4 })
                     .children({
                     command_palette.render();
                 });
@@ -309,7 +317,7 @@ pub fn render() void {
                     .pointer()
                     .children({
                     Vapor.Svg(.{ .override = true, .svg = theme_svg })
-                        .size(.hwPx(56, 56))
+                        .size(.hwPx(44, 44))
                         .inheritHover(&.{.text_color})
                         .font(18, 700, .white)
                         .end();
@@ -323,19 +331,20 @@ pub fn render() void {
             .child_gap = 8,
             .padding = .horizontal(16),
             .position = .{ .type = .fixed, .top = .px(0), .left = .percent(0), .right = .percent(0), .z_index = 999 },
-            .size = .hw(.px(80), .percent(100)),
+            .size = .hw(.px(60), .percent(100)),
             .visual = .{
                 .background = .palette(.background),
             },
-        }).showOn(.mobile).children({
+        }).hideOn(.desktop).children({
             Row().style(&.{ .layout = .left_center }).children({
-                Link(.{ .url = "/", .aria_label = "home page of tether" }).style(&.{
+                // The desktop bar's logo, a little smaller.
+                Link(.{ .url = "/", .aria_label = "vapor-ui home" }).style(&.{
                     .visual = .{ .text_decoration = .none },
-                    .size = .h(.px(48)),
+                    .size = .hw(.px(28), .px(72)),
                     .layout = .center,
                 }).children({
-                    Image(.{ .src = "/assets/circlelogo.webp", .alt = "tether logo" }).style(&.{
-                        .size = .w(.px(48)),
+                    Graphic(.{ .src = "/assets/vapor_ui.svg" }).style(&.{
+                        .size = .{ .width = .percent(100), .height = .percent(100) },
                     }).end();
                 });
             });
@@ -343,11 +352,11 @@ pub fn render() void {
                 Button(openSearch, .{})
                     .ariaLabel("search components")
                     .style(&.{
-                        .size = .hw(.px(36), .px(48)),
+                        .size = .hw(.px(36), .px(36)),
                         .visual = .bg(.palette(.background)),
                     }).children({
                     Icon(.search).style(&.{
-                        .visual = .{ .font_size = 24, .text_color = .palette(.icon_color) },
+                        .visual = .{ .font_size = 18, .text_color = .palette(.icon_color) },
                         .interactive = .{ .hover = .{ .text_color = .palette(.tint) } },
                     }).end();
                 });
@@ -356,28 +365,28 @@ pub fn render() void {
                     .ariaLabel("toggle theme")
                     .style(&.{
                         .visual = .{ .cursor = .pointer, .background = .palette(.background) },
-                        .size = .hw(.px(36), .px(48)),
+                        .size = .hw(.px(36), .px(36)),
                     }).children({
                     Icon(.cloud_moon).style(&.{
-                        .visual = .{ .font_size = 24, .text_color = .palette(.icon_color) },
+                        .visual = .{ .font_size = 18, .text_color = .palette(.icon_color) },
                     }).end();
                 });
 
                 Button(openMenu, .{})
                     .ariaLabel(if (menu) "close menu" else "open menu")
                     .style(&.{
-                        .size = .hw(.px(36), .px(48)),
+                        .size = .hw(.px(36), .px(36)),
                         .visual = .bg(.palette(.background)),
                     }).children({
                     if (menu) {
                         Icon(.x_lg).style(&.{
                             .id = "close-menu",
-                            .visual = .{ .font_size = 24, .text_color = .palette(.icon_color) },
+                            .visual = .{ .font_size = 18, .text_color = .palette(.icon_color) },
                         }).end();
                     } else {
                         Icon(.list).style(&.{
                             .id = "open-menu",
-                            .visual = .{ .font_size = 24, .text_color = .palette(.icon_color) },
+                            .visual = .{ .font_size = 18, .text_color = .palette(.icon_color) },
                         }).end();
                     }
                 });
@@ -396,13 +405,13 @@ fn closeMenu(_: *Vapor.Event) void {
 fn MobileMenu() void {
     const current_path = Vapor.currentPath();
     Stack().id("mobile-menu").style(&.{
-        .position = .{ .type = .fixed, .top = .px(80), .left = .percent(0), .right = .percent(0), .bottom = .px(0), .z_index = 998 },
+        .position = .{ .type = .fixed, .top = .px(60), .left = .percent(0), .right = .percent(0), .bottom = .px(0), .z_index = 998 },
         .padding = .{ .top = 8, .bottom = 48, .left = 16, .right = 16 },
         .scroll = .scrollY(),
         .visual = .{ .background = .palette(.background) },
     }).children({
         MenuSection("Pages");
-        for (urls) |url| MenuLink(url.url, url.title[6..], current_path);
+        for (urls) |url| MenuLink(url.url, url.label, current_path);
         MenuSection("Components");
         for (ComponentsNav.items) |item| MenuLink(item.value, item.label, current_path);
     });

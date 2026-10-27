@@ -738,319 +738,209 @@ pub fn TabsView() void {
     // Tabs.renderSample();
 }
 
-pub fn View() void {
-    Vapor.Stack()
+/// A bordered panel holding one example.
+fn Card() Vapor.Builder(.pure) {
+    return Stack()
         .width(.percent(100))
+        .border(.round(.palette(.border_color_light), .all(12)))
+        .background(.palette(.background))
+        .padding(.all(16))
+        .spacing(16);
+}
+
+/// A card's title, with the line under it.
+fn CardHeading(title: []const u8, subtitle: []const u8) void {
+    Stack()
+        .width(.expand)
+        .spacing(4)
         .children({
-        // Two columns of examples on wide screens, one on phones.
-        Vapor.Row()
+        Text(title)
+            .font(18, 300, .palette(.text_color))
+            .end();
+        Text(subtitle)
+            .font(12, 300, .palette(.text_color))
+            .end();
+    });
+}
+
+/// A round icon button, as in a toolbar.
+fn IconButton(icon: Vapor.IconTokens, label: []const u8) void {
+    Button(std.log.info, .{ "{s}", .{label} })
+        .ariaLabel(label)
+        .width(.px(32))
+        .height(.px(32))
+        .border(.round(.palette(.border_color_light), .all(99)))
+        .layout(.center)
+        .hover(.{
+            .transform = .scaleDecimal(1.1),
+            .text_color = .palette(.tint),
+            .border = .round(.palette(.tint), .all(99)),
+        })
+        .children({
+        Vapor.Icon(icon)
+            .font(16, 300, null)
+            .end();
+    });
+}
+
+/// A button whose glitch plays while it is hovered.
+fn GlitchButton(on_click: anytype, label: []const u8, aria_label: []const u8, tail: []const u8) void {
+    Button(on_click, .{})
+        .ariaLabel(aria_label)
+        .hover(.{
+            .background = if (Theme.mode == .light) .yellow else .palette(.danger),
+            .animation = "glitch",
+        })
+        .border(.round(.palette(.text_color), .all(12)))
+        .onHover(onHover, .{})
+        .spacing(16)
+        .children({
+        Text("//")
+            .font(16, 300, .palette(.text_color))
+            .fontFamily("IBM Plex Sans,monospace")
+            .end();
+        Text(label)
+            .font(16, 300, .palette(.text_color))
+            .fontFamily("IBM Plex Sans,monospace")
+            .end();
+        Text(tail)
+            .animation(if (hovered) "blink" else null)
+            .font(16, 300, .palette(.text_color))
+            .fontFamily("IBM Plex Sans,monospace")
+            .end();
+    });
+}
+
+/// The components tab: the table across the top, then the other examples as
+/// cards, two columns of them from 1024px and one below.
+pub fn View() void {
+    Stack()
+        .width(.percent(100))
+        .spacing(16)
+        .padding(.vertical(32))
+        .responsive(.mobile, .{ .padding = .vertical(16) })
+        .children({
+        // It scrolls inside its box when the screen is narrower than it.
+        Row()
+            .width(.percent(100))
+            .layer(.grid(14, 1, .palette(.grid_color)))
+            .children({
+            table.render();
+        });
+
+        Row()
             .width(.percent(100))
             .spacing(16)
-            .padding(.all(32))
-            .columns(2)
-            .responsive(.mobile, .{ .direction = .column, .padding = .all(8) })
+            .responsive(.mobile, .{ .direction = .column })
+            .responsive(.tablet, .{ .direction = .column })
+            .responsive(.desktop, .{ .direction = .row })
             .children({
-            Vapor.Stack()
+            Stack()
                 .width(.expand)
                 .spacing(16)
-                .layer(.grid(14, 1, .palette(.grid_color)))
                 .children({
-                Vapor.Row()
-                    .width(.percent(100))
-                    .height(.fit)
-                    .children({
-                    table.render();
-                });
-                Row()
-                    .direction(.row)
-                    .padding(.all(16))
-                    .layout(.top_center)
-                    .width(.percent(100))
-                    .spacing(16)
-                    .responsive(.mobile, .{ .direction = .column, .padding = .all(0) })
-                    .children({
+                Card().layout(.top_center).children({
                     date_picker.render();
-                    Stack()
-                        .width(.expand)
-                        .children({
-                        login.render(); // this is the broken line
-                    });
                 });
-                Row()
-                    .width(.percent(100))
-                    .spacing(8)
-                    .children({
-                    Row()
-                        .width(.percent(90))
-                        .border(.round(.palette(.border_color_light), .all(12)))
-                        .padding(.all(16))
-                        .direction(.column)
-                        .spacing(16)
-                        .background(.palette(.background))
-                        .children({
-                        Stack().children({
-                            Row()
-                                .width(.percent(100))
-                                .layout(.x_between_center)
-                                .children({
-                                Text("Billing Information")
-                                    .font(18, 300, .palette(.text_color))
-                                    .end();
-                                Switch.render("file-switch", Vapor.alert, .{ "{s}", .{"Im a switch"} });
-                            });
-                            Text("Billing information is required to process your payment. Use the following information to complete your purchase.")
-                                .font(12, 300, .palette(.text_color))
-                                .end();
-                        });
-                        Row()
-                            .width(.percent(100))
-                            .layout(.x_between_center)
-                            .children({
-                            Button(std.log.info, .{ "{s}", .{"hello"} })
-                                .ariaLabel("Print Hello")
-                                .width(.px(36))
-                                .height(.px(36))
-                                .border(.round(.palette(.border_color_light), .all(99)))
-                                .layout(.center)
-                                .children({
-                                Vapor.Icon(.plus)
-                                    .font(24, 300, .palette(.text_color))
-                                    .end();
-                            });
-                            Vapor.Stack()
-                                .width(.percent(90))
-                                .children({
-                                Field.render(.{ .label = "Add File", .value = .{ .string = &file_text } });
-                            });
-                        });
-                        Stack()
-                            .width(.percent(100))
-                            .spacing(8)
-                            .children({
-                            Text("Payment Method")
-                                .font(18, 300, .palette(.text_color))
-                                .end();
-                            Field.render(.{ .label = "Card Number", .value = .{ .string = &card_number } });
-                        });
-                        Row()
-                            .width(.percent(100))
-                            .layout(.x_between_center)
-                            .spacing(16)
-                            .children({
-                            Stack()
-                                .width(.percent(60))
-                                .spacing(4)
-                                .children({
-                                Text("Month")
-                                    .font(16, 300, .palette(.text_color))
-                                    .end();
-                                months_select.render();
-                            });
-                            Stack()
-                                .width(.percent(30))
-                                .spacing(4)
-                                .children({
-                                Text("Year")
-                                    .font(16, 300, .palette(.text_color))
-                                    .end();
-                                years_select.render();
-                            });
-                        });
-                        Row()
-                            .width(.percent(100))
-                            .height(.fit)
-                            .layout(.right_center)
-                            .children({
-                            Button(addSuccessToast, .{})
-                                .ariaLabel("Success Toast")
-                                .background(.transparentize(.palette(.tint), 0.7))
-                                .border(.round(.palette(.tint), .all(12)))
-                                .children({
-                                Text("Success")
-                                    .font(14, 300, .palette(.text_color))
-                                    .fontFamily("IBM Plex Sans,monospace")
-                                    .end();
-                                Vapor.Icon(.send)
-                                    .font(16, 700, .palette(.text_color))
-                                    .end();
-                            });
-                        });
-                    });
-                    Vapor.Stack()
-                        .width(.percent(8))
-                        .layout(.top_center)
-                        .padding(.vertical(8))
-                        .border(.round(.palette(.border_color_light), .all(12)))
-                        .background(.palette(.background))
-                        .spacing(8)
-                        .children({
-                        Button(std.log.info, .{ "{s}", .{"hello"} })
-                            .ariaLabel("Print Hello")
-                            .width(.px(32))
-                            .height(.px(32))
-                            .border(.round(.palette(.border_color_light), .all(99)))
-                            .layout(.center)
-                            .hover(.{
-                                .transform = .scaleDecimal(1.1),
-                                .text_color = .palette(.tint),
-                                .border = .round(.palette(.tint), .all(99)),
-                            })
-                            .children({
-                            Vapor.Icon(.cloud)
-                                .font(16, 300, null)
-                                .end();
-                        });
-                        Button(std.log.info, .{ "{s}", .{"hello"} })
-                            .ariaLabel("Print Hello")
-                            .width(.px(32))
-                            .height(.px(32))
-                            .border(.round(.palette(.border_color_light), .all(99)))
-                            .layout(.center)
-                            .hover(.{
-                                .transform = .scaleDecimal(1.1),
-                                .text_color = .palette(.tint),
-                                .border = .round(.palette(.tint), .all(99)),
-                            })
-                            .children({
-                            Vapor.Icon(.motherboard)
-                                .font(16, 300, null)
-                                .end();
-                        });
-                        Button(std.log.info, .{ "{s}", .{"hello"} })
-                            .ariaLabel("Print Hello")
-                            .width(.px(32))
-                            .height(.px(32))
-                            .border(.round(.palette(.border_color_light), .all(99)))
-                            .layout(.center)
-                            .hover(.{
-                                .transform = .scaleDecimal(1.1),
-                                .text_color = .palette(.tint),
-                                .border = .round(.palette(.tint), .all(99)),
-                            })
-                            .children({
-                            Vapor.Icon(.github)
-                                .font(16, 300, null)
-                                .end();
-                        });
-                        Button(std.log.info, .{ "{s}", .{"hello"} })
-                            .ariaLabel("Print Hello")
-                            .width(.px(32))
-                            .height(.px(32))
-                            .border(.round(.palette(.border_color_light), .all(99)))
-                            .layout(.center)
-                            .hover(.{
-                                .transform = .scaleDecimal(1.1),
-                                .text_color = .palette(.tint),
-                                .border = .round(.palette(.tint), .all(99)),
-                            })
-                            .children({
-                            Vapor.Icon(.heart_balloon)
-                                .font(16, 300, null)
-                                .end();
-                        });
-                    });
-                });
-            });
-            Vapor.Stack()
-                .width(.expand)
-                .spacing(16)
-                .children({
-                // chart.render();
-                Row()
-                    .width(.percent(100))
-                    .height(.fit)
-                    .layout(.right_center)
-                    .children({
-                    Button(regenerate, .{})
-                        .ariaLabel("Regenerate Chart")
-                        .hover(.{
-                            .background = if (Theme.mode == .light) .yellow else .palette(.danger),
-                            .animation = "glitch",
-                        })
-                        .border(.round(.palette(.text_color), .all(12)))
-                        .onHover(onHover, .{})
-                        .spacing(16)
-                        .children({
-                        Text("//")
-                            .font(16, 300, .palette(.text_color))
-                            .fontFamily("IBM Plex Sans,monospace")
-                            .end();
-                        Text("Re-generate")
-                            .font(16, 300, .palette(.text_color))
-                            .fontFamily("IBM Plex Sans,monospace")
-                            .end();
-                        Text("_ ↺")
-                            .animation(if (hovered) "blink" else null)
-                            .font(16, 300, .palette(.text_color))
-                            .fontFamily("IBM Plex Sans,monospace")
-                            .end();
-                    });
-                });
-                Row()
-                    .width(.expand)
-                    .height(.px(72))
-                    .layout(.center)
-                    .spacing(16)
-                    .children({
-                    Button(Sheet.open, .{&sheet})
-                        .ariaLabel("Open Sheet")
-                        .width(.px(200))
-                        .background(.transparentize(.palette(.tint), 0.7))
-                        .border(.round(.palette(.tint), .all(12)))
-                        .children({
-                        Text("Open Drawer")
-                            .font(16, 300, .palette(.text_color))
-                            .fontFamily("IBM Plex Sans,monospace")
-                            .end();
-                        Vapor.Icon(.arrow_right)
-                            .font(16, 700, .palette(.text_color))
-                            .end();
-                    });
-                    combobox.render();
-                });
-                accordion.render();
-                Row()
-                    .width(.percent(100))
-                    .height(.px(128))
-                    .border(.round(.palette(.border_color_light), .all(12)))
-                    .padding(.all(16))
-                    .direction(.column)
-                    .spacing(8)
-                    .children({
+
+                Card().children({
                     Row()
                         .width(.percent(100))
                         .layout(.x_between_center)
+                        .spacing(16)
                         .children({
-                        Text("Enable Developer Mode")
-                            .font(18, 300, .palette(.text_color))
-                            .end();
-                        Switch.render("test-switch", Vapor.alert, .{ "{s}", .{"Im a switch"} });
+                        CardHeading("Billing Information", "Billing information is required to process your payment.");
+                        Switch.render("file-switch", Vapor.alert, .{ "{s}", .{"Im a switch"} });
                     });
-                    Text("Switch to developer mode to see developer tools, and debug your application.")
-                        .font(12, 300, .palette(.text_color))
-                        .end();
+                    Row()
+                        .width(.percent(100))
+                        .layout(.left_center)
+                        .spacing(12)
+                        .children({
+                        Button(std.log.info, .{ "{s}", .{"hello"} })
+                            .ariaLabel("Add File")
+                            .width(.px(36))
+                            .height(.px(36))
+                            .border(.round(.palette(.border_color_light), .all(99)))
+                            .layout(.center)
+                            .children({
+                            Vapor.Icon(.plus)
+                                .font(24, 300, .palette(.text_color))
+                                .end();
+                        });
+                        Stack()
+                            .width(.expand)
+                            .children({
+                            Field.render(.{ .label = "Add File", .value = .{ .string = &file_text } });
+                        });
+                    });
+                    Stack()
+                        .width(.percent(100))
+                        .spacing(8)
+                        .children({
+                        Text("Payment Method")
+                            .font(16, 300, .palette(.text_color))
+                            .end();
+                        Field.render(.{ .label = "Card Number", .value = .{ .string = &card_number } });
+                    });
+                    Row()
+                        .width(.percent(100))
+                        .spacing(16)
+                        .children({
+                        Stack()
+                            .width(.expand)
+                            .spacing(4)
+                            .children({
+                            Text("Month")
+                                .font(14, 300, .palette(.text_color))
+                                .end();
+                            months_select.render();
+                        });
+                        Stack()
+                            .width(.expand)
+                            .spacing(4)
+                            .children({
+                            Text("Year")
+                                .font(14, 300, .palette(.text_color))
+                                .end();
+                            years_select.render();
+                        });
+                    });
+                    Row()
+                        .width(.percent(100))
+                        .layout(.x_between_center)
+                        .spacing(8)
+                        .children({
+                        Row()
+                            .spacing(8)
+                            .children({
+                            IconButton(.cloud, "Cloud");
+                            IconButton(.motherboard, "Hardware");
+                            IconButton(.github, "GitHub");
+                            IconButton(.heart_balloon, "Favourite");
+                        });
+                        Button(addSuccessToast, .{})
+                            .ariaLabel("Success Toast")
+                            .background(.transparentize(.palette(.tint), 0.7))
+                            .border(.round(.palette(.tint), .all(12)))
+                            .children({
+                            Text("Success")
+                                .font(14, 300, .palette(.text_color))
+                                .fontFamily("IBM Plex Sans,monospace")
+                                .end();
+                            Vapor.Icon(.send)
+                                .font(16, 700, .palette(.text_color))
+                                .end();
+                        });
+                    });
                 });
 
-                Row()
-                    .width(.percent(100))
-                    .height(.px(256))
-                    .border(.round(.palette(.border_color_light), .all(12)))
-                    .padding(.all(16))
-                    .direction(.column)
-                    .spacing(8)
-                    .children({
-                    Text("Bug Fixes")
-                        .font(24, 300, .palette(.text_color))
-                        .end();
-
-                    Text("Record any bugs you find, and we will fix them ASAP!")
-                        .font(14, 300, .palette(.text_color))
-                        .end();
-
+                Card().children({
+                    CardHeading("Bug Fixes", "Record any bugs you find, and we will fix them ASAP!");
                     Vapor.TextArea()
                         .ariaLabel("Text Area")
                         .width(.percent(100))
-                        .height(.percent(100))
+                        .height(.px(112))
                         .outline(.none, null)
                         .border(.solid(.{ .top = 1, .bottom = 3, .left = 1, .right = 1 }, .palette(.border_color_light), .all(6)))
                         .background(.palette(.background))
@@ -1059,68 +949,84 @@ pub fn View() void {
                         .fontFamily("IBM Plex Sans,monospace")
                         .resize(.none)
                         .end();
-
                     Row()
                         .width(.percent(100))
-                        .height(.fit)
                         .layout(.right_center)
                         .children({
-                        Button(addSuccessToast, .{})
-                            .ariaLabel("Success Toast")
-                            .hover(.{
-                                .background = if (Theme.mode == .light) .yellow else .palette(.danger),
-                                .animation = "glitch",
-                            })
-                            .border(.round(.palette(.text_color), .all(12)))
-                            .onHover(onHover, .{})
-                            .spacing(16)
+                        GlitchButton(addSuccessToast, "Glitch", "Success Toast", "_ ⇒");
+                    });
+                });
+            });
+
+            Stack()
+                .width(.expand)
+                .spacing(16)
+                .children({
+                Stack()
+                    .width(.percent(100))
+                    .children({
+                    login.render();
+                });
+
+                Card().children({
+                    CardHeading("Actions", "A drawer, a combobox, a dialog and a glitch.");
+                    Row()
+                        .width(.percent(100))
+                        .layout(.left_center)
+                        .wrap(.wrap)
+                        .spacing(12)
+                        .children({
+                        Button(Sheet.open, .{&sheet})
+                            .ariaLabel("Open Sheet")
+                            .background(.transparentize(.palette(.tint), 0.7))
+                            .border(.round(.palette(.tint), .all(12)))
+                            .spacing(12)
                             .children({
-                            Text("//")
+                            Text("Open Drawer")
                                 .font(16, 300, .palette(.text_color))
                                 .fontFamily("IBM Plex Sans,monospace")
                                 .end();
-                            Text("Glitch")
-                                .font(16, 300, .palette(.text_color))
-                                .fontFamily("IBM Plex Sans,monospace")
+                            Vapor.Icon(.arrow_right)
+                                .font(16, 700, .palette(.text_color))
                                 .end();
-                            Text("_ ⇒")
-                                .animation(if (hovered) "blink" else null)
-                                .font(16, 300, .palette(.text_color))
+                        });
+                        combobox.render();
+                    });
+                    Row()
+                        .width(.percent(100))
+                        .layout(.x_between_center)
+                        .wrap(.wrap)
+                        .spacing(12)
+                        .children({
+                        Button(ComboBoxDialog([]const u8).open, .{&combobox_dialog})
+                            .ariaLabel("Open ComboBox Dialog")
+                            .children({
+                            Text("Open Dialog")
+                                .font(14, 300, .palette(.text_color))
                                 .fontFamily("IBM Plex Sans,monospace")
                                 .end();
                         });
+                        GlitchButton(regenerate, "Re-generate", "Regenerate Chart", "_ ↺");
                     });
                 });
-                Button(ComboBoxDialog([]const u8).open, .{&combobox_dialog})
-                    .ariaLabel("Open ComboBox Dialog")
-                    .children({
-                    Text("Open Dialog")
-                        .font(14, 300, .palette(.text_color))
-                        .fontFamily("IBM Plex Sans,monospace")
-                        .end();
+
+                Card().padding(.xy(16, 4)).children({
+                    accordion.render();
                 });
 
-                Row()
-                    .width(.percent(70))
-                    // .height(.px(256))
-                    .border(.round(.palette(.border_color_light), .all(12)))
-                    .padding(.all(16))
-                    .direction(.column)
-                    .spacing(16)
-                    .children({
-                    Stack()
+                Card().children({
+                    Row()
                         .width(.percent(100))
-                        .layout(.top_left)
-                        .spacing(8)
+                        .layout(.x_between_center)
+                        .spacing(16)
                         .children({
-                        Text("Profile")
-                            .font(18, 300, .palette(.text_color))
-                            .end();
-                        Text("Upload your profile picture")
-                            .font(12, 300, .palette(.text_color))
-                            .end();
+                        CardHeading("Enable Developer Mode", "Switch to developer mode to see developer tools, and debug your application.");
+                        Switch.render("test-switch", Vapor.alert, .{ "{s}", .{"Im a switch"} });
                     });
+                });
 
+                Card().children({
+                    CardHeading("Profile", "Upload your profile picture");
                     Stack()
                         .layout(.center)
                         .width(.percent(100))
@@ -1135,8 +1041,6 @@ pub fn View() void {
                                     .pos(.absolute)
                                     .width(.px(256))
                                     .height(.px(256))
-                                    // .newShadow(Vapor.Types.NewShadow.init()
-                                    // .drop(0, 1, 3, .transparentizeHex(.black, 0.1)))
                                     .border(.round(.transparent, .all(12)))
                                     .outline(.none, null)
                                     .end();
@@ -1152,7 +1056,6 @@ pub fn View() void {
                     });
                     Field.render(.{ .label = "Email", .value = .{ .string = &text }, .trans_label = true });
                     Field.render(.{ .label = "Password", .value = .{ .password = &password }, .trans_label = true });
-                    // Slider.render(.{});
                 });
             });
         });

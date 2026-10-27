@@ -193,8 +193,10 @@ pub fn render() void {
         .children({
         Vapor.Stack()
             .layout(.center)
-            .height(.px(256))
             .width(.percent(100))
+            .padding(.{ .top = 64, .bottom = 48, .left = 24, .right = 24 })
+            .spacing(12)
+            .responsive(.mobile, .{ .padding = .{ .top = 32, .bottom = 24, .left = 16, .right = 16 } })
             .children({
             Text("vapor-ui ⇒").style(&.{
                 .visual = .font(12, 500, .hex("#6f6f6f")),
@@ -203,20 +205,24 @@ pub fn render() void {
 
             Text("vapor-ui")
                 .font(72, 700, .palette(.text_color))
+                .responsive(.mobile, .{ .visual = .{ .font_size = 48 } })
                 .end();
             Text("Vapor UI is a collection of well crafted UI components for Vapor. It comes with default animations, and a rich set of components.")
                 .font(16, 300, .palette(.text_color))
+                .layout(.center)
+                .inlineStyle("max-width: 640px;", .{})
                 .end();
             Text("Vapor allows you to build complex UIs, and Animations, with no dependencies.")
                 .font(14, 300, .palette(.text_color))
                 .fontFamily("Montserrat")
+                .layout(.center)
                 .end();
         });
 
         Stack()
             .spacing(24)
-            .width(.percent(90))
-            .responsive(.mobile, .{ .size = .w(.percent(92)) })
+            .width(.percent(92))
+            .inlineStyle("max-width: 1280px;", .{})
             .children({
             const index = Tabs.create("vapor-ui", &.{ "Components", "Templates", "Kanban", "Authentication", "Payments", "Chat" })
                 .default(stored_tab)

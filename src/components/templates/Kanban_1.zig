@@ -764,10 +764,12 @@ pub const Kanban = struct {
     fn renderHeader(self: *Kanban) void {
         Row()
             .width(.percent(100))
-            .height(.px(72))
-            .padding(.horizontal(28))
+            .padding(.xy(28, 16))
+            .responsive(.mobile, .{ .padding = .xy(8, 12) })
             .background(Theme.bg_base)
             .layout(.x_between_center)
+            .wrap(.wrap)
+            .spacing(12)
             .children({
             // Title
             Stack()
@@ -783,6 +785,7 @@ pub const Kanban = struct {
             // Controls
             Row()
                 .layout(.right_center)
+                .wrap(.wrap)
                 .spacing(12)
                 .children({
                 // Search
@@ -866,6 +869,7 @@ pub const Kanban = struct {
         Row()
             .width(.percent(100))
             .padding(.horizontal(28))
+            .responsive(.mobile, .{ .padding = .horizontal(8) })
             .layout(.left_center)
             .spacing(16)
             .children({
@@ -887,9 +891,13 @@ pub const Kanban = struct {
 
     // --- Board ------------------------------------------------------------
     fn renderBoard(self: *Kanban) void {
+        // The columns share the width down to 220px each; narrower than
+        // that, the board scrolls sideways.
         Row()
+            .width(.percent(100))
             .height(.fit)
             .padding(.all(28))
+            .responsive(.mobile, .{ .padding = .all(8) })
             .layout(.top_left)
             .spacing(20)
             .scroll(.scrollX())
@@ -909,7 +917,8 @@ pub const Kanban = struct {
         const visible = collection.visibleCount();
 
         Row()
-            .width(.percent(19))
+            .width(.expand)
+            .inlineStyle("min-width: 220px;", .{})
             .direction(.column)
             .border(.round(.palette(.border_color_light), .all(20)))
             .padding(.all(8))

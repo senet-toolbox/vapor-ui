@@ -8,6 +8,8 @@
 //                                       name contains text)
 //   node tests/run.mjs --dump /ui/x    (lists what a page offers to click)
 //   node tests/run.mjs --serve         (serve the site on :8091 to poke at)
+//   node tests/run.mjs --shot / /ui/x  (whole-page screenshots at 1440, 1024,
+//                                       768 and 390px into $SHOT_DIR)
 //   node tests/run.mjs --release       (against release/, as a static host
 //                                       serves it; `zig build test-release`)
 //
@@ -16,7 +18,7 @@
 
 import { spawn } from "node:child_process";
 import { createServer } from "node:http";
-import { existsSync, mkdtempSync, readFileSync, rmSync, statSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, extname, join, normalize, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -1088,6 +1090,9 @@ const tests = {
       await p.waitText("Tabs", { gone: true });
       await p.clickLabel("open menu");
       for (const text of ["Components", "Templates", "Authentication", "Payments", "Accordion", "Tabs", "Progress Bar/Circle"]) await p.waitText(text);
+      // The section links read their names, inside the menu.
+      const menu = await p.evaluate(`[...document.querySelectorAll("#mobile-menu a")].slice(0, 4).map((a) => a.textContent.trim()).join(",")`);
+      assert(menu === "Components,Templates,Authentication,Payments", `menu sections read ${menu}`);
       await p.clickText("Tabs");
       await p.waitFor(`location.pathname === "/ui/components/tabs"`, "the tabs page");
       await p.waitFor(`!document.getElementById("mobile-menu")`, "the menu to close");
@@ -1292,6 +1297,41 @@ if (flags.has("--dump")) {
         .map((e) => [e.tagName.toLowerCase(), e.getAttribute("role") ?? "", e.getAttribute("aria-label") ?? "", e.textContent.trim().replace(/\\s+/g, " ").slice(0, 60)].join(" | "));
     })()`);
     console.log(`── ${path}\n  ${items.join("\n  ")}`);
+  }
+  cdp.close();
+  server.close();
+  process.exit(0);
+}
+
+if (flags.has("--shot")) {
+  // Whole-page screenshots of each path at each width, for checking layout.
+  const out = process.env.SHOT_DIR ?? tmpdir();
+  const widths = (process.env.SHOT_WIDTHS ?? "1440,1024,768,390").split(",").map(Number);
+  for (const path of positional) {
+    for (const width of widths) {
+      await page.viewport(width, 900, width < 768);
+      await page.goto(path);
+      // SHOT_CLICK="Templates": click the element reading that first.
+      if (process.env.SHOT_CLICK) await page.clickText(process.env.SHOT_CLICK);
+      await sleep(600);
+      // SHOT_EVAL="js expression": print what it returns, for measuring.
+      if (process.env.SHOT_EVAL) console.log(await page.evaluate(process.env.SHOT_EVAL));
+      const { cssContentSize } = await cdp.send("Page.getLayoutMetrics");
+      // SHOT_VIEWPORT=1: only what is on screen, as a visitor sees it.
+      const shot = await cdp.send(
+        "Page.captureScreenshot",
+        process.env.SHOT_VIEWPORT
+          ? { format: "png" }
+          : {
+              format: "png",
+              captureBeyondViewport: true,
+              clip: { x: 0, y: 0, width: Math.max(width, cssContentSize.width), height: cssContentSize.height, scale: 1 },
+            },
+      );
+      const file = join(out, `${(path + (process.env.SHOT_CLICK ?? "")).replace(/\W+/g, "_") || "_"}-${width}.png`);
+      writeFileSync(file, Buffer.from(shot.data, "base64"));
+      console.log(`${file}  page ${Math.round(cssContentSize.width)}x${Math.round(cssContentSize.height)}`);
+    }
   }
   cdp.close();
   server.close();

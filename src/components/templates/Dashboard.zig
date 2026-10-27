@@ -751,11 +751,12 @@ fn renderNavButton(item: NavItem) void {
 fn renderHeader() void {
     Row()
         .width(.percent(100))
-        .height(.px(72))
-        .padding(.horizontal(28))
-        .responsive(.mobile, .{ .padding = .horizontal(12) })
+        .padding(.xy(28, 16))
+        .responsive(.mobile, .{ .padding = .xy(12, 12) })
         .background(Theme.bg_base)
         .layout(.x_between_center)
+        .wrap(.wrap)
+        .spacing(12)
         .children({
         // Left: Title
         Stack()
@@ -771,6 +772,7 @@ fn renderHeader() void {
         // Right: Controls
         Row()
             .layout(.right_center)
+            .wrap(.wrap)
             .spacing(12)
             .children({
 
@@ -931,15 +933,19 @@ fn renderDashboardView() void {
             .spacing(20)
             .children({
             // Main chart
+            // Side by side from 1024px, one above the other below. Each
+            // chart measures its column when it mounts.
             Row()
                 .width(.percent(100))
                 .padding(.all(24))
-                .direction(.row)
-                .layout(.x_between_center)
+                .responsive(.mobile, .{ .direction = .column, .padding = .all(8) })
+                .responsive(.tablet, .{ .direction = .column })
+                .responsive(.desktop, .{ .direction = .row })
                 .spacing(20)
                 .children({
-                Row()
-                    .direction(.column)
+                Stack()
+                    .width(.expand)
+                    .spacing(12)
                     .children({
                     Stack()
                         .spacing(4)
@@ -955,8 +961,9 @@ fn renderDashboardView() void {
                     });
                     revenue_chart.render();
                 });
-                Row()
-                    .direction(.column)
+                Stack()
+                    .width(.expand)
+                    .spacing(12)
                     .children({
                     Stack()
                         .spacing(4)
@@ -979,11 +986,15 @@ fn renderDashboardView() void {
         Row()
             .width(.percent(100))
             .padding(.all(24))
+            .responsive(.mobile, .{ .padding = .all(8) })
             .direction(.column)
             .spacing(20)
             .children({
             Row()
+                .width(.percent(100))
                 .layout(.x_between_center)
+                .wrap(.wrap)
+                .spacing(12)
                 .children({
                 Stack()
                     .spacing(4)

@@ -1114,7 +1114,9 @@ fn renderSidebar() void {
     Stack()
         .width(.px(320))
         .height(.percent(100))
-        .responsive(.mobile, .{ .size = .hw(.px(280), .percent(100)) })
+        // Tall enough for its header, search, filters and footer with
+        // conversations to spare.
+        .responsive(.mobile, .{ .size = .hw(.px(480), .percent(100)) })
         .border(.right(1, .palette(.border_color_light)))
         .children({
         // Header
@@ -1442,12 +1444,16 @@ fn renderChatArea() void {
 }
 
 fn renderChatHeader(conv: *const Conversation) void {
+    // Wraps its actions under the name on narrow screens.
     Row()
         .width(.percent(100))
-        .height(.px(72))
-        .padding(.horizontal(24))
+        .inlineStyle("min-height: 72px;", .{})
+        .padding(.xy(24, 12))
+        .responsive(.mobile, .{ .padding = .xy(12, 12) })
         .border(.bottom(1, .palette(.border_color_light)))
         .layout(.x_between_center)
+        .wrap(.wrap)
+        .spacing(12)
         .layer(.line(1, 4, .diagonal_down, .palette(.grid_color)))
         .children({
         Row()
@@ -1497,6 +1503,7 @@ fn renderChatHeader(conv: *const Conversation) void {
         // Header actions
         Row()
             .layout(.right_center)
+            .wrap(.wrap)
             .spacing(8)
             .children({
             Button(togglePinConversation, .{@constCast(conv)})
