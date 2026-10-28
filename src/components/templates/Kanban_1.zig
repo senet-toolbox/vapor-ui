@@ -247,6 +247,8 @@ pub const Kanban = struct {
 
     // Drag context shared across this board's columns (NOT across boards).
     drag_ctx: Ctx = .{},
+    // The row of columns, which scrolls sideways on narrow screens.
+    board_el: Vapor.Element = .{},
 
     // One sortable collection per kanban column.
     backlog_col: TaskCollection = undefined,
@@ -303,6 +305,9 @@ pub const Kanban = struct {
         self.* = .{};
 
         self.drag_ctx.init();
+        // Dragging a card near the board's edge scrolls to the columns off
+        // screen.
+        self.drag_ctx.setScrollContainer(&self.board_el);
 
         // Seed each column. Names ("backlog", "todo", ...) are used in
         // var backlog_task = Vapor.persist.array(Task);
@@ -901,6 +906,7 @@ pub const Kanban = struct {
             .layout(.top_left)
             .spacing(20)
             .scroll(.scrollX())
+            .ref(&self.board_el)
             .children({
             for (std.enums.values(TaskStatus)) |status| {
                 if (status == .done and !self.show_completed) continue;

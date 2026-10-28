@@ -363,6 +363,35 @@ function makePage(cdp, origin) {
       await mouse("mouseReleased", to.x, to.y);
       await sleep(60);
     },
+    // A finger drag, through the browser's touch pipeline: it scrolls,
+    // cancels pointers and fires touch events as a phone would.
+    async tap(at) {
+      await cdp.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 1 });
+      await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [at] });
+      await sleep(40);
+      await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+      await sleep(100);
+      await cdp.send("Emulation.setTouchEmulationEnabled", { enabled: false });
+    },
+    // `then`: points the finger moves on to after the dwell, before lifting.
+    async touchDrag(from, to, { steps = 12, holdMs = 0, dwellMs = 0, then = [] } = {}) {
+      await cdp.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 1 });
+      const touch = (type, x, y) => cdp.send("Input.dispatchTouchEvent", { type, touchPoints: type === "touchEnd" ? [] : [{ x, y }] });
+      await touch("touchStart", from.x, from.y);
+      if (holdMs) await sleep(holdMs);
+      for (let i = 1; i <= steps; i++) {
+        await touch("touchMove", from.x + ((to.x - from.x) * i) / steps, from.y + ((to.y - from.y) * i) / steps);
+        await sleep(16);
+      }
+      if (dwellMs) await sleep(dwellMs);
+      for (const at of then) {
+        await touch("touchMove", at.x, at.y);
+        await sleep(50);
+      }
+      await touch("touchEnd", to.x, to.y);
+      await sleep(100);
+      await cdp.send("Emulation.setTouchEmulationEnabled", { enabled: false });
+    },
     centreOf: (find, what) => centre(find, what),
     async screenshot() {
       const r = await cdp.send("Page.captureScreenshot", { format: "png" });
@@ -434,6 +463,20 @@ const kanbanColumnOf = (title) => `(() => {
   }
   return best;
 })()`;
+
+// Where to pick up the card titled `title`, and a point in `column` to drop
+// it at, after scrolling the card into view.
+async function kanbanDragPoints(p, title, column) {
+  return p.evaluate(`(() => {
+    ${finders}
+    const t = __ui.byText(${JSON.stringify(title)})[0];
+    t.scrollIntoView({ block: "center", inline: "nearest" });
+    const r = t.getBoundingClientRect();
+    const backlog = __ui.byText("Backlog")[0].getBoundingClientRect();
+    const head = __ui.byText(${JSON.stringify(column)}).map((e) => e.getBoundingClientRect()).find((h) => Math.abs(h.top - backlog.top) < 4);
+    return { from: { x: r.left + 20, y: r.top + r.height / 2 }, to: { x: Math.min(head.left + 40, innerWidth - 10), y: r.top + r.height / 2 + 40 } };
+  })()`);
+}
 
 // The button labelled `label` on the card whose title is `title`.
 const kanbanCardButton = (title, label) => `(() => {
@@ -1256,6 +1299,80 @@ const tests = {
     for (let i = 0; i < 3; i++) await p.clickSelector('[aria-label="Next slide"]', 2);
     await p.waitFor(`${next}.getAttribute("aria-disabled") === "true"`, "next to disable on the last slide");
     assert(await p.evaluate(`${prev}.getAttribute("aria-disabled")`) !== "true", "previous works again");
+  },
+
+  async "kanban: a card dropped below a short column's last card joins it"(p) {
+    // Only the list's own box took drops, which ends at its last card.
+    await p.goto("/ui/templates");
+    const { from } = await kanbanDragPoints(p, "Performance audit", "Done");
+    const to = await p.evaluate(`(() => {
+      ${finders}
+      const backlog = __ui.byText("Backlog")[0].getBoundingClientRect();
+      const done = __ui.byText("Done").map((e) => e.getBoundingClientRect()).find((h) => Math.abs(h.top - backlog.top) < 4);
+      // Lower than any card in Done: it holds the fewest.
+      const lowest = Math.max(...[...document.querySelectorAll("[id^=ST-Item]")].map((e) => e.getBoundingClientRect()).filter((r) => r.right > done.left && r.left < done.left + 60).map((r) => r.bottom));
+      return { x: done.left + 40, y: Math.min(lowest + 60, innerHeight - 10) };
+    })()`);
+    await p.drag(from, to, 16);
+    await p.waitFor(`${kanbanColumnOf("Performance audit")} === "Done"`, "the card to land in Done");
+  },
+
+  async "phone: a card held then dragged by touch moves to another column"(p) {
+    // A finger moving at once is a scroll, which the browser takes over
+    // (pointercancel); resting on the card first picks it up.
+    await p.viewport(390, 844, true);
+    try {
+      await p.goto("/ui/templates");
+      const { from, to } = await kanbanDragPoints(p, "Performance audit", "To Do");
+      await p.touchDrag(from, to, { holdMs: 300 });
+      await p.waitFor(`${kanbanColumnOf("Performance audit")} === "To Do"`, "the card to land in To Do");
+    } finally {
+      await p.viewport(1440, 900);
+    }
+  },
+
+  async "phone: swiping across a card scrolls the board and leaves the card"(p) {
+    await p.viewport(390, 844, true);
+    try {
+      await p.goto("/ui/templates");
+      const { from } = await kanbanDragPoints(p, "Performance audit", "To Do");
+      const board = `(() => { ${finders} let e = __ui.byText("Backlog")[0]; while (e && getComputedStyle(e).overflowX !== "auto" && getComputedStyle(e).overflowX !== "scroll") e = e.parentElement; return e; })()`;
+      const before = await p.evaluate(`${board}.scrollLeft`);
+      await p.touchDrag(from, { x: from.x - 150, y: from.y });
+      await p.waitFor(`${board}.scrollLeft > ${before + 50}`, "the board to scroll");
+      assert(await p.evaluate(kanbanColumnOf("Performance audit")) === "Backlog", "the card moved");
+    } finally {
+      await p.viewport(1440, 900);
+    }
+  },
+
+  async "phone: a held card dragged to the board's edge reaches the columns off screen"(p) {
+    await p.viewport(390, 844, true);
+    try {
+      await p.goto("/ui/templates");
+      const { from } = await kanbanDragPoints(p, "Performance audit", "To Do");
+      // Rest at the right edge while the board scrolls to its end, then
+      // drop into the last column.
+      const y = from.y + 40;
+      await p.touchDrag(from, { x: 385, y }, { holdMs: 300, dwellMs: 2500, then: [{ x: 340, y }, { x: 300, y }] });
+      const where = await p.evaluate(kanbanColumnOf("Performance audit"));
+      assert(where === "Done", `the card landed in ${where}`);
+    } finally {
+      await p.viewport(1440, 900);
+    }
+  },
+
+  async "phone: tapping a card's button still works"(p) {
+    await p.viewport(390, 844, true);
+    try {
+      await p.goto("/ui/templates");
+      await p.evaluate(`${kanbanCardButton("Performance audit", "Move task right")}.scrollIntoView({ block: "center", inline: "nearest" })`);
+      const at = await p.evaluate(`(() => { const r = ${kanbanCardButton("Performance audit", "Move task right")}.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; })()`);
+      await p.tap(at);
+      await p.waitFor(`${kanbanColumnOf("Performance audit")} === "To Do"`, "the card to move to To Do");
+    } finally {
+      await p.viewport(1440, 900);
+    }
   },
 
   async "kanban: buttons move and delete a card"(p) {
