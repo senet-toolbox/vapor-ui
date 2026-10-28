@@ -292,6 +292,12 @@ function makePage(cdp, origin) {
     async viewport(width, height, mobile = false) {
       await cdp.send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile });
     },
+    // The colour scheme the system prefers, "light" or "dark"; none for
+    // Chrome's own. The app reads it when it loads, so goto after.
+    async colorScheme(scheme) {
+      const features = scheme ? [{ name: "prefers-color-scheme", value: scheme }] : [];
+      await cdp.send("Emulation.setEmulatedMedia", { features });
+    },
     async goto(path) {
       await cdp.send("Page.navigate", { url: origin + path });
       await waitFor(`document.readyState === "complete"`, "page load");
@@ -1264,6 +1270,28 @@ const tests = {
     for (const text of ["Ryven Pricing", "$0", "$29", "$79"]) await p.waitText(text);
   },
 
+  async "payment: the highlighted plan's text is white in light and dark"(p) {
+    const color = (text) =>
+      `getComputedStyle([...document.querySelectorAll("*")].find((e) => e.childElementCount === 0 && e.textContent === ${JSON.stringify(text)})).color`;
+    try {
+      for (const scheme of ["light", "dark"]) {
+        await p.colorScheme(scheme);
+        await p.goto("/ui/payment");
+        await p.waitText("$29");
+        for (const text of ["Pro", "$29", "Priority support", "Start Free Trial"]) {
+          const c = await p.evaluate(color(text));
+          assert(c === "rgb(255, 255, 255)", `in ${scheme}, the Pro card's "${text}" is ${c}`);
+        }
+        // The other cards keep the theme's text colour.
+        const free = await p.evaluate(color("$0"));
+        const want = scheme === "light" ? "rgb(0, 0, 0)" : "rgb(234, 234, 234)";
+        assert(free === want, `in ${scheme}, the Free card's "$0" is ${free}`);
+      }
+    } finally {
+      await p.colorScheme(null);
+    }
+  },
+
   async "every page: each control has a name"(p) {
     const pages = ["/", "/ui/components/accordion", "/ui/components/alert", "/ui/components/button", "/ui/components/carousel", "/ui/components/chart", "/ui/components/checkbox", "/ui/components/combobox", "/ui/components/commandpalette", "/ui/components", "/ui/components/datepicker", "/ui/components/dialog", "/ui/components/drawer", "/ui/components/marquee", "/ui/components/progress", "/ui/components/radio", "/ui/components/select", "/ui/components/sidebar", "/ui/components/slider", "/ui/components/switch", "/ui/components/table", "/ui/components/tabs", "/ui/templates", "/ui/components/textfield", "/ui/components/toasts", "/ui/components/tooltip", "/ui/auth", "/ui/payment"];
     const problems = [];
@@ -1492,6 +1520,8 @@ if (flags.has("--shot")) {
   // Whole-page screenshots of each path at each width, for checking layout.
   const out = process.env.SHOT_DIR ?? tmpdir();
   const widths = (process.env.SHOT_WIDTHS ?? "1440,1024,768,390").split(",").map(Number);
+  // SHOT_SCHEME=light|dark: the colour scheme the page sees the system prefer.
+  if (process.env.SHOT_SCHEME) await page.colorScheme(process.env.SHOT_SCHEME);
   for (const path of positional) {
     for (const width of widths) {
       await page.viewport(width, 900, width < 768);

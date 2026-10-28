@@ -102,10 +102,9 @@ fn PricingCard(plan: *const PricingPlan) void {
     // const is_hovered = hovered_tier != null and hovered_tier.? == plan.tier;
     const is_highlighted = plan.highlighted;
 
-    // The highlighted card is a translucent tint over the page, so the theme's
-    // own text colour reads on it in light and dark.
-    const text_color: Vapor.Types.Color = .palette(.text);
-    const cta_text_color: Vapor.Types.Color = if (is_highlighted) .white else .palette(.text);
+    // White on the highlighted card's tint in light and dark; the theme's own
+    // text colour on the others.
+    const text_color: Vapor.Types.Color = if (is_highlighted) .white else .palette(.text);
 
     Stack()
         .pos(.relative)
@@ -238,7 +237,7 @@ fn PricingCard(plan: *const PricingPlan) void {
                     // .text = .palette(.background),
                     .transform = .scaleDecimal(1.02),
                 })
-                .font(16, 500, cta_text_color)
+                .font(16, 500, text_color)
                 .children({
                 Text(plan.cta_text)
                     .font(16, 300, null)
