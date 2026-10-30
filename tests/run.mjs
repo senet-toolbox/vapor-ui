@@ -298,6 +298,11 @@ function makePage(cdp, origin) {
       const features = scheme ? [{ name: "prefers-color-scheme", value: scheme }] : [];
       await cdp.send("Emulation.setEmulatedMedia", { features });
     },
+    // How fast CSS animations play: 0.1 is ten times slower, 1 normal.
+    async animationSpeed(rate) {
+      await cdp.send("Animation.enable");
+      await cdp.send("Animation.setPlaybackRate", { playbackRate: rate });
+    },
     async goto(path) {
       await cdp.send("Page.navigate", { url: origin + path });
       await waitFor(`document.readyState === "complete"`, "page load");
@@ -676,6 +681,98 @@ const tests = {
     await p.waitText("Transaction Details");
     await p.clickAway();
     await p.waitText("Transaction Details", { gone: true });
+  },
+
+  async "toast: the corner buttons move the stack there"(p) {
+    await p.goto("/ui/components/toasts");
+    const corners = [
+      // Each toast's description; its title is also a label on the page.
+      ["Show Bottom Left", "Toasts stack upward from bottom left.", false, false],
+      ["Show Top Left", "Toasts stack from the top left.", false, true],
+      ["Show Bottom Right", "Toasts rise from the bottom right.", true, false],
+      ["Show Top Right", "Toasts appear in the top right corner.", true, true],
+    ];
+    for (const [button, title, right, top] of corners) {
+      await p.clickText(button);
+      await p.waitText(title);
+      await sleep(400);
+      const box = await p.boxOf(title);
+      const x = (box.left + box.right) / 2, y = (box.top + box.bottom) / 2;
+      assert((x > box.vw / 2) === right && (y < box.vh / 2) === top, `"${button}" shows its toast at ${Math.round(x)},${Math.round(y)}`);
+    }
+  },
+
+  async "toast: its colours follow the theme"(p) {
+    // The toast's own box, and the colours of its background and title.
+    const look = `(() => { ${finders} const t = __ui.byText("Document Saved")[0]; const box = t.closest('[id^="opaque-toast-"]'); return { bg: getComputedStyle(box).backgroundColor, text: getComputedStyle(t).color }; })()`;
+    const want = {
+      light: { bg: "rgb(255, 255, 255)", text: "rgb(0, 0, 0)" },
+      dark: { bg: "rgb(17, 17, 17)", text: "rgb(234, 234, 234)" },
+    };
+    try {
+      for (const scheme of ["light", "dark"]) {
+        await p.colorScheme(scheme);
+        await p.goto("/ui/components/toasts");
+        await p.clickText("Save Successful");
+        await p.waitText("Document Saved");
+        const got = await p.evaluate(look);
+        assert(got.text === want[scheme].text, `in ${scheme}, a toast's text is ${got.text}`);
+        assert(got.bg === want[scheme].bg, `in ${scheme}, a toast's background is ${got.bg}`);
+      }
+    } finally {
+      await p.colorScheme(null);
+    }
+  },
+
+  async "toast: closing slides it away whole, without fading"(p) {
+    await p.goto("/ui/components/toasts");
+    await p.clickText("Save Successful");
+    await p.waitText("Document Saved");
+    await sleep(500);
+    const toast = `__ui.byText("Document Saved")[0]?.closest('[id^="opaque-toast-"]')`;
+    const before = await p.evaluate(`(() => { ${finders} return ${toast}.getBoundingClientRect().left; })()`);
+    try {
+      // Ten times slower, so the check lands inside the 200ms exit (vapor
+      // removes an exiting element after a second whatever the speed).
+      await p.animationSpeed(0.1);
+      await p.clickLabel("Dismiss notification");
+      await sleep(500);
+      const mid = await p.evaluate(`(() => {
+        const box = document.querySelector('[id^="opaque-toast-"][data-removing="true"]');
+        if (!box) return null;
+        let o = 1;
+        for (let e = box.querySelector("*"); e; e = e.parentElement) o *= +getComputedStyle(e).opacity;
+        return { left: box.getBoundingClientRect().left, opacity: o };
+      })()`);
+      assert(mid, "the toast was gone before its exit was half way");
+      // A fading toast loses its backdrop blur at once and leaves its text
+      // fading on its own.
+      assert(mid.opacity === 1, `the closing toast fades (opacity ${mid.opacity})`);
+      assert(mid.left > before + 20, `the closing toast does not slide away (left ${before} then ${mid.left})`);
+    } finally {
+      await p.animationSpeed(1);
+    }
+    await p.waitText("Document Saved", { gone: true });
+  },
+
+  async "toast: only the front toast shows its content until the stack is hovered"(p) {
+    await p.goto("/ui/components/toasts");
+    await p.clickText("Connection Failed");
+    await p.waitText("Connection Error");
+    await p.clickText("Save Successful");
+    await p.waitText("Document Saved");
+    await sleep(400);
+    // Two stacks share an id, and hovering then reaches the wrong one.
+    const stacks = await p.evaluate(`document.querySelectorAll("#opaque-toast-stack").length`);
+    assert(stacks === 1, `the page has ${stacks} toast stacks`);
+    // Found by its text alone: the finders skip a toast hidden behind another.
+    const opacity = (text) => `(() => { const t = [...document.querySelectorAll("body *")].find((e) => e.childElementCount === 0 && e.textContent === ${JSON.stringify(text)}); if (!t) return "missing"; let o = 1; for (let e = t; e; e = e.parentElement) o *= +getComputedStyle(e).opacity; return o; })()`;
+    assert(await p.evaluate(opacity("Document Saved")) === 1, "the front toast's text is hidden");
+    assert(await p.evaluate(opacity("Connection Error")) === 0, "the text of the toast behind shows past the front one");
+    await p.hoverText("Document Saved");
+    await p.waitFor(`${opacity("Connection Error")} === 1`, "the toast behind to show its text on hover");
+    await p.mouseTo(700, 880);
+    await p.waitFor(`${opacity("Connection Error")} === 0`, "the toast behind to hide its text again");
   },
 
   async "toast: shows in its corner, announced, and its close button dismisses it"(p) {
@@ -1443,15 +1540,17 @@ const tests = {
     await p.waitFor(`${kanbanColumnOf("Database schema review")} === "In Progress"`, "the card to land in In Progress");
   },
 
-  async "chat: sending with no server connected says so"(p) {
+  async "chat: with no server connected, a sent message joins the thread"(p) {
     await p.goto("/ui/templates");
     // The chat sends over a WebSocket; this static site has no server.
-    await p.evaluate(`document.querySelector('textarea[aria-label="Type a message..."]').scrollIntoView({ block: "center" })`);
-    await p.evaluate(`document.querySelector('textarea[aria-label="Type a message..."]').focus()`);
+    const box = `document.querySelector('textarea[aria-label="Type a message..."]')`;
+    await p.evaluate(`${box}.scrollIntoView({ block: "center" })`);
+    await p.evaluate(`${box}.focus()`);
     await p.type("Hello there");
     await p.clickLabel("Send message");
-    await p.waitText("Not Connected");
-    await p.waitText("Waiting for connection...");
+    await p.waitText("Hello there");
+    await p.waitFor(`${box}.value === ""`, "the message box to empty");
+    assert(!(await p.evaluate(`(() => { ${finders} return __ui.byText("Not Connected").length > 0; })()`)), "it said Not Connected");
   },
 
   async "chat: the message box takes typing; Shift+Enter is a new line, Enter sends"(p) {
@@ -1463,7 +1562,8 @@ const tests = {
     const typed = await p.evaluate(`${box}.value`);
     assert(typed === "Hi there\nsecond line", `the message box reads ${JSON.stringify(typed)}`);
     await p.press("Enter");
-    await p.waitText("Not Connected");
+    await p.waitText("Hi there\nsecond line");
+    await p.waitFor(`${box}.value === ""`, "the message box to empty");
   },
 
   async "landing: every tab shows its content"(p) {

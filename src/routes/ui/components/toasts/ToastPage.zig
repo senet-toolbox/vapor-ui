@@ -30,31 +30,18 @@ const Theme = struct {
 var hl_basic: SyntaxHighlighter = undefined;
 var hl_positions: SyntaxHighlighter = undefined;
 var hl_types: SyntaxHighlighter = undefined;
+var hl_style: SyntaxHighlighter = undefined;
 
 // ============================================================================
 // CURRENT POSITION STATE
 // ============================================================================
 
-var current_position: Toast.StackPosition = .top_right;
 var prev_position: Toast.StackPosition = .top_right;
 
 pub fn init() void {
-    // Configure toast styles
-    Toast.success_background = .transparentize(.hex("#22c55e"), 0.8);
-    Toast.success_blur = 12;
-    // Toast.success_text_color = .white;
-
-    Toast.err_background = .transparentize(.hex("#ef4444"), 0.8);
-    Toast.err_blur = 12;
-    // Toast.err_text_color = .white;
-
-    Toast.warning_background = .transparentize(.hex("#f59e0b"), 0.8);
-    Toast.warning_blur = 12;
-    // Toast.warning_text_color = .white;
-
-    // Toast.info_background = .transparentizeHex(.hex("#3b82f6"), 0.8);
-    // Toast.info_blur = 12;
-    // Toast.info_text_color = .white;
+    hl_style = SyntaxHighlighter.init(Vapor.arena(.persist));
+    hl_style.show_toolbar = true;
+    hl_style.parse(@embedFile("examples/ToastStyle.zig")) catch unreachable;
 
     Vapor.Page(.{ .src = @src() }, render, null);
 }
@@ -226,11 +213,17 @@ fn render() void {
                     multiToastBtn("Trigger 3 Toasts");
                 });
             });
+
+            // ================================================================
+            // SECTION: Styling
+            // ================================================================
+            sectionTitle("Styling");
+            sectionDesc("Toasts follow your theme, light or dark. Change every toast, or one type, by setting these once.");
+            CodeBlock(&hl_style);
         });
     });
 
-    // Render the toast stack at current position
-    Toast.renderStackAt(current_position);
+    // The layout renders the one toast stack, at Toast.stack_position.
 }
 
 // ============================================================================
@@ -246,9 +239,9 @@ const ToastArg = struct {
 fn toastBtn(label: []const u8, toast_type: Toast.ToastType, title: []const u8, description: []const u8) void {
     const ToastFn = struct {
         fn trigger(opts: ToastArg) void {
-            if (current_position != prev_position) {
+            if (Toast.stack_position != prev_position) {
                 Toast.clearToasts();
-                prev_position = current_position;
+                prev_position = Toast.stack_position;
             }
             switch (opts.toast_type) {
                 .success => Toast.success(.{ .title = opts.title, .description = opts.description }),
@@ -287,10 +280,10 @@ const PositionArg = struct {
 fn positionBtn(label: []const u8, position: Toast.StackPosition, toast_type: Toast.ToastType, title: []const u8, description: []const u8) void {
     const PositionFn = struct {
         fn trigger(opts: PositionArg) void {
-            current_position = opts.position;
-            if (current_position != prev_position) {
+            Toast.stack_position = opts.position;
+            if (Toast.stack_position != prev_position) {
                 Toast.clearToasts();
-                prev_position = current_position;
+                prev_position = Toast.stack_position;
             }
             switch (opts.toast_type) {
                 .success => Toast.success(.{ .title = opts.title, .description = opts.description }),
@@ -315,11 +308,11 @@ fn positionBtn(label: []const u8, position: Toast.StackPosition, toast_type: Toa
 fn positionSelectBtn(label: []const u8, position: Toast.StackPosition) void {
     const SelectFn = struct {
         fn select(pos: Toast.StackPosition) void {
-            current_position = pos;
+            Toast.stack_position = pos;
         }
     };
 
-    const is_active = current_position == position;
+    const is_active = Toast.stack_position == position;
     const bg = if (is_active) Vapor.Types.Color.palette(.tint) else Vapor.Types.Color.transparent;
     const text_color = if (is_active) Vapor.Types.Color.palette(.background) else Theme.text;
     const border_color = if (is_active) Vapor.Types.Color.palette(.tint) else Theme.border;

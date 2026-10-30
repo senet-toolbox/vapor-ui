@@ -13,8 +13,8 @@
             .hash = "vaporize-0.0.0-EPBNpxwSDQAjDjtMSYFWm0kHn_YVWxzrAAy454krdOTs",
         },
         .opaque_ui = .{
-            .url = "https://github.com/senet-toolbox/opaque/archive/refs/tags/v0.1.8.tar.gz",
-            .hash = "opaque_ui-0.0.0-UtoLhKS5FwC664wvlAn7i9nkOVXn_Ll8K69XqzNRP4EX",
+            .url = "https://github.com/senet-toolbox/opaque/archive/refs/tags/v0.1.9.tar.gz",
+            .hash = "opaque_ui-0.0.0-UtoLhJS9FwDGOMnKy45doCTlvhkdcD5QqlEcSVuYiMn6",
         },
     },
 

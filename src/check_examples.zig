@@ -40,6 +40,7 @@ pub const examples = .{
     @import("routes/ui/components/tabs/examples/BasicTabs.zig"),
     @import("routes/ui/components/tabs/examples/ControlledTabs.zig"),
     @import("routes/ui/components/tabs/examples/CustomTabs.zig"),
+    @import("routes/ui/components/toasts/examples/ToastStyle.zig"),
     @import("routes/ui/components/tooltip/examples/TooltipCustom.zig"),
     @import("routes/ui/components/tooltip/examples/TooltipCustomTrigger.zig"),
 };

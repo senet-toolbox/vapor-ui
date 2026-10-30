@@ -8,7 +8,8 @@
 // USAGE:
 //   1. Call Chat.init() during application startup
 //   2. Call Chat.render() in your main render loop
-//   3. Optionally call Chat.initWss() to establish WebSocket connection
+//   3. Optionally call Chat.initWss() to establish WebSocket connection;
+//      without one, sent messages only join the thread locally
 // =============================================================================
 
 const std = @import("std");
@@ -532,7 +533,8 @@ fn onClose() void {
 // WEBSOCKET - SENDING MESSAGES
 // =============================================================================
 
-/// Send the current message input to the selected conversation
+/// Send the current message input to the selected conversation. With no
+/// server connected the message only joins the thread here, already sent.
 fn sendMessage() void {
     if (message_input.len == 0) return;
 
@@ -541,10 +543,7 @@ fn sendMessage() void {
         return;
     };
 
-    const wss = current_user.wss orelse {
-        Toast.err(.{ .title = "Not Connected", .description = "Waiting for connection..." });
-        return;
-    };
+    const wss = current_user.wss;
 
     const msg_list = getMessagesForConversation(conv.id);
     const msg_id = generateMessageId();
@@ -560,7 +559,7 @@ fn sendMessage() void {
         .timestamp = timestamp,
         .is_read = true,
         .reactions = Vapor.array(Reaction, .persist),
-        .state = .pending,
+        .state = if (wss == null) .sent else .pending,
         .retry_count = 0,
     };
 
@@ -570,21 +569,23 @@ fn sendMessage() void {
         return;
     };
 
-    // Track as pending
-    const msg_ptr = &msg_list.items[msg_list.items.len - 1];
-    pending_messages.append(msg_ptr) catch {};
+    if (wss) |connection| {
+        // Track as pending
+        const msg_ptr = &msg_list.items[msg_list.items.len - 1];
+        pending_messages.append(msg_ptr) catch {};
 
-    // Create wire message and send
-    const wire_msg = WebSocketMessage{
-        .id = Vapor.fmtln("{d}", .{msg_id}),
-        .conversation_id = Vapor.fmtln("{d}", .{conv.id}),
-        .sender_id = Vapor.fmtln("{d}", .{current_user.id}),
-        .content = message_input,
-        .timestamp = timestamp,
-        .msg_type = "message",
-    };
+        // Create wire message and send
+        const wire_msg = WebSocketMessage{
+            .id = Vapor.fmtln("{d}", .{msg_id}),
+            .conversation_id = Vapor.fmtln("{d}", .{conv.id}),
+            .sender_id = Vapor.fmtln("{d}", .{current_user.id}),
+            .content = message_input,
+            .timestamp = timestamp,
+            .msg_type = "message",
+        };
 
-    sendWsMessage(wss, wire_msg);
+        sendWsMessage(connection, wire_msg);
+    }
 
     // Update conversation preview
     conv.last_message = local_msg.content;
