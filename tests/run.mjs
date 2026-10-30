@@ -417,6 +417,21 @@ function makePage(cdp, origin) {
       await cdp.send("Input.insertText", { text });
       await sleep(60);
     },
+    // Types `text` one key at a time, keydown to keyup, as a keyboard does,
+    // so a keydown handler that cancels keys stops them. "\n" is Shift+Enter.
+    async typeKeys(text) {
+      for (const ch of text) {
+        const enter = ch === "\n";
+        const key = enter ? "Enter" : ch;
+        const typed = enter ? "\r" : ch;
+        const keyCode = enter ? 13 : ch.toUpperCase().charCodeAt(0);
+        const modifiers = enter ? 8 : 0;
+        await cdp.send("Input.dispatchKeyEvent", { type: "keyDown", key, modifiers, windowsVirtualKeyCode: keyCode, text: typed, unmodifiedText: typed });
+        await cdp.send("Input.dispatchKeyEvent", { type: "keyUp", key, modifiers, windowsVirtualKeyCode: keyCode });
+        await sleep(20);
+      }
+      await sleep(60);
+    },
     // Waits for an element reading `text` to be visible (or, with
     // `gone`, for none to be).
     async waitText(text, { gone = false, timeout } = {}) {
@@ -1437,6 +1452,18 @@ const tests = {
     await p.clickLabel("Send message");
     await p.waitText("Not Connected");
     await p.waitText("Waiting for connection...");
+  },
+
+  async "chat: the message box takes typing; Shift+Enter is a new line, Enter sends"(p) {
+    await p.goto("/ui/templates");
+    const box = `document.querySelector('textarea[aria-label="Type a message..."]')`;
+    await p.evaluate(`${box}.scrollIntoView({ block: "center" })`);
+    await p.evaluate(`${box}.focus()`);
+    await p.typeKeys("Hi there\nsecond line");
+    const typed = await p.evaluate(`${box}.value`);
+    assert(typed === "Hi there\nsecond line", `the message box reads ${JSON.stringify(typed)}`);
+    await p.press("Enter");
+    await p.waitText("Not Connected");
   },
 
   async "landing: every tab shows its content"(p) {
