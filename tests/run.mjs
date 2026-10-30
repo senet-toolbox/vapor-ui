@@ -1566,6 +1566,47 @@ const tests = {
     await p.waitFor(`${box}.value === ""`, "the message box to empty");
   },
 
+  async "chat: the message box grows with its lines, then scrolls"(p) {
+    await p.goto("/ui/templates");
+    const box = `document.querySelector('textarea[aria-label="Type a message..."]')`;
+    await p.evaluate(`${box}.scrollIntoView({ block: "center" })`);
+    await p.evaluate(`${box}.focus()`);
+    const height = () => p.evaluate(`${box}.getBoundingClientRect().height`);
+    const empty = await height();
+    await p.typeKeys("one\ntwo\nthree");
+    await sleep(100);
+    const three = await height();
+    assert(three > empty, `three lines leave the box at ${three}px, as tall as empty (${empty}px)`);
+    await p.typeKeys("\nline".repeat(30));
+    await sleep(100);
+    const many = await p.evaluate(`(() => { const t = ${box}; const s = getComputedStyle(t); return { h: t.getBoundingClientRect().height, scroll: t.scrollHeight, overflow: s.overflowY, max: s.maxHeight }; })()`);
+    assert(many.h <= 256, `thirty lines stretch the box to ${many.h}px (max-height ${many.max})`);
+    assert(many.scroll > many.h, `the box holds every line without scrolling (${JSON.stringify(many)})`);
+    assert(many.overflow !== "hidden" && many.overflow !== "visible", `the box can't scroll (overflow-y ${many.overflow})`);
+    // The bar under the messages grows to hold the box, rather than the box
+    // spilling up over the messages.
+    const spill = await p.evaluate(`(() => {
+      const t = ${box}.getBoundingClientRect();
+      let bar = ${box}.parentElement;
+      while (bar && !bar.querySelector('[aria-label="Send message"]')) bar = bar.parentElement;
+      const b = bar.getBoundingClientRect();
+      return t.top < b.top - 0.5 || t.bottom > b.bottom + 0.5 ? { box: [t.top, t.bottom], bar: [b.top, b.bottom] } : null;
+    })()`);
+    assert(spill === null, `the box spills out of the bar that holds it: ${JSON.stringify(spill)}`);
+  },
+
+  async "chat: the message box's text follows the theme"(p) {
+    const box = `document.querySelector('textarea[aria-label="Type a message..."]')`;
+    for (const [scheme, text] of [["light", "rgb(0, 0, 0)"], ["dark", "rgb(234, 234, 234)"]]) {
+      await p.colorScheme(scheme);
+      await p.goto("/ui/templates");
+      await p.waitFor(`!!${box}`, "the message box");
+      const color = await p.evaluate(`getComputedStyle(${box}).color`);
+      assert(color === text, `in ${scheme} mode the message box's text is ${color}, not ${text}`);
+    }
+    await p.colorScheme(null);
+  },
+
   async "landing: every tab shows its content"(p) {
     await p.goto("/");
     // A tab's own text, to know it rendered.

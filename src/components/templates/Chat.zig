@@ -1795,9 +1795,11 @@ fn renderTypingIndicator() void {
 // =============================================================================
 
 fn renderMessageInput() void {
+    // Grows with the message box up to its 256px cap (plus this padding),
+    // taking the room from the messages above.
     Row()
         .width(.percent(100))
-        .height(.clamp(72, 72, 256, .px))
+        .height(.elastic(72, 288))
         .padding(.all(16))
         .spacing(12)
         .children({
