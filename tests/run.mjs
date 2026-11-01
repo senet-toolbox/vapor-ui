@@ -1047,6 +1047,40 @@ const tests = {
     assert(await p.evaluate(`document.querySelector('[aria-label="Toggle menu"]')?.getAttribute("aria-expanded")`) === "true", "the menu toggle is named and reads open");
   },
 
+  async "chart: zooming in keeps the lines inside the axes"(p) {
+    await p.goto("/ui/components/chart");
+    const svg = `document.querySelector("svg:has(.series-line)")`;
+    await p.waitFor(`!!${svg}`, "a line chart");
+    await p.evaluate(`${svg}.scrollIntoView({ block: "center" })`);
+    await sleep(200);
+    // The plot area is the box the two axes draw.
+    const plot = () => p.evaluate(`(() => {
+      const s = ${svg}, x = s.querySelector("#chart-axis-x").getBoundingClientRect(), y = s.querySelector("#chart-axis-y").getBoundingClientRect();
+      return { left: y.left, right: x.right, top: y.top, bottom: x.bottom };
+    })()`);
+    const box = await plot();
+    const w = box.right - box.left, h = box.bottom - box.top;
+    await p.drag({ x: box.left + w * 0.35, y: box.top + h * 0.3 }, { x: box.left + w * 0.6, y: box.top + h * 0.7 });
+    await p.waitFor(`${svg}.querySelector(".series-line").getBoundingClientRect().width > ${w * 1.5}`, "the chart to zoom in");
+    const after = await plot();
+    // The line now runs past the axes; it has to be clipped to them.
+    const loose = await p.evaluate(`(() => {
+      const s = ${svg}, a = ${JSON.stringify(after)}, out = [];
+      for (const e of s.querySelectorAll(".series-line, .series-area, .series-dot, .series-bar")) {
+        const g = e.closest("[clip-path]");
+        const id = g?.getAttribute("clip-path").slice("url(#".length, -1);
+        const r = id && document.getElementById(id)?.querySelector("rect");
+        if (!r) { out.push(e.getAttribute("class") + " is not clipped"); continue; }
+        const m = r.getScreenCTM(), b = r.getBBox();
+        const l = m.e + b.x * m.a, t = m.f + b.y * m.d, rr = l + b.width * m.a, bb = t + b.height * m.d;
+        if (Math.abs(l - a.left) > 1.5 || Math.abs(rr - a.right) > 1.5 || Math.abs(t - a.top) > 1.5 || Math.abs(bb - a.bottom) > 1.5)
+          out.push(e.getAttribute("class") + " is clipped to " + [l, t, rr, bb].map(Math.round) + ", not the axes " + [a.left, a.top, a.right, a.bottom].map(Math.round));
+      }
+      return [...new Set(out)];
+    })()`);
+    assert(loose.length === 0, loose.join("\n        "));
+  },
+
   async "tabs: clicking and arrow keys switch the chart, focus follows"(p) {
     await p.goto("/ui/components/chart");
     const selected = `[...document.querySelectorAll("[role=tab][aria-selected=true]")].map((e) => e.textContent.trim())`;
