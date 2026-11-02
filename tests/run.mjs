@@ -362,6 +362,14 @@ function makePage(cdp, origin) {
       await sleep(60);
       return pos;
     },
+    async dblclick(at) {
+      await mouse("mouseMoved", at.x, at.y, { button: "none", clickCount: 0 });
+      for (const clickCount of [1, 2]) {
+        await mouse("mousePressed", at.x, at.y, { clickCount });
+        await mouse("mouseReleased", at.x, at.y, { clickCount });
+      }
+      await sleep(60);
+    },
     async drag(from, to, steps = 8) {
       await mouse("mouseMoved", from.x, from.y, { button: "none", clickCount: 0 });
       await mouse("mousePressed", from.x, from.y);
@@ -1079,6 +1087,74 @@ const tests = {
       return [...new Set(out)];
     })()`);
     assert(loose.length === 0, loose.join("\n        "));
+  },
+
+  async "chart: a zoomed chart zooms back out, by button or double-click"(p) {
+    await p.goto("/ui/components/chart");
+    const svg = `document.querySelector("svg:has(.series-line)")`;
+    await p.waitFor(`!!${svg}`, "a line chart");
+    await p.evaluate(`${svg}.scrollIntoView({ block: "center" })`);
+    await sleep(200);
+    const plot = await p.evaluate(`(() => {
+      const s = ${svg}, x = s.querySelector("#chart-axis-x").getBoundingClientRect(), y = s.querySelector("#chart-axis-y").getBoundingClientRect();
+      return { left: y.left, right: x.right, top: y.top, bottom: x.bottom };
+    })()`);
+    const w = plot.right - plot.left, h = plot.bottom - plot.top;
+    const lineWidth = () => p.evaluate(`Math.round(${svg}.querySelector(".series-line").getBoundingClientRect().width)`);
+    const full = await lineWidth();
+    const reset = `document.querySelector('button[aria-label="Reset zoom"]')`;
+    assert(!(await p.evaluate(`!!${reset}`)), "a chart that isn't zoomed offers to reset its zoom");
+    const zoom = async () => {
+      await p.drag({ x: plot.left + w * 0.35, y: plot.top + h * 0.3 }, { x: plot.left + w * 0.6, y: plot.top + h * 0.7 });
+      await p.waitFor(`${svg}.querySelector(".series-line").getBoundingClientRect().width > ${full * 1.5}`, "the chart to zoom in");
+    };
+    await zoom();
+    await p.waitFor(`!!${reset}`, "a Reset zoom button");
+    await p.clickSelector('button[aria-label="Reset zoom"]');
+    await p.waitFor(`Math.abs(${svg}.querySelector(".series-line").getBoundingClientRect().width - ${full}) < 2`, "the button to zoom the chart back out");
+    await p.waitFor(`!${reset}`, "the Reset zoom button to go");
+    await zoom();
+    await p.dblclick({ x: plot.left + w / 2, y: plot.top + h / 2 });
+    await p.waitFor(`Math.abs(${svg}.querySelector(".series-line").getBoundingClientRect().width - ${full}) < 2`, "a double-click to zoom the chart back out");
+  },
+
+  async "chart: after zooming, the tooltip shows the values under the pointer"(p) {
+    await p.goto("/ui/components/chart");
+    const svg = `document.querySelector("svg:has(.series-line)")`;
+    await p.waitFor(`!!${svg}`, "a line chart");
+    await p.evaluate(`${svg}.scrollIntoView({ block: "center" })`);
+    await sleep(200);
+    const plot = await p.evaluate(`(() => {
+      const s = ${svg}, x = s.querySelector("#chart-axis-x").getBoundingClientRect(), y = s.querySelector("#chart-axis-y").getBoundingClientRect();
+      return { left: y.left, right: x.right, top: y.top, bottom: x.bottom };
+    })()`);
+    const w = plot.right - plot.left, h = plot.bottom - plot.top;
+    await p.drag({ x: plot.left + w * 0.35, y: plot.top + h * 0.3 }, { x: plot.left + w * 0.6, y: plot.top + h * 0.7 });
+    await sleep(300);
+    // The tooltip: the box that reads the axis label, then each series, then Total.
+    const tip = await p.evaluate(`(() => {
+      const c = ${svg}.parentElement;
+      const t = [...c.querySelectorAll("div")].filter((e) => /^Month/.test(e.textContent) && e.textContent.includes("Total")).pop();
+      return t ? t.textContent : null;
+    })()`);
+    assert(tip !== null, "no tooltip after zooming");
+    assert(tip.includes("Sales") && !/Total0$/.test(tip), `after zooming the tooltip reads ${JSON.stringify(tip)}`);
+  },
+
+  async "chart: its labels and grid follow the theme"(p) {
+    for (const [scheme, text] of [["light", "rgb(0, 0, 0)"], ["dark", "rgb(234, 234, 234)"]]) {
+      await p.colorScheme(scheme);
+      await p.goto("/ui/components/chart");
+      const svg = `document.querySelector("svg:has(.series-line)")`;
+      await p.waitFor(`!!${svg}`, "a line chart");
+      const got = await p.evaluate(`(() => {
+        const s = ${svg}, fill = (q) => getComputedStyle(s.querySelector(q)).fill;
+        return { axis: fill(".axis-label"), tick: fill(".tick-label"), legend: fill(".legend-text") };
+      })()`);
+      for (const [what, color] of Object.entries(got))
+        assert(color === text, `in ${scheme} mode the chart's ${what} text is ${color}, not ${text}`);
+    }
+    await p.colorScheme(null);
   },
 
   async "tabs: clicking and arrow keys switch the chart, focus follows"(p) {
