@@ -52,7 +52,7 @@ pub fn init() void {
 // ============================================================================
 
 fn sectionTitle(title: []const u8) void {
-    Text(title).font(24, 600, Theme.text).margin(.{ .top = 48 }).end();
+    Text(title).font(24, 600, Theme.text).fontFamily("IBM Plex Mono,monospace").margin(.{ .top = 48 }).end();
 }
 
 fn sectionDesc(desc: []const u8) void {

@@ -2,10 +2,6 @@ const Vapor = @import("vapor");
 const Text = Vapor.Text;
 const Accordion = @import("opaque-ui").Accordion;
 
-// ============================================================================
-// MAIN RENDER
-// ============================================================================
-
 var items = [_]Accordion.AccordionItem{
     .{
         .title = "Product Information",

@@ -1,6 +1,7 @@
 const Vapor = @import("vapor");
 const Hero = @import("../../../../components/Hero.zig").Hero;
 const CodeBox = @import("../CodeBox.zig").CodeBox;
+const Docs = @import("../Docs.zig");
 const Row = Vapor.Row;
 const Text = Vapor.Text;
 const Stack = Vapor.Stack;
@@ -246,14 +247,6 @@ pub fn init() void {
     Vapor.Page(.{ .src = @src() }, render, null);
 }
 
-fn sectionTitle(title: []const u8) void {
-    Text(title).font(24, 600, .palette(.text_color)).margin(.{ .top = 48 }).end();
-}
-
-fn sectionDesc(desc: []const u8) void {
-    Text(desc).font(14, 400, .hex("#71717a")).fontFamily("IBM Plex Mono,monospace").margin(.{ .bottom = 16 }).end();
-}
-
 pub fn render() void {
     Row()
         .width(.percent(100))
@@ -314,20 +307,20 @@ pub fn render() void {
             .responsive(.mobile, .{ .size = .w(.percent(92)) })
             .padding(.{ .bottom = 120 })
             .children({
-            sectionTitle("Usage");
-            sectionDesc("Set a chart up once in your page's init, then render it. It fills its parent's width. Hover it to read the values at a point.");
+            Docs.sectionTitle("Usage");
+            Docs.sectionDesc("Set a chart up once in your page's init, then render it. It fills its parent's width. Hover it to read the values at a point.");
             CodeBox(&hl_basic, "BasicChart");
 
-            sectionTitle("Pie and Donut Charts");
-            sectionDesc("Give each slice a label: the legend and the pie name the slices by it.");
+            Docs.sectionTitle("Pie and Donut Charts");
+            Docs.sectionDesc("Give each slice a label: the legend and the pie name the slices by it.");
             CodeBox(&hl_pie, "PieChart");
 
-            sectionTitle("Zooming");
-            sectionDesc("Drag a box over a chart to zoom into it. Double-click, or press Reset zoom, to zoom back out. Try it on the charts above.");
+            Docs.sectionTitle("Zooming");
+            Docs.sectionDesc("Drag a box over a chart to zoom into it. Double-click, or press Reset zoom, to zoom back out. Try it on the charts above.");
             CodeBox(&hl_zoom, "ChartZoom");
 
-            sectionTitle("Styling");
-            sectionDesc("Labels, grid lines and legend text follow your theme in light and dark mode. Colours, fills, lines and dots are set per chart, axis or series.");
+            Docs.sectionTitle("Styling");
+            Docs.sectionDesc("Labels, grid lines and legend text follow your theme in light and dark mode. Colours, fills, lines and dots are set per chart, axis or series.");
             CodeBox(&hl_style, "ChartStyle");
         });
     });

@@ -562,6 +562,36 @@ const tests = {
     assert(fits, "the open panel is tall enough for its content");
   },
 
+  async "accordion: the API reference shows init, render and every item field, framed like the examples"(p) {
+    for (const [w, h] of [[1440, 900], [390, 844]]) {
+      await p.viewport(w, h);
+      await p.goto("/ui/components/accordion");
+      const text = await p.evaluate(`document.body.textContent`);
+      for (const want of ["pub fn init(items: []AccordionItem) Accordion", "pub fn render(accordion: *Accordion) void", "is_open", "?*const fn (*AccordionItem) void"])
+        assert(text.includes(want), `at ${w}px the API reference doesn't show ${JSON.stringify(want)}`);
+      // The ApiBox: the frame (with a CodeBox's 18px corners) around the tab
+      // reading "AccordionItem"; each field's name is in the code font.
+      const got = await p.evaluate(`(() => {
+        const tab = [...document.querySelectorAll("p, span")].find((e) => e.textContent === "AccordionItem" && getComputedStyle(e).fontStyle === "italic");
+        let box = tab;
+        while (box && getComputedStyle(box).borderTopLeftRadius !== "18px") box = box.parentElement;
+        if (!box) return null;
+        const names = [...box.querySelectorAll("p, span")].filter((e) => getComputedStyle(e).fontFamily.includes("DM Mono") && getComputedStyle(e).fontWeight === "500");
+        const rows = names.map((e) => e.parentElement.parentElement);
+        return {
+          names: names.map((e) => e.textContent),
+          radius: getComputedStyle(box).borderTopLeftRadius,
+          fits: box.getBoundingClientRect().right <= innerWidth && rows.every((e) => e.scrollWidth <= e.clientWidth + 1),
+        };
+      })()`);
+      assert(got, `at ${w}px there is no AccordionItem API box`);
+      assert(JSON.stringify(got.names) === JSON.stringify(["title", "description", "is_open", "trigger", "content"]), `at ${w}px the fields are ${got.names}`);
+      assert(got.radius === "18px", `at ${w}px the API box's corners are ${got.radius}, not the code boxes' 18px`);
+      assert(got.fits, `at ${w}px a field row is wider than the page or its box`);
+    }
+    await p.viewport(1440, 900);
+  },
+
   async "alert: opens on its trigger and Cancel closes it"(p) {
     await p.goto("/ui/components/alert");
     await p.waitText("Are you sure?", { gone: true });
@@ -1266,6 +1296,7 @@ const tests = {
         assert(got.copy, `${at} no button is named "Copy code"`);
       }
     }
+    await p.viewport(1440, 900);
   },
 
   async "accordion: opening and closing moves only the panel, smoothly"(p) {
