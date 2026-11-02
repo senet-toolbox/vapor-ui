@@ -1,5 +1,6 @@
 const Vapor = @import("vapor");
 const Hero = @import("../../../../components/Hero.zig").Hero;
+const CodeBox = @import("../CodeBox.zig").CodeBox;
 const Row = Vapor.Row;
 const Text = Vapor.Text;
 const Stack = Vapor.Stack;
@@ -253,16 +254,6 @@ fn sectionDesc(desc: []const u8) void {
     Text(desc).font(14, 400, .hex("#71717a")).fontFamily("IBM Plex Mono,monospace").margin(.{ .bottom = 16 }).end();
 }
 
-fn CodeBlock(hl: *SyntaxHighlighter) void {
-    Row()
-        .scroll(.scrollY())
-        .size(.hw(.mobileDesktop(.fit, .px(400)), .mobileDesktopPercent(100, 100)))
-        .border(.thin(.palette(.text_color)))
-        .children({
-        hl.render() catch unreachable;
-    });
-}
-
 pub fn render() void {
     Row()
         .width(.percent(100))
@@ -325,19 +316,19 @@ pub fn render() void {
             .children({
             sectionTitle("Usage");
             sectionDesc("Set a chart up once in your page's init, then render it. It fills its parent's width. Hover it to read the values at a point.");
-            CodeBlock(&hl_basic);
+            CodeBox(&hl_basic, "BasicChart");
 
             sectionTitle("Pie and Donut Charts");
             sectionDesc("Give each slice a label: the legend and the pie name the slices by it.");
-            CodeBlock(&hl_pie);
+            CodeBox(&hl_pie, "PieChart");
 
             sectionTitle("Zooming");
             sectionDesc("Drag a box over a chart to zoom into it. Double-click, or press Reset zoom, to zoom back out. Try it on the charts above.");
-            CodeBlock(&hl_zoom);
+            CodeBox(&hl_zoom, "ChartZoom");
 
             sectionTitle("Styling");
             sectionDesc("Labels, grid lines and legend text follow your theme in light and dark mode. Colours, fills, lines and dots are set per chart, axis or series.");
-            CodeBlock(&hl_style);
+            CodeBox(&hl_style, "ChartStyle");
         });
     });
 }

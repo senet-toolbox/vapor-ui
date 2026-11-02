@@ -62,12 +62,6 @@ fn exampleLabel(label: []const u8) void {
     Text(label).font(14, 500, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.{ .top = 8 }).end();
 }
 
-fn CodeBlock(highlighter: *SyntaxHighlighter) void {
-    Row().scroll(.scrollY()).size(.hw(.fit, .percent(100))).border(.thin(Theme.border)).children({
-        highlighter.render() catch unreachable;
-    });
-}
-
 fn PreviewCard() Vapor.Builder(.pure) {
     return Stack()
         .background(.transparentize(.palette(.background), 0.5))

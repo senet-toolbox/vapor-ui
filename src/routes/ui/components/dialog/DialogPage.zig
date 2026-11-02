@@ -82,16 +82,6 @@ fn PreviewCard() Vapor.Builder(.pure) {
         .spacing(16);
 }
 
-fn CodeBlock(highlighter: *SyntaxHighlighter) void {
-    Row()
-        .scroll(.scrollY())
-        .size(.hw(.mobileDesktop(.fit, .px(512)), .mobileDesktopPercent(100, 100)))
-        .border(.thin(.palette(.text_color)))
-        .children({
-        highlighter.render() catch unreachable;
-    });
-}
-
 // ============================================================================
 // RENDER
 // ============================================================================

@@ -1218,43 +1218,53 @@ const tests = {
       assert(text.includes(code), `the page's examples don't show ${code}`);
   },
 
-  async "code: an example's lines line up, and its last line and longest line scroll into view"(p) {
+  async "code: examples line up, scroll to their last and longest line, and only where needed"(p) {
+    // A page per code box style there was, and the chart's long lines.
+    const pages = [["/ui/components/chart", "chart.addSeries(.line_smooth"], ["/ui/components/dialog", "@import"], ["/ui/components/toasts", "Toast.err_blur"]];
     for (const [w, h] of [[1440, 900], [390, 844]]) {
       await p.viewport(w, h);
-      await p.goto("/ui/components/chart");
-      const got = await p.evaluate(`(() => {
-        // The Usage example: the code box whose lines include "chart.addSeries(".
-        const lines = [...document.querySelectorAll("div")].filter((d) => d.children.length === 2 && /^\\d+$/.test(d.children[0].textContent.trim()) && d.children[1].textContent.length >= 0);
-        const box = lines.find((d) => d.textContent.includes("chart.addSeries(.line_smooth"))?.parentElement;
-        if (!box) return { error: "no code box" };
-        const rows = lines.filter((d) => d.parentElement === box);
-        const starts = new Set(rows.map((d) => Math.round(d.children[1].getBoundingClientRect().left)));
-        const scroller = (e, axis) => {
-          for (let a = e.parentElement; a; a = a.parentElement) {
-            const o = getComputedStyle(a)[axis === "x" ? "overflowX" : "overflowY"];
-            if (o === "auto" || o === "scroll") return a;
-            if (o === "hidden") return null;
+      for (const [path, needle] of pages) {
+        await p.goto(path);
+        const got = await p.evaluate(`(() => {
+          const lines = [...document.querySelectorAll("div")].filter((d) => d.children.length === 2 && /^\\d+$/.test(d.children[0].textContent.trim()));
+          const box = lines.find((d) => d.textContent.includes(${JSON.stringify(needle)}))?.parentElement;
+          if (!box) return { error: "no code box" };
+          const rows = lines.filter((d) => d.parentElement === box);
+          const starts = new Set(rows.map((d) => Math.round(d.children[1].getBoundingClientRect().left)));
+          // The boxes between the code and its frame that clip or scroll it.
+          const clips = [];
+          for (let a = box.parentElement, n = 0; a && n < 6; a = a.parentElement, n++) {
+            const s = getComputedStyle(a);
+            if (s.overflowX !== "visible" || s.overflowY !== "visible") clips.push({ a, x: s.overflowX, y: s.overflowY });
           }
-          return null;
-        };
-        const last = rows[rows.length - 1].children[1];
-        const longest = rows.map((d) => d.children[1]).sort((a, b) => b.scrollWidth - a.scrollWidth)[0];
-        const sy = scroller(box, "y"), sx = scroller(box, "x");
-        if (sy) sy.scrollTop = 1e6;
-        if (sx) sx.scrollLeft = 1e6;
-        const inside = (e, a) => { const r = e.getBoundingClientRect(), b = a.getBoundingClientRect(); return r.bottom <= b.bottom + 1 && r.right <= b.right + 1; };
-        return {
-          starts: [...starts],
-          lastShows: !!sy && (sy.scrollHeight <= sy.clientHeight || inside(last, sy)) || box.getBoundingClientRect().height < 0,
-          lastY: !!sy,
-          longestShows: !!sx && inside(longest, sx),
-          widest: Math.round(longest.getBoundingClientRect().width),
-        };
-      })()`);
-      assert(!got.error, got.error);
-      assert(got.starts.length === 1, `at ${w}px the lines start at ${got.starts.join(", ")}px, not one edge`);
-      assert(got.lastY && got.lastShows, `at ${w}px the example's last line can't be scrolled into view`);
-      assert(got.longestShows, `at ${w}px the example's longest line (${got.widest}px) can't be scrolled into view`);
+          const scroller = clips[0]?.a;
+          const last = rows[rows.length - 1].children[1];
+          const longest = rows.map((d) => d.children[1]).sort((a, b) => b.scrollWidth - a.scrollWidth)[0];
+          if (scroller) { scroller.scrollTop = 1e6; scroller.scrollLeft = 1e6; }
+          // Scrolled to the end both ways: the last line's bottom and the
+          // longest line's end are within the box.
+          const box_ = (a) => a.getBoundingClientRect();
+          return {
+            starts: [...starts],
+            clips: clips.map((c) => c.x + "/" + c.y),
+            lastShows: !!scroller && last.getBoundingClientRect().bottom <= box_(scroller).bottom + 1,
+            longestShows: !!scroller && longest.getBoundingClientRect().right <= box_(scroller).right + 1,
+            numbersSelect: getComputedStyle(rows[0].children[0]).userSelect,
+            codeHeight: Math.round(box.getBoundingClientRect().height),
+            boxHeight: scroller ? Math.round(box_(scroller).height) : 0,
+            copy: [...document.querySelectorAll("button")].some((b) => b.getAttribute("aria-label") === "Copy code"),
+          };
+        })()`);
+        const at = `at ${w}px on ${path}`;
+        assert(!got.error, `${at}: ${got.error}`);
+        assert(got.starts.length === 1, `${at} the lines start at ${got.starts.join(", ")}px, not one edge`);
+        assert(got.clips.length === 1 && got.clips[0] === "auto/auto", `${at} the code sits in ${got.clips.length} clipping or scrolling boxes (${got.clips.join(", ")}), not one that scrolls only when needed`);
+        assert(got.lastShows, `${at} the example's last line can't be scrolled into view`);
+        assert(got.boxHeight <= got.codeHeight + 80, `${at} the code box is ${got.boxHeight}px tall for ${got.codeHeight}px of code`);
+        assert(got.longestShows, `${at} the example's longest line can't be scrolled into view`);
+        assert(got.numbersSelect === "none", `${at} selecting code also selects its line numbers`);
+        assert(got.copy, `${at} no button is named "Copy code"`);
+      }
     }
   },
 

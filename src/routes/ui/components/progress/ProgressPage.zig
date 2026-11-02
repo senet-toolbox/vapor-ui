@@ -210,17 +210,6 @@ fn PreviewCard() Vapor.Builder(.pure) {
         .spacing(16);
 }
 
-fn CodeBlock(highlighter: *SyntaxHighlighter) void {
-    Row()
-        .scroll(.scrollY())
-        .inlineStyle("max-height: 512px;", .{})
-        .size(.w(.percent(100)))
-        .border(.thin(.palette(.text_color)))
-        .children({
-        highlighter.render() catch unreachable;
-    });
-}
-
 fn startAnimation() void {
     // Run it again from the start once it has finished.
     if (bar_with_label.progress >= 1) bar_with_label.updateProgress(0);

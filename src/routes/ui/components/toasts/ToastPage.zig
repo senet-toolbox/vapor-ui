@@ -1,6 +1,7 @@
 const std = @import("std");
 const Vapor = @import("vapor");
 const Hero = @import("../../../../components/Hero.zig").Hero;
+const CodeBox = @import("../CodeBox.zig").CodeBox;
 const Text = Vapor.Text;
 const Row = Vapor.Row;
 const Stack = Vapor.Stack;
@@ -60,16 +61,6 @@ fn sectionDesc(desc: []const u8) void {
 
 fn exampleLabel(label: []const u8) void {
     Text(label).font(14, 500, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.{ .top = 24 }).end();
-}
-
-fn CodeBlock(highlighter: *SyntaxHighlighter) void {
-    Row()
-        .scroll(.scrollY())
-        .size(.hw(.mobileDesktop(.fit, .px(400)), .mobileDesktopPercent(100, 100)))
-        .border(.thin(.palette(.text_color)))
-        .children({
-        highlighter.render() catch unreachable;
-    });
 }
 
 fn PreviewCard() Vapor.Builder(.pure) {
@@ -219,7 +210,7 @@ fn render() void {
             // ================================================================
             sectionTitle("Styling");
             sectionDesc("Toasts follow your theme, light or dark. Change every toast, or one type, by setting these once.");
-            CodeBlock(&hl_style);
+            CodeBox(&hl_style, "ToastStyle");
         });
     });
 

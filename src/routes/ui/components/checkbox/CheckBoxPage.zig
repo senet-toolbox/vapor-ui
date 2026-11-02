@@ -2,6 +2,7 @@
 const std = @import("std");
 const Vapor = @import("vapor");
 const Hero = @import("../../../../components/Hero.zig").Hero;
+const CodeBox = @import("../CodeBox.zig").CodeBox;
 const Text = Vapor.Text;
 const Row = Vapor.Row;
 const Stack = Vapor.Stack;
@@ -26,6 +27,7 @@ const Theme = struct {
 // ============================================================================
 
 var hl_basic: SyntaxHighlighter = undefined;
+var hl_custom: SyntaxHighlighter = undefined;
 var hl_custom_checkbox: SyntaxHighlighter = undefined;
 var hl_grouped: SyntaxHighlighter = undefined;
 var hl_detached: SyntaxHighlighter = undefined;
@@ -41,6 +43,19 @@ pub fn init() void {
     hl_basic = SyntaxHighlighter.init(allocator);
     hl_basic.show_toolbar = true;
     hl_basic.parse("Checkbox.render(\"test-checkbox\", checkboxToggle, .{})") catch unreachable;
+
+    hl_custom = SyntaxHighlighter.init(allocator);
+    hl_custom.show_toolbar = true;
+    hl_custom.parse(
+        \\Checkbox.create("custom-v1-checkbox", customCheckboxToggle, .{})
+        \\    .ariaLabel("Sound")
+        \\    .background(if (custom) .palette(.danger) else .palette(.background))
+        \\    .children({
+        \\    Vapor.Icon(.soundwave)
+        \\        .font(16, 300, if (custom) .white else .palette(.text_color))
+        \\        .end();
+        \\});
+    ) catch unreachable;
 
     Vapor.Page(.{ .src = @src() }, render, null);
 }
@@ -85,17 +100,6 @@ fn PreviewCard() Vapor.Builder(.pure) {
         .spacing(16);
 }
 
-fn CodeBlock(highlighter: *SyntaxHighlighter) void {
-    Row()
-        .scroll(.scrollY())
-        .inlineStyle("max-height: 512px;", .{})
-        .size(.w(.percent(100)))
-        .border(.thin(.palette(.text_color)))
-        .children({
-        highlighter.render() catch unreachable;
-    });
-}
-
 fn checkboxToggle() void {
     Vapor.alert("Checkbox Toggled", .{});
 }
@@ -136,7 +140,7 @@ pub fn render() void {
             PreviewCard().children({
                 Checkbox.render("test-checkbox", checkboxToggle, .{});
             });
-            CodeBlock(&hl_basic);
+            CodeBox(&hl_basic, "BasicCheckbox");
 
             exampleLabel("Custom");
             sectionDesc("A custom checkbox with a Title and Content.");
@@ -150,7 +154,7 @@ pub fn render() void {
                         .end();
                 });
             });
-            CodeBlock(&hl_basic);
+            CodeBox(&hl_custom, "CustomCheckbox");
 
             // ============================================================
             // API REFERENCE

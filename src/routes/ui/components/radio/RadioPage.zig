@@ -2,6 +2,7 @@
 const std = @import("std");
 const Vapor = @import("vapor");
 const Hero = @import("../../../../components/Hero.zig").Hero;
+const CodeBox = @import("../CodeBox.zig").CodeBox;
 const Text = Vapor.Text;
 const Row = Vapor.Row;
 const Stack = Vapor.Stack;
@@ -70,17 +71,6 @@ fn PreviewCard() Vapor.Builder(.pure) {
         .spacing(16);
 }
 
-fn CodeBlock(highlighter: *SyntaxHighlighter) void {
-    Row()
-        .scroll(.scrollY())
-        .inlineStyle("max-height: 512px;", .{})
-        .size(.w(.percent(100)))
-        .border(.thin(.palette(.text_color)))
-        .children({
-        highlighter.render() catch unreachable;
-    });
-}
-
 fn checkboxToggle() void {
     Vapor.alert("Checkbox Toggled", .{});
 }
@@ -133,7 +123,7 @@ pub fn render() void {
             PreviewCard().height(.fit).children({
                 BasicRadio.render();
             });
-            CodeBlock(&hl_basic);
+            CodeBox(&hl_basic, "BasicRadio");
 
             sectionTitle("API Reference");
 
