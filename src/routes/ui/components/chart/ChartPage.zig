@@ -6,11 +6,24 @@ const Stack = Vapor.Stack;
 const Opaque = @import("opaque-ui");
 const Tabs = Opaque.Tabs;
 const Chart = Opaque.Chart;
+const SyntaxHighlighter = @import("vaporize").SyntaxHighlighter;
 
 var chart: Chart = undefined;
 var requests_chart: Chart = undefined;
 var pie_chart: Chart = undefined;
 var area_chart: Chart = undefined;
+
+var hl_basic: SyntaxHighlighter = undefined;
+var hl_pie: SyntaxHighlighter = undefined;
+var hl_zoom: SyntaxHighlighter = undefined;
+var hl_style: SyntaxHighlighter = undefined;
+
+fn highlighter(comptime source: []const u8) SyntaxHighlighter {
+    var hl = SyntaxHighlighter.init(Vapor.arena(.persist));
+    hl.show_toolbar = true;
+    hl.parse(source) catch unreachable;
+    return hl;
+}
 
 const data = [_]Chart.Point{
     .{ .x = 1, .y = 90 },
@@ -224,7 +237,30 @@ pub fn init() void {
 
     requests_chart.build() catch unreachable;
 
+    hl_basic = highlighter(@embedFile("examples/BasicChart.zig"));
+    hl_pie = highlighter(@embedFile("examples/PieChart.zig"));
+    hl_zoom = highlighter(@embedFile("examples/ChartZoom.zig"));
+    hl_style = highlighter(@embedFile("examples/ChartStyle.zig"));
+
     Vapor.Page(.{ .src = @src() }, render, null);
+}
+
+fn sectionTitle(title: []const u8) void {
+    Text(title).font(24, 600, .palette(.text_color)).margin(.{ .top = 48 }).end();
+}
+
+fn sectionDesc(desc: []const u8) void {
+    Text(desc).font(14, 400, .hex("#71717a")).fontFamily("IBM Plex Mono,monospace").margin(.{ .bottom = 16 }).end();
+}
+
+fn CodeBlock(hl: *SyntaxHighlighter) void {
+    Row()
+        .scroll(.scrollY())
+        .size(.hw(.mobileDesktop(.fit, .px(400)), .mobileDesktopPercent(100, 100)))
+        .border(.thin(.palette(.text_color)))
+        .children({
+        hl.render() catch unreachable;
+    });
 }
 
 pub fn render() void {
@@ -279,6 +315,29 @@ pub fn render() void {
                 },
                 else => {},
             }
+        });
+
+        Stack()
+            .spacing(12)
+            .width(.percent(60))
+            .responsive(.mobile, .{ .size = .w(.percent(92)) })
+            .padding(.{ .bottom = 120 })
+            .children({
+            sectionTitle("Usage");
+            sectionDesc("Set a chart up once in your page's init, then render it. It fills its parent's width. Hover it to read the values at a point.");
+            CodeBlock(&hl_basic);
+
+            sectionTitle("Pie and Donut Charts");
+            sectionDesc("Give each slice a label: the legend and the pie name the slices by it.");
+            CodeBlock(&hl_pie);
+
+            sectionTitle("Zooming");
+            sectionDesc("Drag a box over a chart to zoom into it. Double-click, or press Reset zoom, to zoom back out. Try it on the charts above.");
+            CodeBlock(&hl_zoom);
+
+            sectionTitle("Styling");
+            sectionDesc("Labels, grid lines and legend text follow your theme in light and dark mode. Colours, fills, lines and dots are set per chart, axis or series.");
+            CodeBlock(&hl_style);
         });
     });
 }

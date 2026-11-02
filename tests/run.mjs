@@ -1095,17 +1095,21 @@ const tests = {
     await p.waitFor(`!!${svg}`, "a line chart");
     await p.evaluate(`${svg}.scrollIntoView({ block: "center" })`);
     await sleep(200);
-    const plot = await p.evaluate(`(() => {
-      const s = ${svg}, x = s.querySelector("#chart-axis-x").getBoundingClientRect(), y = s.querySelector("#chart-axis-y").getBoundingClientRect();
-      return { left: y.left, right: x.right, top: y.top, bottom: x.bottom };
-    })()`);
-    const w = plot.right - plot.left, h = plot.bottom - plot.top;
+    // Measured again before each use: clicking the button scrolls the page.
+    const plot = async () => {
+      const b = await p.evaluate(`(() => {
+        const s = ${svg}, x = s.querySelector("#chart-axis-x").getBoundingClientRect(), y = s.querySelector("#chart-axis-y").getBoundingClientRect();
+        return { left: y.left, right: x.right, top: y.top, bottom: x.bottom };
+      })()`);
+      return { ...b, w: b.right - b.left, h: b.bottom - b.top };
+    };
     const lineWidth = () => p.evaluate(`Math.round(${svg}.querySelector(".series-line").getBoundingClientRect().width)`);
     const full = await lineWidth();
     const reset = `document.querySelector('button[aria-label="Reset zoom"]')`;
     assert(!(await p.evaluate(`!!${reset}`)), "a chart that isn't zoomed offers to reset its zoom");
     const zoom = async () => {
-      await p.drag({ x: plot.left + w * 0.35, y: plot.top + h * 0.3 }, { x: plot.left + w * 0.6, y: plot.top + h * 0.7 });
+      const b = await plot();
+      await p.drag({ x: b.left + b.w * 0.35, y: b.top + b.h * 0.3 }, { x: b.left + b.w * 0.6, y: b.top + b.h * 0.7 });
       await p.waitFor(`${svg}.querySelector(".series-line").getBoundingClientRect().width > ${full * 1.5}`, "the chart to zoom in");
     };
     await zoom();
@@ -1114,7 +1118,8 @@ const tests = {
     await p.waitFor(`Math.abs(${svg}.querySelector(".series-line").getBoundingClientRect().width - ${full}) < 2`, "the button to zoom the chart back out");
     await p.waitFor(`!${reset}`, "the Reset zoom button to go");
     await zoom();
-    await p.dblclick({ x: plot.left + w / 2, y: plot.top + h / 2 });
+    const b = await plot();
+    await p.dblclick({ x: b.left + b.w / 2, y: b.top + b.h / 2 });
     await p.waitFor(`Math.abs(${svg}.querySelector(".series-line").getBoundingClientRect().width - ${full}) < 2`, "a double-click to zoom the chart back out");
   },
 
@@ -1202,6 +1207,55 @@ const tests = {
       for (const c of swatches) assert(contrast(c, page) >= 2, `in ${scheme} mode ${c} barely shows on ${page} (contrast ${contrast(c, page).toFixed(2)})`);
     }
     await p.colorScheme(null);
+  },
+
+  async "chart: the page shows how to use charts, zoom them and style them"(p) {
+    await p.goto("/ui/components/chart");
+    for (const title of ["Usage", "Pie and Donut Charts", "Zooming", "Styling"])
+      assert(await p.evaluate(`(() => { ${finders} return __ui.byText(${JSON.stringify(title)}).some((e) => e.getAttribute("role") !== "tab"); })()`), `no ${JSON.stringify(title)} section`);
+    const text = await p.evaluate(`document.body.textContent`);
+    for (const code of ["chart.addSeries(.line_smooth", ".label = \"Direct\"", "chart.onendselection = onZoom", "chart.resetZoom()", ".fill_opacity = 0.15"])
+      assert(text.includes(code), `the page's examples don't show ${code}`);
+  },
+
+  async "code: an example's lines line up, and its last line and longest line scroll into view"(p) {
+    for (const [w, h] of [[1440, 900], [390, 844]]) {
+      await p.viewport(w, h);
+      await p.goto("/ui/components/chart");
+      const got = await p.evaluate(`(() => {
+        // The Usage example: the code box whose lines include "chart.addSeries(".
+        const lines = [...document.querySelectorAll("div")].filter((d) => d.children.length === 2 && /^\\d+$/.test(d.children[0].textContent.trim()) && d.children[1].textContent.length >= 0);
+        const box = lines.find((d) => d.textContent.includes("chart.addSeries(.line_smooth"))?.parentElement;
+        if (!box) return { error: "no code box" };
+        const rows = lines.filter((d) => d.parentElement === box);
+        const starts = new Set(rows.map((d) => Math.round(d.children[1].getBoundingClientRect().left)));
+        const scroller = (e, axis) => {
+          for (let a = e.parentElement; a; a = a.parentElement) {
+            const o = getComputedStyle(a)[axis === "x" ? "overflowX" : "overflowY"];
+            if (o === "auto" || o === "scroll") return a;
+            if (o === "hidden") return null;
+          }
+          return null;
+        };
+        const last = rows[rows.length - 1].children[1];
+        const longest = rows.map((d) => d.children[1]).sort((a, b) => b.scrollWidth - a.scrollWidth)[0];
+        const sy = scroller(box, "y"), sx = scroller(box, "x");
+        if (sy) sy.scrollTop = 1e6;
+        if (sx) sx.scrollLeft = 1e6;
+        const inside = (e, a) => { const r = e.getBoundingClientRect(), b = a.getBoundingClientRect(); return r.bottom <= b.bottom + 1 && r.right <= b.right + 1; };
+        return {
+          starts: [...starts],
+          lastShows: !!sy && (sy.scrollHeight <= sy.clientHeight || inside(last, sy)) || box.getBoundingClientRect().height < 0,
+          lastY: !!sy,
+          longestShows: !!sx && inside(longest, sx),
+          widest: Math.round(longest.getBoundingClientRect().width),
+        };
+      })()`);
+      assert(!got.error, got.error);
+      assert(got.starts.length === 1, `at ${w}px the lines start at ${got.starts.join(", ")}px, not one edge`);
+      assert(got.lastY && got.lastShows, `at ${w}px the example's last line can't be scrolled into view`);
+      assert(got.longestShows, `at ${w}px the example's longest line (${got.widest}px) can't be scrolled into view`);
+    }
   },
 
   async "tabs: clicking and arrow keys switch the chart, focus follows"(p) {

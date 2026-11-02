@@ -9,8 +9,8 @@
             .hash = "vapor-3.7.1-VGoNdbUFFQCRwfRib1ZCeDcQwNIgPRX8iSf96Z91eieV",
         },
         .vaporize = .{
-            .url = "https://github.com/senet-toolbox/vaporize/archive/refs/tags/v1.1.1.tar.gz",
-            .hash = "vaporize-0.0.0-EPBNpxwSDQAjDjtMSYFWm0kHn_YVWxzrAAy454krdOTs",
+            .url = "https://github.com/senet-toolbox/vaporize/archive/refs/tags/v1.1.2.tar.gz",
+            .hash = "vaporize-0.0.0-EPBNp_oSDQCEKve3-oT9rAaQmUCM9ke2pUWST9hevXuP",
         },
         .opaque_ui = .{
             .url = "https://github.com/senet-toolbox/opaque/archive/refs/tags/v0.1.14.tar.gz",
