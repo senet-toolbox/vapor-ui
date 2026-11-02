@@ -554,11 +554,11 @@ const tests = {
     await p.waitFor(`${trigger("Security Settings")}?.getAttribute("aria-expanded") === "true"`, "the trigger to read expanded");
     await p.waitText("Open Account Settings");
     await sleep(300); // the open animation
-    // No item overlaps the next, open or closed.
-    const overlaps = await p.evaluate(`(() => { const bs = [...document.querySelectorAll("button[aria-expanded]")].map((b) => b.closest("[style*=grid]").getBoundingClientRect()); let n = 0; for (let i = 1; i < bs.length; i++) if (bs[i].top < bs[i - 1].bottom - 1 && bs[i].left < bs[i - 1].right) n++; return n; })()`);
+    // No item (a trigger and its panel) overlaps the next, open or closed.
+    const overlaps = await p.evaluate(`(() => { const bs = [...document.querySelectorAll("button[aria-expanded]")].map((b) => b.parentElement.getBoundingClientRect()); let n = 0; for (let i = 1; i < bs.length; i++) if (bs[i].top < bs[i - 1].bottom - 1 && bs[i].left < bs[i - 1].right) n++; return n; })()`);
     assert(overlaps === 0, `${overlaps} accordion items overlap the one before`);
     // The open panel shows all of its content.
-    const fits = await p.evaluate(`(() => { const b = [...document.querySelectorAll("button")].find((e) => e.textContent.trim() === "Open Account Settings"); const item = b.closest("[style*=grid]").getBoundingClientRect(); const r = b.getBoundingClientRect(); return r.bottom <= item.bottom + 1; })()`);
+    const fits = await p.evaluate(`(() => { const b = [...document.querySelectorAll("button")].find((e) => e.textContent.trim() === "Open Account Settings"); const item = b.closest("[style*=grid]").parentElement.getBoundingClientRect(); const r = b.getBoundingClientRect(); return r.bottom <= item.bottom + 1; })()`);
     assert(fits, "the open panel is tall enough for its content");
   },
 
@@ -1265,6 +1265,36 @@ const tests = {
         assert(got.numbersSelect === "none", `${at} selecting code also selects its line numbers`);
         assert(got.copy, `${at} no button is named "Copy code"`);
       }
+    }
+  },
+
+  async "accordion: opening and closing moves only the panel, smoothly"(p) {
+    await p.goto("/ui/components/accordion");
+    const trig = `[...document.querySelectorAll("button[aria-expanded]")].find((b) => b.textContent.includes("Product Information"))`;
+    await p.evaluate(`${trig}.scrollIntoView({ block: "center" })`);
+    await sleep(300);
+    // Every frame of one toggle: the trigger's top and height, and the panel's height.
+    const toggle = () => p.evaluate(`new Promise((done) => {
+      const b = ${trig};
+      const content = [...b.parentElement.parentElement.querySelectorAll("p")].find((e) => e.textContent.startsWith("Our flagship"));
+      const frames = [], start = performance.now();
+      const tick = () => {
+        const r = b.getBoundingClientRect();
+        frames.push({ top: r.top, height: r.height, gap: content.getBoundingClientRect().top - r.bottom, shown: content.parentElement.parentElement.getBoundingClientRect().height });
+        if (performance.now() - start < 500) requestAnimationFrame(tick); else done(frames);
+      };
+      requestAnimationFrame(tick);
+      setTimeout(() => b.click(), 20);
+    })`);
+    for (const [what, grows] of [["opening", true], ["closing", false]]) {
+      const frames = await toggle();
+      const tops = new Set(frames.map((f) => f.top.toFixed(1))), heights = new Set(frames.map((f) => f.height.toFixed(1)));
+      assert(tops.size === 1 && heights.size === 1, `${what}, the trigger moves: tops ${[...tops].join(", ")}, heights ${[...heights].join(", ")}`);
+      const shown = frames.map((f) => f.shown);
+      const steps = shown.slice(1).map((v, i) => v - shown[i]);
+      assert(steps.every((d) => (grows ? d >= -0.01 : d <= 0.01)), `${what}, the panel's height goes back and forth: ${shown.map((v) => v.toFixed(1)).join(", ")}`);
+      assert(new Set(shown.map((v) => v.toFixed(0))).size > 3, `${what}, the panel jumps instead of animating: ${shown.map((v) => v.toFixed(1)).join(", ")}`);
+      await sleep(200);
     }
   },
 
