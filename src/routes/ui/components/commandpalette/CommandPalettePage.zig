@@ -1,84 +1,49 @@
-const std = @import("std");
 const Vapor = @import("vapor");
 const Hero = @import("../../../../components/Hero.zig").Hero;
-const Text = Vapor.Text;
 const Row = Vapor.Row;
-const Stack = Vapor.Stack;
-const Icon = Vapor.Icon;
-const Opaque = @import("opaque-ui");
-const Button = Opaque.Button;
-const CommandPalette = Opaque.CommandPalette;
+const SyntaxHighlighter = @import("vaporize").SyntaxHighlighter;
+const CodeBox = @import("../CodeBox.zig").CodeBox;
+const Docs = @import("../Docs.zig");
+// Rendered and shown as code: what you read is what runs.
+const BasicCommandPalette = @import("examples/BasicCommandPalette.zig");
+const PaletteDialog = @import("examples/PaletteDialog.zig");
 
-// ============================================================================
-// THEME
-// ============================================================================
+var hl_basic: SyntaxHighlighter = undefined;
+var hl_dialog: SyntaxHighlighter = undefined;
+var hl_api: SyntaxHighlighter = undefined;
 
-const Theme = struct {
-    const bg = Vapor.Types.Color.palette(.background);
-    const text = Vapor.Types.Color.palette(.text_color);
-    const text_muted = Vapor.Types.Color.hex("#71717a");
-    const border = Vapor.Types.Color.palette(.border_color_light);
-    const code_bg = Vapor.Types.Color.hex("#1a1a1a");
-};
-
-// ============================================================================
-// CODE SNIPPET COMPONENT
-// ============================================================================
-
-fn code_snippet(code: []const u8) void {
-    Row()
-        .width(.percent(100))
-        .padding(.all(16))
-        .background(Theme.code_bg)
-        .scroll(.scrollX())
-        .border(.round(Theme.border, .all(8)))
-        .children({
-        Text(code)
-            .font(14, 400, .hex("#e4e4e7"))
-            .fontFamily("IBM Plex Mono,monospace")
-            .end();
-    });
-}
-
-fn section_title(title: []const u8) void {
-    Text(title)
-        .font(24, 600, Theme.text)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .top = 32 })
-        .end();
-}
-
-fn section_description(desc: []const u8) void {
-    Text(desc)
-        .font(14, 400, Theme.text_muted)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .bottom = 16 })
-        .end();
-}
-
-// ============================================================================
-// MAIN RENDER
-// ============================================================================
-
-var command_palette: CommandPalette = .{ .text = "Search..." };
-var open_dialog: CommandPalette = .{ .text = "Open Dialog..." };
 pub fn init() void {
-    command_palette.key_press = "j";
-    open_dialog.key_press = "i";
+    hl_basic = Docs.highlighter(@embedFile("examples/BasicCommandPalette.zig"));
+    hl_dialog = Docs.highlighter(@embedFile("examples/PaletteDialog.zig"));
+    hl_api = Docs.highlighter(
+        \\const CommandPalette = @import("opaque-ui").CommandPalette;
+        \\
+        \\// Draws the field. While it's on the page, its shortcut works.
+        \\pub fn render(palette: *CommandPalette) void
+        \\// Opens or closes it, as a click or the shortcut does.
+        \\pub fn toggle(palette: *CommandPalette) void
+        \\
+        \\// A struct you fill in, kept in a global var.
+        \\var palette: CommandPalette = .{ .text = "Search...", .on_click = onOpen };
+    );
+    PaletteDialog.init();
+
     Vapor.Page(.{ .src = @src() }, render, null);
 }
 
-fn Card() Vapor.Builder(.pure) {
-    return Stack()
-        .background(.transparentize(.palette(.background), 0.5))
-        .border(.round(.palette(.border_color_light), .all(12)))
-        .width(.percent(100))
-        .height(.px(160))
-        .padding(.all(24))
-        .direction(.column)
-        .layout(.center)
-        .spacing(16);
-}
+const fields = [_]Docs.Field{
+    .{ .name = "text", .type = "[]const u8", .default = "\"\"", .desc = "The field's placeholder; \"Search\" when empty. It floats up while open." },
+    .{ .name = "key_press", .type = "[]const u8", .default = "\"k\"", .desc = "The shortcut's key, pressed with Ctrl, or Cmd on a Mac. Shown in the field." },
+    .{ .name = "on_click", .type = "?*const fn () void", .default = "null", .desc = "Called after each click or shortcut, once clicked has flipped. Open or close what the palette is for here." },
+    .{ .name = "on_escape", .type = "?*const fn () void", .default = "null", .desc = "Called when Escape closes it." },
+    .{ .name = "clicked", .type = "bool", .default = "false", .desc = "Whether it's open. Set it false when what you opened closes." },
+};
+
+const behaviours = [_]Docs.Field{
+    .{ .name = "Shortcut", .desc = "Ctrl or Cmd with key_press opens and closes it from anywhere on the page; Escape closes it." },
+    .{ .name = "Keyboard", .desc = "The field is a button: Tab reaches it, Enter or Space opens it." },
+    .{ .name = "Leaving", .desc = "The shortcut stops listening when the field leaves the page." },
+};
 
 pub fn render() void {
     Row()
@@ -86,122 +51,36 @@ pub fn render() void {
         .layout(.top_center)
         .direction(.column)
         .children({
-        Hero("command-palette-ui", "A collection of ready-to-use command-palette components built on top of Vapor. Copy and paste into your apps.");
+        Hero("command-palette-ui", "A search field with a keyboard shortcut, for opening your app's command menu.");
 
-        Stack()
-            .width(.px(720))
-            .responsive(.mobile, .{ .size = .w(.percent(92)) })
-            .height(.percent(100))
-            .spacing(12)
-            .children({
-            // Page Title
-            Text("Command Palette")
-                .font(36, 700, Theme.text)
-                .fontFamily("IBM Plex Mono,monospace")
-                .end();
-
-            Text("Displays a command-palette or a component that looks like a command-palette.")
-                .font(16, 400, Theme.text_muted)
-                .fontFamily("IBM Plex Mono,monospace")
-                .margin(.{ .bottom = 24 })
-                .end();
-
-            // Preview Section
-
-            // Primary
-            Text("Primary")
-                .font(14, 500, Theme.text_muted)
-                .fontFamily("IBM Plex Mono,monospace")
-                .end();
-            Card().children({
-                command_palette.render();
+        Docs.Content().children({
+            Docs.exampleLabel("Basic Command Palette");
+            Docs.sectionDesc("The field, with its shortcut. Press Ctrl+J, or Cmd+J on a Mac, then Escape.");
+            Docs.PreviewCard().height(.px(160)).layout(.center).children({
+                BasicCommandPalette.render();
             });
+            CodeBox(&hl_basic, "BasicCommandPalette");
 
-            // Secondary
-            Text("Secondary")
-                .font(14, 500, Theme.text_muted)
-                .fontFamily("IBM Plex Mono,monospace")
-                .end();
-            Card().children({
-                open_dialog.render();
+            Docs.exampleLabel("Opening a Dialog");
+            Docs.sectionDesc("What opens is yours: here a searchable dialog of pages, with Ctrl+I or Cmd+I.");
+            Docs.PreviewCard().height(.px(160)).layout(.center).children({
+                PaletteDialog.render();
             });
+            CodeBox(&hl_dialog, "PaletteDialog");
 
-            // Installation Section
-            section_title("Installation");
-            section_description("Install the command-palette component from your command line.");
+            Docs.sectionTitle("API Reference");
 
-            code_snippet("vapor add command-palette");
+            Docs.exampleLabel("CommandPalette");
+            Docs.sectionDesc("Fill one in and render it where the field goes.");
+            CodeBox(&hl_api, "CommandPalette");
 
-            // Usage Section
-            section_title("Usage");
-            section_description("Import and use the Button component in your code.");
+            Docs.exampleLabel("Fields");
+            Docs.sectionDesc("Set them in the struct, or later.");
+            Docs.ApiBox("CommandPalette", &fields);
 
-            code_snippet("const Button = @import(\"opaque-ui\").Button;");
-
-            // Examples Section
-            section_title("Examples");
-
-            // Primary Button
-            Text("Primary")
-                .font(18, 500, Theme.text)
-                .fontFamily("IBM Plex Mono,monospace")
-                .margin(.{ .top = 16 })
-                .end();
-
-            code_snippet(
-                \\Button(handleClick, .{})
-                \\    .background(.palette(.tint))
-                \\    .children({
-                \\        Text("Primary").end();
-                \\    });
-            );
-
-            // Secondary Button
-            Text("Secondary")
-                .font(18, 500, Theme.text)
-                .fontFamily("IBM Plex Mono,monospace")
-                .margin(.{ .top = 16 })
-                .end();
-
-            code_snippet(
-                \\Button(handleClick, .{})
-                \\    .background(.transparent)
-                \\    .border(.round(.palette(.border_color_light), .all(8)))
-                \\    .children({
-                \\        Text("Secondary").end();
-                \\    });
-            );
-
-            // With Icon
-            Text("With Icon")
-                .font(18, 500, Theme.text)
-                .fontFamily("IBM Plex Mono,monospace")
-                .margin(.{ .top = 16 })
-                .end();
-
-            code_snippet(
-                \\Button(handleClick, .{})
-                \\    .children({
-                \\        Icon(.arrow_right).end();
-                \\        Text("Continue").end();
-                \\    });
-            );
-
-            // API Reference Section
-            section_title("API Reference");
-            section_description("The Button component accepts the following properties.");
-
-            code_snippet(
-                \\// Handler and arguments
-                \\Button(handler_fn, .{ arg1, arg2 })
-                \\
-                \\// Styling
-                \\.background(.palette(.tint))
-                \\.border(.round(.palette(.border_color_light), .all(8)))
-                \\.padding(.xy(16, 10))
-                \\.layout(.center)
-                \\.spacing(8)
-            );
+            Docs.exampleLabel("Behaviour");
+            Docs.sectionDesc("What the command palette does for you.");
+            Docs.ApiBox("Behaviour", &behaviours);
         });
     });
 }

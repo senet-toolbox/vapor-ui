@@ -1,112 +1,61 @@
-// page.zig
-const std = @import("std");
 const Vapor = @import("vapor");
 const Hero = @import("../../../../components/Hero.zig").Hero;
-const Text = Vapor.Text;
 const Row = Vapor.Row;
-const Stack = Vapor.Stack;
-const Vaporize = @import("vaporize");
-const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
+const SyntaxHighlighter = @import("vaporize").SyntaxHighlighter;
 const CodeBox = @import("../CodeBox.zig").CodeBox;
-// The page shows these files' code and renders them, so the code you read
-// is the code that runs.
+const Docs = @import("../Docs.zig");
+// Rendered and shown as code: what you read is what runs.
 const BasicTabs = @import("examples/BasicTabs.zig");
 const ControlledTabs = @import("examples/ControlledTabs.zig");
 const CustomTabs = @import("examples/CustomTabs.zig");
 
-// ============================================================================
-// THEME
-// ============================================================================
-
-const Theme = struct {
-    const text = Vapor.Types.Color.palette(.text_color);
-    const text_muted = Vapor.Types.Color.hex("#71717a");
-    const border = Vapor.Types.Color.palette(.border_color_light);
-    const code_bg = Vapor.Types.Color.hex("#1a1a1a");
-};
-
-// ============================================================================
-// SYNTAX HIGHLIGHTERS
-// ============================================================================
-
 var hl_basic: SyntaxHighlighter = undefined;
 var hl_controlled: SyntaxHighlighter = undefined;
 var hl_custom: SyntaxHighlighter = undefined;
+var hl_api: SyntaxHighlighter = undefined;
 
 pub fn init() void {
-    const allocator = Vapor.arena(.persist);
-
-    hl_basic = SyntaxHighlighter.init(allocator);
-    hl_basic.show_toolbar = true;
-    hl_basic.parse(@embedFile("examples/BasicTabs.zig")) catch unreachable;
-
-    hl_controlled = SyntaxHighlighter.init(allocator);
-    hl_controlled.show_toolbar = true;
-    hl_controlled.parse(@embedFile("examples/ControlledTabs.zig")) catch unreachable;
-
-    hl_custom = SyntaxHighlighter.init(allocator);
-    hl_custom.show_toolbar = true;
-    hl_custom.parse(@embedFile("examples/CustomTabs.zig")) catch unreachable;
+    hl_basic = Docs.highlighter(@embedFile("examples/BasicTabs.zig"));
+    hl_controlled = Docs.highlighter(@embedFile("examples/ControlledTabs.zig"));
+    hl_custom = Docs.highlighter(@embedFile("examples/CustomTabs.zig"));
+    hl_api = Docs.highlighter(
+        \\const Tabs = @import("opaque-ui").Tabs;
+        \\
+        \\// Draws the tabs and returns the selected index. The tabs are
+        \\// kept under tag, so the selection survives rerenders.
+        \\pub fn NavBar(tag: []const u8, names: []const []const u8) usize
+        \\
+        \\// The same, configured first.
+        \\pub fn create(tag: []const u8, names: []const []const u8) *Tabs
+        \\// Selects the named tab, on every render it's called.
+        \\pub fn default(tabs: *Tabs, name: ?[]const u8) *Tabs
+        \\// Called after a tab is clicked or picked by key.
+        \\pub fn onClick(tabs: *Tabs, callback: *const fn (*Tabs) void) *Tabs
+        \\// Draws the standard tabs; returns the selected index.
+        \\pub fn render(tabs: *Tabs) usize
+        \\// Draws each tab with your function; returns the selected index.
+        \\pub fn Trigger(tabs: *Tabs, trigger_fn: *const fn (*Tabs, []const u8, bool) void) usize
+        \\
+        \\// Selects a tab from outside, by tag and index.
+        \\pub fn switchToTab(tag: []const u8, index: usize) void
+    );
 
     Vapor.Page(.{ .src = @src() }, render, null);
 }
 
-// ============================================================================
-// UI HELPERS
-// ============================================================================
+const fields = [_]Docs.Field{
+    .{ .name = "tag", .type = "[]const u8", .desc = "The name the tabs are kept under. One per set of tabs." },
+    .{ .name = "names", .type = "[]const []const u8", .desc = "The tabs, in order. Each name is also its label." },
+    .{ .name = "active_tab", .type = "?[]const u8", .default = "null", .desc = "The selected tab's name; null means the first. Read it in onClick." },
+    .{ .name = "selected_index", .type = "usize", .default = "0", .desc = "The selected tab's index, as of the last render." },
+};
 
-fn sectionTitle(title: []const u8) void {
-    Text(title)
-        .font(24, 600, Theme.text)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .top = 48 })
-        .end();
-}
-
-fn sectionDesc(desc: []const u8) void {
-    Text(desc)
-        .font(14, 400, Theme.text_muted)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .bottom = 16 })
-        .end();
-}
-
-fn exampleLabel(label: []const u8) void {
-    Text(label)
-        .font(14, 500, Theme.text_muted)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .top = 24 })
-        .end();
-}
-
-fn PreviewCard() Vapor.Builder(.pure) {
-    return Stack()
-        .background(.transparentize(.palette(.background), 0.5))
-        .border(.round(.palette(.border_color_light), .all(12)))
-        .width(.percent(100))
-        .padding(.all(24))
-        .direction(.column)
-        .spacing(16);
-}
-
-fn CodeLine(code: []const u8) void {
-    Row()
-        .width(.percent(100))
-        .padding(.all(16))
-        .background(Theme.code_bg)
-        .scroll(.scrollX())
-        .border(.round(Theme.border, .all(8)))
-        .children({
-        Text(code)
-            .font(14, 400, .hex("#e4e4e7"))
-            .fontFamily("IBM Plex Mono,monospace")
-            .end();
-    });
-}
-
-// ============================================================================
-// MAIN RENDER
-// ============================================================================
+const behaviours = [_]Docs.Field{
+    .{ .name = "Keyboard", .desc = "Tab reaches the selected tab. Left and Right move to the next one, Home and End to the first and last, selecting it and taking focus with it." },
+    .{ .name = "Screen readers", .desc = "The row has role=tablist; each tab has role=tab and reports aria-selected." },
+    .{ .name = "Narrow screens", .desc = "Tabs that don't fit scroll sideways rather than widen the page." },
+    .{ .name = "Panels", .desc = "Yours to draw: switch on the returned index." },
+};
 
 pub fn render() void {
     Row()
@@ -114,60 +63,43 @@ pub fn render() void {
         .layout(.top_center)
         .direction(.column)
         .children({
-
-        // Hero
         Hero("tabs-ui", "Accessible tabs that switch between panels, with arrow-key navigation and your own tab styles.");
 
-        // Content
-        Stack()
-            .width(.percent(50))
-            .responsive(.mobile, .{ .size = .w(.percent(92)) })
-            .height(.percent(100))
-            .spacing(12)
-            .padding(.{ .bottom = 120 })
-            .children({
-
-            // Basic
-            exampleLabel("Basic Tabs");
-            sectionDesc("NavBar draws the tabs and returns the selected index; switch on it to show a panel.");
-            PreviewCard().children({
+        Docs.Content().children({
+            Docs.exampleLabel("Basic Tabs");
+            Docs.sectionDesc("NavBar draws the tabs and returns the selected index; switch on it to show a panel.");
+            Docs.PreviewCard().children({
                 BasicTabs.render();
             });
             CodeBox(&hl_basic, "BasicTabs");
 
-            // Controlled
-            exampleLabel("Controlled Tabs");
-            sectionDesc("Keep the selected tab in your own state with default and onClick, e.g. to remember it.");
-            PreviewCard().children({
+            Docs.exampleLabel("Controlled Tabs");
+            Docs.sectionDesc("Keep the selected tab in your own state with default and onClick, e.g. to remember it.");
+            Docs.PreviewCard().children({
                 ControlledTabs.render();
             });
             CodeBox(&hl_controlled, "ControlledTabs");
 
-            // Custom
-            exampleLabel("Custom Triggers");
-            sectionDesc("Trigger keeps selection, keyboard and roles, and calls your function to draw each tab.");
-            PreviewCard().children({
+            Docs.exampleLabel("Custom Triggers");
+            Docs.sectionDesc("Trigger keeps selection, keyboard and roles, and calls your function to draw each tab.");
+            Docs.PreviewCard().children({
                 CustomTabs.render();
             });
             CodeBox(&hl_custom, "CustomTabs");
 
-            // API Reference
-            sectionTitle("API Reference");
+            Docs.sectionTitle("API Reference");
 
-            exampleLabel("NavBar");
-            sectionDesc("The tabs keep their state under the tag, so the selection survives rerenders.");
-            CodeLine("const index = Tabs.NavBar(\"tag\", &.{ \"One\", \"Two\" });");
+            Docs.exampleLabel("Tabs");
+            Docs.sectionDesc("NavBar for the standard tabs; create, then render or Trigger, to configure them.");
+            CodeBox(&hl_api, "Tabs");
 
-            exampleLabel("create");
-            sectionDesc("Returns the Tabs for the tag, to configure before rendering.");
-            CodeLine("const index = Tabs.create(\"tag\", names).default(selected).onClick(onTab).render();");
+            Docs.exampleLabel("Fields");
+            Docs.sectionDesc("What onClick's *Tabs holds.");
+            Docs.ApiBox("Tabs", &fields);
 
-            exampleLabel("Trigger");
-            sectionDesc("Renders each tab with your function; active is true for the selected one.");
-            CodeLine("fn TabTrigger(tabs: *Tabs, name: []const u8, active: bool) void { ... }");
-
-            exampleLabel("Keyboard");
-            sectionDesc("Left and Right move between tabs, Home and End jump to the first and last.");
+            Docs.exampleLabel("Behaviour");
+            Docs.sectionDesc("What the tabs do for you.");
+            Docs.ApiBox("Behaviour", &behaviours);
         });
     });
 }

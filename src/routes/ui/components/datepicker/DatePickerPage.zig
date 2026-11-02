@@ -1,48 +1,38 @@
-const std = @import("std");
 const Vapor = @import("vapor");
 const Hero = @import("../../../../components/Hero.zig").Hero;
-const Text = Vapor.Text;
 const Row = Vapor.Row;
-const Stack = Vapor.Stack;
-const Opaque = @import("opaque-ui");
-const Vaporize = @import("vaporize");
-const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
-const Icon = Vapor.Icon;
-const Button = Opaque.Button;
-const DatePicker = Opaque.DatePicker;
+const SyntaxHighlighter = @import("vaporize").SyntaxHighlighter;
+const CodeBox = @import("../CodeBox.zig").CodeBox;
+const Docs = @import("../Docs.zig");
 // Rendered and shown as code: what you read is what runs.
 const BasicDatePicker = @import("examples/BasicDatePicker.zig");
 const EventDatePicker = @import("examples/EventDatePicker.zig");
-const DateTime = Vapor.DateTime;
-const CodeBox = @import("../CodeBox.zig").CodeBox;
-
-// ============================================================================
-// THEME
-// ============================================================================
-
-const Theme = struct {
-    const text = Vapor.Types.Color.palette(.text_color);
-    const text_muted = Vapor.Types.Color.hex("#71717a");
-    const border = Vapor.Types.Color.palette(.border_color_light);
-    const code_bg = Vapor.Types.Color.hex("#1a1a1a");
-};
-
-// ============================================================================
-// SYNTAX HIGHLIGHTERS
-// ============================================================================
 
 var hl_basic: SyntaxHighlighter = undefined;
 var hl_events: SyntaxHighlighter = undefined;
+var hl_api: SyntaxHighlighter = undefined;
 
 pub fn init() void {
-    const allocator = Vapor.arena(.persist);
-
-    // Highlighters
-    hl_basic = SyntaxHighlighter.init(allocator);
-    hl_basic.parse(@embedFile("examples/BasicDatePicker.zig")) catch unreachable;
-
-    hl_events = SyntaxHighlighter.init(allocator);
-    hl_events.parse(@embedFile("examples/EventDatePicker.zig")) catch unreachable;
+    hl_basic = Docs.highlighter(@embedFile("examples/BasicDatePicker.zig"));
+    hl_events = Docs.highlighter(@embedFile("examples/EventDatePicker.zig"));
+    hl_api = Docs.highlighter(
+        \\const DatePicker = @import("opaque-ui").DatePicker;
+        \\
+        \\// Fills in the calendar, starting on start_date's month (or
+        \\// today's). It resets every other field: set them after.
+        \\pub fn init(date_picker: *DatePicker) void
+        \\pub fn render(date_picker: *DatePicker) void
+        \\
+        \\// A global var, set up in your init.
+        \\var picker: DatePicker = undefined;
+        \\
+        \\pub fn init() void {
+        \\    picker.init();
+        \\    picker.on_date_select = onDate;
+        \\}
+        \\
+        \\fn onDate(picker: *DatePicker, date: Vapor.DateTime) void { ... }
+    );
 
     BasicDatePicker.init();
     EventDatePicker.init();
@@ -50,99 +40,60 @@ pub fn init() void {
     Vapor.Page(.{ .src = @src() }, render, null);
 }
 
-// ============================================================================
-// UI HELPERS
-// ============================================================================
+const fields = [_]Docs.Field{
+    .{ .name = "start_date", .type = "?DateTime", .default = "null", .desc = "The month it opens on and the day it starts picked; today when null. Set it before init." },
+    .{ .name = "on_date_select", .type = "?*const fn (*DatePicker, DateTime) void", .default = "null", .desc = "Called with the day clicked." },
+    .{ .name = "on_month_select", .type = "?*const fn (month: i32) void", .default = "null", .desc = "Called with the month picked from its menu." },
+    .{ .name = "on_year_select", .type = "?*const fn (year: i32) void", .default = "null", .desc = "Called with the year picked from its menu, 1925 to 2035." },
+    .{ .name = "on_next_month", .type = "?*const fn () void", .default = "null", .desc = "Called after the next-month arrow." },
+    .{ .name = "on_prev_month", .type = "?*const fn () void", .default = "null", .desc = "Called after the previous-month arrow." },
+    .{ .name = "tint", .type = "Color", .default = ".palette(.tint)", .desc = "The picked day's background, and a faint wash on today." },
+    .{ .name = "text_color", .type = "Color", .default = ".palette(.text)", .desc = "The numbers of this month's days; other months' are grey." },
+    .{ .name = "background", .type = "Color", .default = ".palette(.background)", .desc = "The calendar's background." },
+};
 
-fn sectionDesc(desc: []const u8) void {
-    Text(desc).font(14, 400, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.{ .bottom = 8 }).end();
-}
+const behaviours = [_]Docs.Field{
+    .{ .name = "Paging", .desc = "The arrows move a month; the month and year menus jump." },
+    .{ .name = "Keyboard", .desc = "Days, arrows and menus are buttons: Tab reaches them, Enter or Space uses them." },
+    .{ .name = "Screen readers", .desc = "Each day is named by its date, like August 14, 1991, and the picked one reports aria-pressed. The arrows are named Previous Month and Next Month." },
+};
 
-fn exampleLabel(label: []const u8) void {
-    Text(label).font(14, 500, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.{ .top = 8 }).end();
-}
-
-fn PreviewCard() Vapor.Builder(.pure) {
-    return Stack()
-        .background(.transparentize(.palette(.background), 0.5))
-        .border(.round(.palette(.border_color_light), .all(12)))
-        .width(.percent(100))
-        .padding(.all(24))
-        .direction(.column)
-        .layout(.center)
-        .spacing(16);
-}
-
-// ============================================================================
-// RENDER
-// ============================================================================
-
-const items: []const []const u8 = &.{ ".on_date_select = fn(DateTime) void", ".on_year_select = fn(i32) void", ".on_month_select = fn(i32) void", ".on_next_month = fn() void", ".on_prev_month = fn() void" };
 fn render() void {
     Row()
         .width(.percent(100))
         .layout(.top_center)
         .direction(.column)
         .children({
-
-        // Hero
         Hero("datepicker-ui", "Accessible calendar components for precise date and time selection.");
 
-        // Content
-        Stack()
-            .width(.percent(50))
-            .responsive(.mobile, .{ .size = .w(.percent(92)) })
-            .spacing(32)
-            .padding(.{ .bottom = 120 })
-            .children({
-
-            // EXAMPLE 1: BASIC
-            Row().direction(.column)
-                .spacing(16)
-                .children({
-                exampleLabel("Basic DatePicker");
-                sectionDesc("Default calendar view with no external dependencies or callbacks.");
-
-                PreviewCard().children({
-                    BasicDatePicker.render();
-                });
-                CodeBox(&hl_basic, "Basic DatePicker");
+        Docs.Content().children({
+            Docs.exampleLabel("Basic DatePicker");
+            Docs.sectionDesc("A calendar on this month. Click a day to pick it.");
+            Docs.PreviewCard().layout(.center).children({
+                BasicDatePicker.render();
             });
+            CodeBox(&hl_basic, "BasicDatePicker");
 
-            // EXAMPLE 2: EVENT DRIVEN
-            Row().direction(.column)
-                .spacing(16)
-                .children({
-                exampleLabel("Event-Driven Selection");
-                sectionDesc("Hook into specific lifecycle events like year changes or month navigation.");
-
-                PreviewCard().children({
-                    EventDatePicker.render();
-                });
-                CodeBox(&hl_events, "Event-Driven Selection");
+            Docs.exampleLabel("Event-Driven Selection");
+            Docs.sectionDesc("Opens on a given month, and calls back on each pick and page.");
+            Docs.PreviewCard().layout(.center).children({
+                EventDatePicker.render();
             });
+            CodeBox(&hl_events, "EventDatePicker");
 
-            // API REFERENCE
-            Text("API Reference").font(24, 600, Theme.text).fontFamily("IBM Plex Mono,monospace").margin(.{ .top = 48 }).end();
+            Docs.sectionTitle("API Reference");
 
-            exampleLabel("Event Callbacks");
-            sectionDesc("DatePicker exposes optional function pointers for fine-grained control.");
-            Vapor.List()
-                .width(.percent(100))
-                .padding(.xy(32, 0))
-                .spacing(8)
-                .listStyle(.upper_roman)
-                .children({
-                for (items[0..]) |item| {
-                    Vapor.ListItem()
-                        .children({
-                        Text(item)
-                            .fontSize(14)
-                            .fontFamily("IBM Plex Mono,monospace")
-                            .end();
-                    });
-                }
-            });
+            Docs.exampleLabel("DatePicker");
+            Docs.sectionDesc("A struct you init once and render.");
+            CodeBox(&hl_api, "DatePicker");
+
+            Docs.exampleLabel("Fields");
+            Docs.sectionDesc("Set them after init, except start_date.");
+            Docs.ApiBox("DatePicker", &fields);
+
+            Docs.exampleLabel("Behaviour");
+            Docs.sectionDesc("What the date picker does for you.");
+            Docs.ApiBox("Behaviour", &behaviours);
         });
     });
 }

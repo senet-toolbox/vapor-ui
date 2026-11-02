@@ -1,104 +1,54 @@
-// page.zig
-const std = @import("std");
 const Vapor = @import("vapor");
 const Hero = @import("../../../../components/Hero.zig").Hero;
-const CodeBox = @import("../CodeBox.zig").CodeBox;
-const Text = Vapor.Text;
 const Row = Vapor.Row;
-const Stack = Vapor.Stack;
-const Vaporize = @import("vaporize");
-const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
+const SyntaxHighlighter = @import("vaporize").SyntaxHighlighter;
+const CodeBox = @import("../CodeBox.zig").CodeBox;
+const Docs = @import("../Docs.zig");
+// Rendered and shown as code: what you read is what runs.
 const BasicRadio = @import("examples/BasicRadio.zig");
 
-// ============================================================================
-// THEME
-// ============================================================================
-
-const Theme = struct {
-    const text = Vapor.Types.Color.palette(.text_color);
-    const text_muted = Vapor.Types.Color.hex("#71717a");
-    const border = Vapor.Types.Color.palette(.border_color_light);
-    const code_bg = Vapor.Types.Color.hex("#1a1a1a");
-};
-
 var hl_basic: SyntaxHighlighter = undefined;
+var hl_api: SyntaxHighlighter = undefined;
 
 pub fn init() void {
-    hl_basic = SyntaxHighlighter.init(Vapor.arena(.persist));
-    hl_basic.show_toolbar = true;
-    hl_basic.parse(@embedFile("examples/BasicRadio.zig")) catch unreachable;
+    hl_basic = Docs.highlighter(@embedFile("examples/BasicRadio.zig"));
+    hl_api = Docs.highlighter(
+        \\const Radio = @import("opaque-ui").Radio;
+        \\
+        \\// Holds the items and which one is chosen. Calls on_change with
+        \\// args, then the chosen value, only when the choice changes.
+        \\pub fn Group(name: []const u8, default_value: []const u8, comptime on_change: anytype, args: anytype) Vapor.Builder(.pure)
+        \\// One choice. Call it inside the group's children.
+        \\pub fn Item(value: []const u8, label: []const u8) void
+        \\
+        \\fn onChange(value: []const u8) void { ... }
+        \\
+        \\// The colours of every radio; set them once, in your init.
+        \\pub var ring_color: Color = .palette(.border_color_light);
+        \\pub var checked_color: Color = .palette(.tint);
+    );
 
     Vapor.Page(.{ .src = @src() }, render, null);
 }
 
-// ============================================================================
-// UI COMPONENTS
-// ============================================================================
+const group_params = [_]Docs.Field{
+    .{ .name = "name", .type = "[]const u8", .desc = "Names the group for screen readers." },
+    .{ .name = "default_value", .type = "[]const u8", .desc = "The value chosen at first. on_change isn't called for it." },
+    .{ .name = "on_change", .type = "comptime anytype", .desc = "Called with args and then the chosen value." },
+    .{ .name = "args", .type = "anytype", .desc = "A tuple of arguments for on_change; .{} for none." },
+};
 
-fn sectionTitle(title: []const u8) void {
-    Text(title)
-        .font(24, 600, Theme.text)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .top = 48 })
-        .end();
-}
+const item_params = [_]Docs.Field{
+    .{ .name = "value", .type = "[]const u8", .desc = "What on_change receives when this item is chosen. Unique within the group." },
+    .{ .name = "label", .type = "[]const u8", .desc = "The text beside the circle; clicking it chooses the item too." },
+};
 
-fn sectionDesc(desc: []const u8) void {
-    Text(desc)
-        .font(14, 400, Theme.text_muted)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .bottom = 16 })
-        .end();
-}
-
-fn exampleLabel(label: []const u8) void {
-    Text(label)
-        .font(14, 500, Theme.text_muted)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .top = 24 })
-        .end();
-}
-
-fn PreviewCard() Vapor.Builder(.pure) {
-    return Stack()
-        .background(.transparentize(.palette(.background), 0.5))
-        .border(.round(.palette(.border_color_light), .all(12)))
-        .width(.percent(100))
-        .height(.px(160))
-        .padding(.all(24))
-        .direction(.column)
-        .layout(.center)
-        .spacing(16);
-}
-
-fn checkboxToggle() void {
-    Vapor.alert("Checkbox Toggled", .{});
-}
-
-var custom: bool = false;
-fn customCheckboxToggle(active: bool) void {
-    custom = active;
-}
-
-// ============================================================================
-// RENDER
-// ============================================================================
-
-fn codeSnippet(code: []const u8) void {
-    Row()
-        .width(.percent(100))
-        .padding(.all(16))
-        .background(Theme.code_bg)
-        .scroll(.scrollX())
-        .border(.round(Theme.border, .all(8)))
-        .children({
-        Text(code)
-            .font(14, 400, .hex("#e4e4e7"))
-            .fontFamily("IBM Plex Mono,monospace")
-            .whiteSpace(.pre)
-            .end();
-    });
-}
+const behaviours = [_]Docs.Field{
+    .{ .name = "Choosing", .desc = "One item at a time. Clicking the chosen one again does nothing." },
+    .{ .name = "State", .desc = "The group keeps its choice across renders, and forgets it when it leaves the page." },
+    .{ .name = "Keyboard", .desc = "Each item is a button: Tab reaches it, Enter or Space chooses it." },
+    .{ .name = "Screen readers", .desc = "The group has role=radiogroup and its name; each item has role=radio and reports aria-checked." },
+};
 
 pub fn render() void {
     Row()
@@ -106,44 +56,33 @@ pub fn render() void {
         .layout(.top_center)
         .direction(.column)
         .children({
-
-        // Hero
         Hero("radio-ui", "Radio buttons for picking one option out of a group, with keyboard and screen reader support.");
 
-        // Content
-        Stack()
-            .width(.percent(50))
-            .responsive(.mobile, .{ .size = .w(.percent(92)) })
-            .height(.percent(100))
-            .spacing(12)
-            .padding(.{ .bottom = 120 })
-            .children({
-            exampleLabel("Basic");
-            sectionDesc("A group starts on its default value and reports each change.");
-            PreviewCard().height(.fit).children({
+        Docs.Content().children({
+            Docs.exampleLabel("Basic Radio");
+            Docs.sectionDesc("A group starts on its default value and reports each change.");
+            Docs.PreviewCard().children({
                 BasicRadio.render();
             });
             CodeBox(&hl_basic, "BasicRadio");
 
-            sectionTitle("API Reference");
+            Docs.sectionTitle("API Reference");
 
-            exampleLabel("Radio.Group");
-            sectionDesc("Groups the items; the name labels the group for screen readers.");
-            codeSnippet(
-                \\Radio.Group(name: []const u8, default_value: []const u8, on_change, args)
-            );
+            Docs.exampleLabel("Radio");
+            Docs.sectionDesc("A Group, with an Item per choice in its children.");
+            CodeBox(&hl_api, "Radio");
 
-            exampleLabel("Radio.Item");
-            sectionDesc("One choice. Call it inside the group's children.");
-            codeSnippet(
-                \\Radio.Item(value: []const u8, label: []const u8)
-            );
+            Docs.exampleLabel("Group");
+            Docs.sectionDesc("What Group takes.");
+            Docs.ApiBox("Group", &group_params);
 
-            exampleLabel("Callback Signature");
-            sectionDesc("Called with the group's args followed by the chosen value, only when the choice changes.");
-            codeSnippet(
-                \\fn onChange(value: []const u8) void { ... }
-            );
+            Docs.exampleLabel("Item");
+            Docs.sectionDesc("What Item takes.");
+            Docs.ApiBox("Item", &item_params);
+
+            Docs.exampleLabel("Behaviour");
+            Docs.sectionDesc("What the radio group does for you.");
+            Docs.ApiBox("Behaviour", &behaviours);
         });
     });
 }

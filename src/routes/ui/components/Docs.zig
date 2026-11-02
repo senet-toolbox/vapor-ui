@@ -3,6 +3,7 @@
 //! counterpart to CodeBox, framed the same way.
 
 const Vapor = @import("vapor");
+const SyntaxHighlighter = @import("vaporize").SyntaxHighlighter;
 const Row = Vapor.Row;
 const Stack = Vapor.Stack;
 const Text = Vapor.Text;
@@ -18,6 +19,23 @@ const name_color = Vapor.Types.Color.hex("#EAEAEA");
 const type_color = Vapor.Types.Color.hex("#82AAFF"); // the highlighter's keyword colour
 const default_color = Vapor.Types.Color.hex("#8A8A8A");
 const desc_color = Vapor.Types.Color.hex("#B4B4B4");
+
+/// A highlighter for a CodeBox, parsed once, kept for the page's life.
+pub fn highlighter(source: []const u8) SyntaxHighlighter {
+    var hl = SyntaxHighlighter.init(Vapor.arena(.persist));
+    hl.show_toolbar = true;
+    hl.parse(source) catch unreachable;
+    return hl;
+}
+
+/// The page's column, below the hero.
+pub fn Content() Vapor.Builder(.pure) {
+    return Stack()
+        .width(.percent(50))
+        .responsive(.mobile, .{ .size = .w(.percent(92)) })
+        .spacing(12)
+        .padding(.{ .bottom = 120 });
+}
 
 pub fn sectionTitle(title: []const u8) void {
     Text(title)

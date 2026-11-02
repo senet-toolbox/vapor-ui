@@ -4,10 +4,6 @@ const Stack = Vapor.Stack;
 const Row = Vapor.Row;
 const Tabs = @import("opaque-ui").Tabs;
 
-// ============================================================================
-// MAIN RENDER
-// ============================================================================
-
 pub fn render() void {
     Stack().width(.percent(100)).spacing(16).children({
         // Trigger keeps the tab behaviour (selection, arrow keys, roles) and

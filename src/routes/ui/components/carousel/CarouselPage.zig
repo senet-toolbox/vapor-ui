@@ -1,95 +1,55 @@
-const std = @import("std");
 const Vapor = @import("vapor");
 const Hero = @import("../../../../components/Hero.zig").Hero;
-const Text = Vapor.Text;
 const Row = Vapor.Row;
-const Stack = Vapor.Stack;
-const Opaque = @import("opaque-ui");
-const Carousel = Opaque.Carousel;
+const SyntaxHighlighter = @import("vaporize").SyntaxHighlighter;
+const CodeBox = @import("../CodeBox.zig").CodeBox;
+const Docs = @import("../Docs.zig");
 // Rendered and shown as code: what you read is what runs.
 const BasicCarousel = @import("examples/BasicCarousel.zig");
 const CarouselOptions = @import("examples/CarouselOptions.zig");
 
-// ============================================================================
-// THEME
-// ============================================================================
-
-const Theme = struct {
-    const text = Vapor.Types.Color.palette(.text_color);
-    const text_muted = Vapor.Types.Color.hex("#71717a");
-    const border = Vapor.Types.Color.palette(.border_color_light);
-    const code_bg = Vapor.Types.Color.hex("#1a1a1a");
-};
-
-// ============================================================================
-// SLIDE DATA
-// ============================================================================
-
-// ============================================================================
-// INIT
-// ============================================================================
+var hl_basic: SyntaxHighlighter = undefined;
+var hl_options: SyntaxHighlighter = undefined;
+var hl_api: SyntaxHighlighter = undefined;
 
 pub fn init() void {
+    hl_basic = Docs.highlighter(@embedFile("examples/BasicCarousel.zig"));
+    hl_options = Docs.highlighter(@embedFile("examples/CarouselOptions.zig"));
+    hl_api = Docs.highlighter(
+        \\const Carousel = @import("opaque-ui").Carousel;
+        \\
+        \\// Opens the carousel; your slides go in its children.
+        \\pub fn render(options: Options) *Carousel
+        \\// Closes it, adding the arrows and dots after your slides.
+        \\pub fn children(self: *Carousel, _: void) void
+        \\
+        \\// Call Opaque.new() once in your app's init: it sets up
+        \\// the state every opaque-ui component keeps.
+        \\@import("opaque-ui").new();
+    );
+
     Vapor.Page(.{ .src = @src() }, render, null);
 }
 
-// ============================================================================
-// UI HELPERS
-// ============================================================================
+const options = [_]Docs.Field{
+    .{ .name = "id", .type = "[]const u8", .desc = "Required. Names the carousel, so it keeps its slide across renders. One per carousel." },
+    .{ .name = "count", .type = "usize", .desc = "Required. How many slides you render, for the dots and the ends." },
+    .{ .name = "viewport_width", .type = "f32", .default = "480", .desc = "The width shown, in px. Never wider than its container: on a narrow screen the slide is cropped." },
+    .{ .name = "viewport_height", .type = "f32", .default = "280", .desc = "The height shown, in px." },
+    .{ .name = "stride", .type = "f32", .default = "496", .desc = "From one slide's start to the next: slide width plus gap. Render your slides that wide." },
+    .{ .name = "loop", .type = "bool", .default = "true", .desc = "Wrap from the last slide to the first, and back." },
+    .{ .name = "show_arrows", .type = "bool", .default = "true", .desc = "Previous and next buttons over the slides." },
+    .{ .name = "show_dots", .type = "bool", .default = "true", .desc = "A dot per slide below, to jump to it." },
+    .{ .name = "swipe_threshold", .type = "f32", .default = "60", .desc = "How far, in px, a drag must go to change slide." },
+    .{ .name = "transition_ms", .type = "u32", .default = "350", .desc = "How long the slide takes to settle." },
+};
 
-fn sectionTitle(title: []const u8) void {
-    Text(title)
-        .font(24, 600, Theme.text)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .top = 48 })
-        .end();
-}
-
-fn sectionDesc(desc: []const u8) void {
-    Text(desc)
-        .font(14, 400, Theme.text_muted)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .bottom = 16 })
-        .end();
-}
-
-fn exampleLabel(label: []const u8) void {
-    Text(label)
-        .font(14, 500, Theme.text_muted)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .top = 24 })
-        .end();
-}
-
-fn PreviewCard() Vapor.Builder(.pure) {
-    return Stack()
-        .background(.transparentize(.palette(.background), 0.5))
-        .border(.round(.palette(.border_color_light), .all(12)))
-        .width(.percent(100))
-        .padding(.all(32))
-        .direction(.column)
-        .layout(.center)
-        .spacing(16);
-}
-
-fn codeSnippet(code: []const u8) void {
-    Row()
-        .width(.percent(100))
-        .padding(.all(16))
-        .background(Theme.code_bg)
-        .scroll(.scrollX())
-        .border(.round(Theme.border, .all(8)))
-        .children({
-        Text(code)
-            .font(13, 400, .hex("#e4e4e7"))
-            .fontFamily("IBM Plex Mono,monospace")
-            .end();
-    });
-}
-
-// ============================================================================
-// RENDER
-// ============================================================================
+const behaviours = [_]Docs.Field{
+    .{ .name = "Swiping", .desc = "Drag with a mouse or finger and the slides follow. Past swipe_threshold it moves one slide on release; a shorter drag springs back. Vertical swipes still scroll the page." },
+    .{ .name = "Keyboard", .desc = "The arrows and dots are buttons: Tab reaches them, Enter or Space uses them." },
+    .{ .name = "Screen readers", .desc = "The arrows are named Previous slide and Next slide, the dots Go to slide 1, 2…" },
+    .{ .name = "One slide", .desc = "With a single slide there are no arrows or dots." },
+};
 
 pub fn render() void {
     Row()
@@ -97,109 +57,54 @@ pub fn render() void {
         .layout(.top_center)
         .direction(.column)
         .children({
-
-        // Hero
         Hero("carousel-ui", "Click + swipe carousel. Prev / next arrows, dot indicators, drag to swipe.");
 
-        // Content
-        Stack()
-            .width(.px(800))
-            .responsive(.mobile, .{ .size = .w(.percent(92)) })
-            .spacing(12)
-            .padding(.{ .bottom = 120 })
-            .children({
-            Text("Carousel")
-                .font(36, 700, Theme.text)
-                .fontFamily("IBM Plex Mono,monospace")
-                .end();
-            Text("Discrete slide carousel. Navigate with arrow buttons, dot indicators, or by swiping.")
-                .font(16, 400, Theme.text_muted)
-                .fontFamily("IBM Plex Mono,monospace")
-                .margin(.{ .bottom = 24 })
-                .end();
-
-            // ================================================================
-            // BASIC
-            // ================================================================
-
-            sectionTitle("Basic");
-            sectionDesc("Click the arrows, drag to swipe, or click a dot to jump.");
-            PreviewCard().children({
+        Docs.Content().children({
+            Docs.exampleLabel("Basic Carousel");
+            Docs.sectionDesc("Click the arrows, drag to swipe, or click a dot to jump. You draw the slides; the carousel moves them.");
+            Docs.PreviewCard().layout(.center).children({
                 BasicCarousel.render();
             });
+            CodeBox(&hl_basic, "BasicCarousel");
 
-            // ================================================================
-            // COMPACT
-            // ================================================================
-
-            sectionTitle("Compact");
-            sectionDesc("Smaller slides — same swipe + click behavior.");
-            PreviewCard().children({
+            Docs.exampleLabel("Compact");
+            Docs.sectionDesc("Smaller slides: the viewport and stride follow the slide size.");
+            Docs.PreviewCard().layout(.center).children({
                 CarouselOptions.compact();
             });
 
-            // ================================================================
-            // NO LOOP
-            // ================================================================
-
-            sectionTitle("Bounded (no loop)");
-            sectionDesc("Stops at the first and last slide instead of wrapping.");
-            PreviewCard().children({
+            Docs.exampleLabel("Bounded");
+            Docs.sectionDesc("Stops at the first and last slide instead of wrapping.");
+            Docs.PreviewCard().layout(.center).children({
                 CarouselOptions.bounded();
             });
 
-            // ================================================================
-            // ARROWS-ONLY (no dots)
-            // ================================================================
-
-            sectionTitle("Arrows only");
-            sectionDesc("Hide the dot indicators below.");
-            PreviewCard().children({
+            Docs.exampleLabel("Arrows Only");
+            Docs.sectionDesc("No dots below.");
+            Docs.PreviewCard().layout(.center).children({
                 CarouselOptions.arrowsOnly();
             });
 
-            // ================================================================
-            // DOTS-ONLY (no arrows)
-            // ================================================================
-
-            sectionTitle("Dots only");
-            sectionDesc("Hide arrow buttons — rely on swipes + dot indicators.");
-            PreviewCard().children({
+            Docs.exampleLabel("Dots Only");
+            Docs.sectionDesc("No arrows: swipe, or use the dots.");
+            Docs.PreviewCard().layout(.center).children({
                 CarouselOptions.dotsOnly();
             });
+            CodeBox(&hl_options, "CarouselOptions");
 
-            // ================================================================
-            // CODE USAGE
-            // ================================================================
+            Docs.sectionTitle("API Reference");
 
-            sectionTitle("Installation");
-            codeSnippet(
-                \\// In your init: sets up the state of every opaque-ui component
-                \\const Opaque = @import("opaque-ui");
-                \\Opaque.new();
-            );
+            Docs.exampleLabel("Carousel");
+            Docs.sectionDesc("render takes the options and opens the carousel; your slides go in its children.");
+            CodeBox(&hl_api, "Carousel");
 
-            sectionTitle("Usage");
-            codeSnippet(@embedFile("examples/BasicCarousel.zig"));
+            Docs.exampleLabel("Options");
+            Docs.sectionDesc("Passed to render, each time; the carousel keeps only which slide it's on.");
+            Docs.ApiBox("Options", &options);
 
-            sectionTitle("Options");
-            sectionDesc("The variants above: size, looping, arrows and dots.");
-            codeSnippet(@embedFile("examples/CarouselOptions.zig"));
-
-            sectionTitle("API Reference");
-            exampleLabel("Carousel.render options");
-            codeSnippet(
-                \\id: []const u8,              // stable id — required for state
-                \\count: usize,                // number of slides you render
-                \\viewport_width: f32 = 480,   // visible width (px)
-                \\viewport_height: f32 = 280,  // visible height (px)
-                \\stride: f32 = 496,           // slide width + gap (px)
-                \\loop: bool = true,           // wrap around at the ends
-                \\show_arrows: bool = true,    // prev / next buttons
-                \\show_dots: bool = true,      // dot indicators
-                \\swipe_threshold: f32 = 60,   // px drag needed to advance
-                \\transition_ms: u32 = 350,    // snap animation duration
-            );
+            Docs.exampleLabel("Behaviour");
+            Docs.sectionDesc("What the carousel does for you.");
+            Docs.ApiBox("Behaviour", &behaviours);
         });
     });
 }

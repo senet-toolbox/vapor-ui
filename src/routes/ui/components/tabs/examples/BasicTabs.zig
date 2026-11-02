@@ -3,10 +3,6 @@ const Text = Vapor.Text;
 const Stack = Vapor.Stack;
 const Tabs = @import("opaque-ui").Tabs;
 
-// ============================================================================
-// MAIN RENDER
-// ============================================================================
-
 pub fn render() void {
     Stack().width(.percent(100)).spacing(16).children({
         // NavBar draws the tabs and returns the index of the selected one.

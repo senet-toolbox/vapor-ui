@@ -1,99 +1,43 @@
-// page.zig
-const std = @import("std");
 const Vapor = @import("vapor");
 const Hero = @import("../../../../components/Hero.zig").Hero;
-const Text = Vapor.Text;
 const Row = Vapor.Row;
-const Stack = Vapor.Stack;
-const Opaque = @import("opaque-ui");
-const Select = Opaque.Select;
-const Vaporize = @import("vaporize");
-const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
-const BasicSlider = @import("examples/BasicSlider.zig");
+const SyntaxHighlighter = @import("vaporize").SyntaxHighlighter;
 const CodeBox = @import("../CodeBox.zig").CodeBox;
-
-// ============================================================================
-// THEME
-// ============================================================================
-
-const Theme = struct {
-    const text = Vapor.Types.Color.palette(.text_color);
-    const text_muted = Vapor.Types.Color.hex("#71717a");
-    const border = Vapor.Types.Color.palette(.border_color_light);
-    const code_bg = Vapor.Types.Color.hex("#1a1a1a");
-};
-
-// ============================================================================
-// SYNTAX HIGHLIGHTERS
-// ============================================================================
+const Docs = @import("../Docs.zig");
+// Rendered and shown as code: what you read is what runs.
+const BasicSlider = @import("examples/BasicSlider.zig");
 
 var hl_basic: SyntaxHighlighter = undefined;
-var hl_custom_switch: SyntaxHighlighter = undefined;
-var hl_grouped: SyntaxHighlighter = undefined;
-var hl_detached: SyntaxHighlighter = undefined;
-
-// ============================================================================
-// INIT
-// ============================================================================
+var hl_api: SyntaxHighlighter = undefined;
 
 pub fn init() void {
-    const allocator = Vapor.arena(.persist);
-
-    // Initialize syntax highlighters
-    hl_basic = SyntaxHighlighter.init(allocator);
-    hl_basic.show_toolbar = true;
-    hl_basic.parse(@embedFile("examples/BasicSlider.zig")) catch unreachable;
+    hl_basic = Docs.highlighter(@embedFile("examples/BasicSlider.zig"));
+    hl_api = Docs.highlighter(
+        \\const Slider = @import("opaque-ui").Slider;
+        \\
+        \\// Draws a slider as wide as its container.
+        \\pub fn render(options: Slider) void
+        \\
+        \\fn onChange(value: f32) void { ... }
+    );
 
     Vapor.Page(.{ .src = @src() }, render, null);
 }
 
-// ============================================================================
-// UI COMPONENTS
-// ============================================================================
+const options = [_]Docs.Field{
+    .{ .name = "min", .type = "f32", .default = "0", .desc = "The value at the left end." },
+    .{ .name = "max", .type = "f32", .default = "100", .desc = "The value at the right end." },
+    .{ .name = "value", .type = "f32", .default = "0", .desc = "Where it starts. After the first render the slider keeps its own value." },
+    .{ .name = "step", .type = "f32", .default = "1", .desc = "Values snap to min plus a multiple of it. With 0 the value is free, and keys move a hundredth of the range." },
+    .{ .name = "label", .type = "[]const u8", .default = "\"Slider\"", .desc = "Names it for screen readers." },
+    .{ .name = "on_change", .type = "?*const fn (value: f32) void", .default = "null", .desc = "Called with the new value whenever it changes." },
+};
 
-fn sectionTitle(title: []const u8) void {
-    Text(title)
-        .font(24, 600, Theme.text)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .top = 48 })
-        .end();
-}
-
-fn sectionDesc(desc: []const u8) void {
-    Text(desc)
-        .font(14, 400, Theme.text_muted)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .bottom = 16 })
-        .end();
-}
-
-fn exampleLabel(label: []const u8) void {
-    Text(label)
-        .font(14, 500, Theme.text_muted)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .top = 24 })
-        .end();
-}
-
-fn PreviewCard() Vapor.Builder(.pure) {
-    return Stack()
-        .background(.transparentize(.palette(.background), 0.5))
-        .border(.round(.palette(.border_color_light), .all(12)))
-        .width(.percent(100))
-        .height(.px(160))
-        .padding(.all(24))
-        .direction(.column)
-        .layout(.center)
-        .spacing(16);
-}
-
-fn switchToggle() void {
-    Vapor.alert("Slider Toggled", .{});
-}
-
-// ============================================================================
-// RENDER
-// ============================================================================
+const behaviours = [_]Docs.Field{
+    .{ .name = "Pointer", .desc = "Press anywhere on the track to jump there, and drag to slide." },
+    .{ .name = "Keyboard", .desc = "Tab to the handle. Arrow keys move one step, Page Up and Down ten, Home and End to min and max." },
+    .{ .name = "Screen readers", .desc = "The handle has role=slider, its label, and reports its value, min and max." },
+};
 
 pub fn render() void {
     Row()
@@ -101,75 +45,31 @@ pub fn render() void {
         .layout(.top_center)
         .direction(.column)
         .children({
+        Hero("slider-ui", "A slider for picking a number in a range, by pointer or keyboard.");
 
-        // Hero
-        Hero("switch-ui", "A collection of ready-to-use switch components built on top of Vapor, copy and paste into your apps.");
-
-        // Content
-        Stack()
-            .width(.percent(50))
-            .responsive(.mobile, .{ .size = .w(.percent(92)) })
-            .height(.percent(100))
-            .spacing(12)
-            .padding(.{ .bottom = 120 })
-            .children({
-
-            // ============================================================
-            // BASIC
-            // ============================================================
-            exampleLabel("Basic");
-            sectionDesc("Drag the handle, press the track, or focus it and use the arrow keys.");
-            PreviewCard().children({
-                Row()
-                    .width(.percent(70))
-                    .direction(.column)
-                    .children({
+        Docs.Content().children({
+            Docs.exampleLabel("Basic Slider");
+            Docs.sectionDesc("Drag the handle, press the track, or focus it and use the arrow keys.");
+            Docs.PreviewCard().layout(.center).children({
+                Row().width(.percent(70)).direction(.column).children({
                     BasicSlider.render();
                 });
             });
             CodeBox(&hl_basic, "BasicSlider");
 
-            // ============================================================
-            // API REFERENCE
-            // ============================================================
-            sectionTitle("API Reference");
+            Docs.sectionTitle("API Reference");
 
-            exampleLabel("Slider.render");
-            sectionDesc("Each slider keeps its own value after the first render; value is where it starts.");
-            apiSnippet(
-                \\Slider.render(.{
-                \\    .min = 0,
-                \\    .max = 100,
-                \\    .value = 40,
-                \\    .step = 5,
-                \\    .label = "Volume",      // names it for screen readers
-                \\    .on_change = setVolume, // fn (value: f32) void
-                \\});
-            );
+            Docs.exampleLabel("Slider");
+            Docs.sectionDesc("One function draws it, from its options.");
+            CodeBox(&hl_api, "Slider");
 
-            exampleLabel("Keyboard");
-            sectionDesc("Once the handle has focus.");
-            apiSnippet(
-                \\Arrow keys      one step
-                \\Page Up / Down  ten steps
-                \\Home / End      min / max
-            );
+            Docs.exampleLabel("Options");
+            Docs.sectionDesc("Passed to render, each time; the slider keeps only its value.");
+            Docs.ApiBox("Slider", &options);
+
+            Docs.exampleLabel("Behaviour");
+            Docs.sectionDesc("What the slider does for you.");
+            Docs.ApiBox("Behaviour", &behaviours);
         });
-    });
-}
-
-fn apiSnippet(code: []const u8) void {
-    Row()
-        .width(.percent(100))
-        .padding(.all(16))
-        .background(Theme.code_bg)
-        .scroll(.scrollX())
-        .border(.round(Theme.border, .all(8)))
-        .children({
-        Text(code)
-            .font(14, 400, .hex("#e4e4e7"))
-            .fontFamily("IBM Plex Mono,monospace")
-            .whiteSpace(.pre)
-            .end();
     });
 }

@@ -1,82 +1,54 @@
-const std = @import("std");
 const Vapor = @import("vapor");
 const Hero = @import("../../../../components/Hero.zig").Hero;
-const Text = Vapor.Text;
 const Row = Vapor.Row;
-const Stack = Vapor.Stack;
-const Opaque = @import("opaque-ui");
-const Alert = Opaque.Alert;
-const Vaporize = @import("vaporize");
-const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
-const Icon = Vapor.Icon;
-const Button = Opaque.Button;
-const Page = Vapor.Page;
+const SyntaxHighlighter = @import("vaporize").SyntaxHighlighter;
 const CodeBox = @import("../CodeBox.zig").CodeBox;
+const Docs = @import("../Docs.zig");
 // Rendered and shown as code: what you read is what runs.
 const AlertExample = @import("examples/AlertExample.zig");
 
-// ============================================================================
-// THEME
-// ============================================================================
-
-const Theme = struct {
-    const text = Vapor.Types.Color.palette(.text_color);
-    const text_muted = Vapor.Types.Color.hex("#71717a");
-    const border = Vapor.Types.Color.palette(.border_color_light);
-    const code_bg = Vapor.Types.Color.hex("#1a1a1a");
-};
-
-// ============================================================================
-// SYNTAX HIGHLIGHTERS
-// ============================================================================
-
 var hl_alert: SyntaxHighlighter = undefined;
-
-// ============================================================================
-// ALERT INSTANCE
-// ============================================================================
+var hl_api: SyntaxHighlighter = undefined;
 
 pub fn init() void {
-    const allocator = Vapor.arena(.persist);
-
-    // Initialize syntax highlighter
-    hl_alert = SyntaxHighlighter.init(allocator);
-    hl_alert.show_toolbar = true;
-    hl_alert.parse(@embedFile("examples/AlertExample.zig")) catch unreachable;
-
-    // Initialize Alert with the content callback
+    hl_alert = Docs.highlighter(@embedFile("examples/AlertExample.zig"));
+    hl_api = Docs.highlighter(
+        \\const Alert = @import("opaque-ui").Alert;
+        \\
+        \\// A closed alert whose box your function draws.
+        \\pub fn init(content: ?*const fn (*Alert) void) Alert
+        \\// Draws the alert while it's open, and nothing while it's closed.
+        \\pub fn render(alert: *Alert) void
+        \\pub fn open(alert: *Alert) void
+        \\pub fn close(alert: *Alert) void
+        \\
+        \\// A global var: open and close change it, so it must outlive
+        \\// the render.
+        \\var alert: Alert = undefined;
+        \\
+        \\// Any button can open it.
+        \\Button(Alert.open, .{&alert})
+    );
     AlertExample.init();
 
-    Page(.{ .src = @src() }, render, null);
+    Vapor.Page(.{ .src = @src() }, render, null);
 }
 
-// ============================================================================
-// UI HELPERS
-// ============================================================================
+const alert_fields = [_]Docs.Field{
+    .{ .name = "content", .type = "?*const fn (*Alert) void", .default = "null", .desc = "Draws what's in the box: text, buttons, anything. Your buttons call close to dismiss it." },
+    .{ .name = "closed", .type = "bool", .default = "true", .desc = "Whether the alert is hidden. open and close set it." },
+    .{ .name = "background", .type = "Color", .default = ".palette(.background)", .desc = "The box's background." },
+    .{ .name = "border", .type = "Border", .default = ".round(.hex(\"#e4e4e4\"), .all(12))", .desc = "The box's border and corners." },
+    .{ .name = "on_enter", .type = "?*const fn (*Alert) void", .default = "null", .desc = "Called when Enter is pressed while the alert is open. The alert stays open; close it here if the action should." },
+    .{ .name = "on_close", .type = "?*const fn () void", .default = "null", .desc = "Called when Escape closes the alert." },
+};
 
-fn sectionDesc(desc: []const u8) void {
-    Text(desc).font(14, 400, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.{ .bottom = 16 }).end();
-}
-
-fn exampleLabel(label: []const u8) void {
-    Text(label).font(14, 500, Theme.text_muted).fontFamily("IBM Plex Mono,monospace").margin(.{ .top = 24 }).end();
-}
-
-fn PreviewCard() Vapor.Builder(.pure) {
-    return Stack()
-        .background(.transparentize(.palette(.background), 0.5))
-        .border(.round(.palette(.border_color_light), .all(12)))
-        .width(.percent(100))
-        .height(.px(200))
-        .padding(.all(24))
-        .direction(.column)
-        .layout(.center)
-        .spacing(16);
-}
-
-// ============================================================================
-// RENDER
-// ============================================================================
+const behaviours = [_]Docs.Field{
+    .{ .name = "Closing", .desc = "Escape, a click outside the box, or your call to close." },
+    .{ .name = "Keyboard", .desc = "While open, Escape closes it and Enter calls on_enter." },
+    .{ .name = "Backdrop", .desc = "The page behind is blurred and can't be clicked; the box sits in the middle." },
+    .{ .name = "Animation", .desc = "Fades and grows in, and fades and shrinks out, in 200ms." },
+};
 
 fn render() void {
     Row()
@@ -84,44 +56,29 @@ fn render() void {
         .layout(.top_center)
         .direction(.column)
         .children({
-
-        // Hero
         Hero("alert-ui", "Modal interrupts used for confirmations, warnings, and critical information.");
 
-        // Content
-        Stack()
-            .width(.percent(50))
-            .responsive(.mobile, .{ .size = .w(.percent(92)) })
-            .height(.percent(100))
-            .spacing(12)
-            .padding(.{ .bottom = 120 })
-            .children({
-            exampleLabel("Standard Alert");
-            sectionDesc("A centered modal overlay that requires user interaction to dismiss.");
-
-            PreviewCard().children({
+        Docs.Content().children({
+            Docs.exampleLabel("Confirmation");
+            Docs.sectionDesc("A box in front of the page that waits for an answer. Your function draws what's in it.");
+            Docs.PreviewCard().height(.px(200)).layout(.center).children({
                 AlertExample.render();
             });
-
             CodeBox(&hl_alert, "Alert");
 
-            // API Reference
-            Text("API Reference").font(24, 600, Theme.text).fontFamily("IBM Plex Mono,monospace").margin(.{ .top = 48 }).end();
+            Docs.sectionTitle("API Reference");
 
-            exampleLabel("Initialization");
-            sectionDesc("Alerts are initialized with a function pointer that defines the internal layout.");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text("alert = Alert.init(myContentFn);")
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            Docs.exampleLabel("Alert");
+            Docs.sectionDesc("Make one in your init, and render it where its button is.");
+            CodeBox(&hl_api, "Alert");
+
+            Docs.exampleLabel("Fields");
+            Docs.sectionDesc("Set them after init to change how it looks and what it does.");
+            Docs.ApiBox("Alert", &alert_fields);
+
+            Docs.exampleLabel("Behaviour");
+            Docs.sectionDesc("What the alert does for you.");
+            Docs.ApiBox("Behaviour", &behaviours);
         });
     });
 }

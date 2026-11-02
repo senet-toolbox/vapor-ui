@@ -1,15 +1,9 @@
-// table_page.zig
-const std = @import("std");
 const Vapor = @import("vapor");
 const Hero = @import("../../../../components/Hero.zig").Hero;
-const Text = Vapor.Text;
 const Row = Vapor.Row;
-const Stack = Vapor.Stack;
-const Opaque = @import("opaque-ui");
-const Table = Opaque.Table;
-const Vaporize = @import("vaporize");
-const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
+const SyntaxHighlighter = @import("vaporize").SyntaxHighlighter;
 const CodeBox = @import("../CodeBox.zig").CodeBox;
+const Docs = @import("../Docs.zig");
 // Rendered and shown as code: what you read is what runs.
 const BasicTable = @import("examples/BasicTable.zig");
 const WithActions = @import("examples/WithActions.zig");
@@ -17,54 +11,41 @@ const Filterable = @import("examples/Filterable.zig");
 const Sortable = @import("examples/Sortable.zig");
 const Virtual = @import("examples/Virtual.zig");
 
-// ============================================================================
-// THEME
-// ============================================================================
-
-const Theme = struct {
-    const text = Vapor.Types.Color.palette(.text_color);
-    const text_muted = Vapor.Types.Color.hex("#71717a");
-    const border = Vapor.Types.Color.palette(.border_color_light);
-    const code_bg = Vapor.Types.Color.hex("#1a1a1a");
-};
-
-// ============================================================================
-// SYNTAX HIGHLIGHTERS
-// ============================================================================
-
 var hl_basic: SyntaxHighlighter = undefined;
 var hl_with_actions: SyntaxHighlighter = undefined;
 var hl_filterable: SyntaxHighlighter = undefined;
 var hl_sortable: SyntaxHighlighter = undefined;
 var hl_virtual: SyntaxHighlighter = undefined;
-
-// ============================================================================
-// INIT
-// ============================================================================
+var hl_api: SyntaxHighlighter = undefined;
 
 pub fn init() void {
-    const allocator = Vapor.arena(.persist);
-
-    // Initialize syntax highlighters
-    hl_basic = SyntaxHighlighter.init(allocator);
-    hl_basic.show_toolbar = true;
-    hl_basic.parse(@embedFile("examples/BasicTable.zig")) catch unreachable;
-
-    hl_with_actions = SyntaxHighlighter.init(allocator);
-    hl_with_actions.show_toolbar = true;
-    hl_with_actions.parse(@embedFile("examples/WithActions.zig")) catch unreachable;
-
-    hl_filterable = SyntaxHighlighter.init(allocator);
-    hl_filterable.show_toolbar = true;
-    hl_filterable.parse(@embedFile("examples/Filterable.zig")) catch unreachable;
-
-    hl_sortable = SyntaxHighlighter.init(allocator);
-    hl_sortable.show_toolbar = true;
-    hl_sortable.parse(@embedFile("examples/Sortable.zig")) catch unreachable;
-
-    hl_virtual = SyntaxHighlighter.init(allocator);
-    hl_virtual.show_toolbar = true;
-    hl_virtual.parse(@embedFile("examples/Virtual.zig")) catch unreachable;
+    hl_basic = Docs.highlighter(@embedFile("examples/BasicTable.zig"));
+    hl_with_actions = Docs.highlighter(@embedFile("examples/WithActions.zig"));
+    hl_filterable = Docs.highlighter(@embedFile("examples/Filterable.zig"));
+    hl_sortable = Docs.highlighter(@embedFile("examples/Sortable.zig"));
+    hl_virtual = Docs.highlighter(@embedFile("examples/Virtual.zig"));
+    hl_api = Docs.highlighter(
+        \\const Opaque = @import("opaque-ui");
+        \\const Table = Opaque.Table;
+        \\
+        \\// A table type for rows of T, a struct with an id field.
+        \\pub fn Table(
+        \\    comptime T: type,
+        \\    comptime columns: []const Column(T),
+        \\    config: struct {
+        \\        actions: ?[]const Action(T) = null,
+        \\        default_style: TableStyle = .{},
+        \\    },
+        \\) type
+        \\
+        \\// Takes the rows; call it once, in your init.
+        \\pub fn init(table: *Self, data: []T) void
+        \\pub fn render(table: *Self) void
+        \\// Applies the search and filters again after you change the rows.
+        \\pub fn refresh(table: *Self) void
+        \\// Removes the row with that id; false if there's none.
+        \\pub fn delete(table: *Self, id: IdType) bool
+    );
 
     BasicTable.init();
     WithActions.init();
@@ -75,49 +56,38 @@ pub fn init() void {
     Vapor.Page(.{ .src = @src() }, render, null);
 }
 
-// ============================================================================
-// UI COMPONENTS
-// ============================================================================
+const column_fields = [_]Docs.Field{
+    .{ .name = "title", .type = "[]const u8", .desc = "The column's heading." },
+    .{ .name = "key", .type = "[]const u8", .desc = "The field of T it shows." },
+    .{ .name = "width", .type = "?f32", .default = "null", .desc = "In px; null uses the style's column_width." },
+    .{ .name = "alignment", .type = "?Align", .default = ".none", .desc = ".left, .center or .right." },
+    .{ .name = "sort", .type = "?Sort", .default = "null", .desc = "Adds a sort button to the heading; .asc or .desc is the first click's direction, and each click flips it." },
+    .{ .name = "search", .type = "bool", .default = "false", .desc = "Adds a search button: shows only the rows that match what you type." },
+    .{ .name = "filter", .type = "bool", .default = "false", .desc = "For an enum field: adds a filter to show only the values you pick." },
+    .{ .name = "render", .type = "?*const fn (*T) void", .default = "null", .desc = "Draws the cell yourself." },
+};
 
-fn sectionTitle(title: []const u8) void {
-    Text(title)
-        .font(24, 600, Theme.text)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .top = 48 })
-        .end();
-}
+const action_fields = [_]Docs.Field{
+    .{ .name = "label", .type = "[]const u8", .desc = "The action's name in the row's menu." },
+    .{ .name = "icon", .type = "?IconTokens", .default = "null", .desc = "Shown beside the label." },
+    .{ .name = "on_action", .type = "?*const fn (item: *T) void", .default = "null", .desc = "Called with the row it was picked on." },
+};
 
-fn sectionDesc(desc: []const u8) void {
-    Text(desc)
-        .font(14, 400, Theme.text_muted)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .bottom = 16 })
-        .end();
-}
+const table_fields = [_]Docs.Field{
+    .{ .name = "display_mode", .type = "DisplayMode", .default = ".paginated", .desc = ".paginated in pages, .virtual draws only the rows in view, for thousands, .all draws every row." },
+    .{ .name = "per_page", .type = "usize", .default = "10", .desc = "Rows per page when paginated." },
+    .{ .name = "on_select", .type = "?*const fn (item: *T) void", .default = "null", .desc = "Called with a row when its checkbox is clicked." },
+    .{ .name = "on_select_all", .type = "?*const fn () void", .default = "null", .desc = "Called when the heading's checkbox is clicked." },
+    .{ .name = "file_name", .type = "[]const u8", .default = "\"content\"", .desc = "Names the table for screen readers." },
+    .{ .name = "style", .type = "TableStyle", .default = "config.default_style", .desc = "Fonts, colours, borders and sizes; set after init for a themed variant." },
+};
 
-fn exampleLabel(label: []const u8) void {
-    Text(label)
-        .font(14, 500, Theme.text_muted)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .top = 24 })
-        .end();
-}
-
-fn PreviewCard() Vapor.Builder(.pure) {
-    return Stack()
-        .background(.transparentize(.palette(.background), 0.5))
-        .border(.round(.palette(.border_color_light), .all(12)))
-        .width(.percent(100))
-        .height(.px(400))
-        .padding(.all(24))
-        .direction(.column)
-        .layout(.top_center)
-        .scroll(.scrollY());
-}
-
-// ============================================================================
-// RENDER
-// ============================================================================
+const behaviours = [_]Docs.Field{
+    .{ .name = "Selecting", .desc = "A checkbox on each row, and one in the heading for every row." },
+    .{ .name = "Pages", .desc = "Previous and next buttons below a paginated table; the page number is announced as it changes." },
+    .{ .name = "Wide tables", .desc = "Scroll sideways inside their box, not the page." },
+    .{ .name = "Screen readers", .desc = "The table has role=grid; the row checkboxes are named Select row, the sort and search buttons after their column." },
+};
 
 pub fn render() void {
     Row()
@@ -125,281 +95,73 @@ pub fn render() void {
         .layout(.top_center)
         .direction(.column)
         .children({
-
-        // Hero
         Hero("table-ui", "A powerful, feature-rich data table component built on top of Vapor with sorting, filtering, pagination, and row actions.");
 
-        // Content
-        Stack()
-            .width(.percent(50))
-            .responsive(.mobile, .{ .size = .w(.percent(92)) })
-            .height(.percent(100))
-            .spacing(12)
-            .padding(.{ .bottom = 120 })
-            .children({
-
-            // ============================================================
-            // BASIC
-            // ============================================================
-            exampleLabel("Basic");
-            sectionDesc("A simple table with columns and data. Each row requires an 'id' field.");
-            PreviewCard().children({
+        Docs.Content().children({
+            Docs.exampleLabel("Basic Table");
+            Docs.sectionDesc("Columns name the fields of your row struct, which needs an id field.");
+            TableCard().children({
                 BasicTable.render();
             });
             CodeBox(&hl_basic, "BasicTable");
 
-            // ============================================================
-            // WITH ACTIONS
-            // ============================================================
-            exampleLabel("With Actions");
-            sectionDesc("Add row-level actions with icons using the config.actions parameter.");
-            PreviewCard().children({
+            Docs.exampleLabel("With Actions");
+            Docs.sectionDesc("A menu on each row, with the actions you list in config.actions.");
+            TableCard().children({
                 WithActions.render();
             });
             CodeBox(&hl_with_actions, "WithActions");
 
-            // ============================================================
-            // FILTERABLE
-            // ============================================================
-            exampleLabel("Filterable");
-            sectionDesc("Enable text search and enum filtering on columns with .search and .filter.");
-            PreviewCard().children({
+            Docs.exampleLabel("Filterable");
+            Docs.sectionDesc("Search a text column with .search, and pick enum values with .filter.");
+            TableCard().children({
                 Filterable.render();
             });
             CodeBox(&hl_filterable, "Filterable");
 
-            // ============================================================
-            // SORTABLE
-            // ============================================================
-            exampleLabel("Sortable");
-            sectionDesc("Add sorting to columns with .sort = .asc or .sort = .desc.");
-            PreviewCard().children({
+            Docs.exampleLabel("Sortable");
+            Docs.sectionDesc("A sort button on each column with .sort.");
+            TableCard().children({
                 Sortable.render();
             });
             CodeBox(&hl_sortable, "Sortable");
 
-            // ============================================================
-            // VIRTUAL SCROLLING
-            // ============================================================
-            exampleLabel("Virtual Scrolling");
-            sectionDesc("For large datasets, use display_mode = .virtual for performant rendering.");
-            PreviewCard().children({
+            Docs.exampleLabel("Virtual Scrolling");
+            Docs.sectionDesc("For thousands of rows, display_mode = .virtual draws only those in view.");
+            TableCard().children({
                 Virtual.render();
             });
             CodeBox(&hl_virtual, "Virtual");
 
-            // ============================================================
-            // API REFERENCE
-            // ============================================================
-            sectionTitle("API Reference");
+            Docs.sectionTitle("API Reference");
 
-            exampleLabel("Table Definition");
-            sectionDesc("Define a table type with your data struct, columns, and optional config:");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\const MyTable = Table(
-                    \\    DataType,           // Must have 'id' field
-                    \\    &.{ ... },          // Column definitions
-                    \\    .{ .actions = ... } // Optional config
-                    \\);
-                    \\var table: MyTable = undefined;
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            Docs.exampleLabel("Table");
+            Docs.sectionDesc("Make a table type from your row struct and its columns, then a var of it.");
+            CodeBox(&hl_api, "Table");
 
-            exampleLabel("Data Structure");
-            sectionDesc("Your data type must include an 'id' field for row identification:");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\const Transaction = struct {
-                    \\    id: usize,           // Required
-                    \\    status: Status,      // Enum fields support filtering
-                    \\    email: []const u8,   // String fields support search
-                    \\    amount: u32,         // Numeric fields support sorting
-                    \\};
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            Docs.exampleLabel("Column");
+            Docs.sectionDesc("One per column, in order.");
+            Docs.ApiBox("Column(T)", &column_fields);
 
-            exampleLabel("Column Options");
-            sectionDesc("Configure each column with these properties:");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\.{
-                    \\    .title = "Column Title",    // Display name
-                    \\    .key = "field_name",        // Struct field to display
-                    \\    .width = 0,                 // Column width (0 = auto)
-                    \\    .alignment = .left,         // .left, .center, .right
-                    \\    .sort = .asc,               // .none, .asc, .desc
-                    \\    .search = true,             // Enable text search
-                    \\    .filter = true,             // Enable enum filtering
-                    \\    .render = customRenderFn,   // Custom cell renderer
-                    \\}
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            Docs.exampleLabel("Action");
+            Docs.sectionDesc("One per entry in a row's menu.");
+            Docs.ApiBox("Action(T)", &action_fields);
 
-            exampleLabel("Action Config");
-            sectionDesc("Add row actions with labels, icons, and callbacks:");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\.{
-                    \\    .actions = &.{
-                    \\        .{ .label = "View", .icon = .eye, .on_action = viewFn },
-                    \\        .{ .label = "Edit", .icon = .pencil, .on_action = editFn },
-                    \\        .{ .label = "Delete", .icon = .trash, .on_action = deleteFn },
-                    \\    },
-                    \\}
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            Docs.exampleLabel("Fields");
+            Docs.sectionDesc("Set them after init.");
+            Docs.ApiBox("Table", &table_fields);
 
-            exampleLabel("Initialization");
-            sectionDesc("Initialize the table with your data slice:");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\table.init(data.items);           // Pass data slice
-                    \\table.on_select = handleSelect;   // Row selection callback
-                    \\table.on_select_all = handleAll;  // Select all callback
-                    \\table.per_page = 10;              // Items per page
-                    \\table.file_name = "export";       // Download filename
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
-
-            exampleLabel("Display Modes");
-            sectionDesc("Choose how to render large datasets:");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\table.display_mode = .paginated;  // Default, with page controls
-                    \\table.display_mode = .virtual;    // Virtualized scrolling
-                    \\table.display_mode = .all;        // Render all rows (small datasets)
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
-
-            exampleLabel("Methods");
-            sectionDesc("Available methods on the table instance:");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\table.init(data);      // Initialize with data
-                    \\table.render();        // Render the table
-                    \\table.refresh();       // Refresh after data changes
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
-
-            exampleLabel("Callback Signatures");
-            sectionDesc("Event handler function signatures:");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\// Row selection callback
-                    \\fn onSelect(item: *Transaction) void {
-                    \\    // Access item.id, item.status, item.email, etc.
-                    \\}
-                    \\
-                    \\// Action callback
-                    \\fn onAction(item: *Transaction) void {
-                    \\    // Handle the action for this row
-                    \\}
-                    \\
-                    \\// Select all callback
-                    \\fn onSelectAll() void {
-                    \\    // Handle select all toggle
-                    \\}
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
-
-            exampleLabel("Features");
-            sectionDesc("Built-in functionality:");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\• Row selection with checkboxes
-                    \\• Select all / deselect all
-                    \\• Column sorting (strings, enums, numbers)
-                    \\• Text search on string columns
-                    \\• Enum filtering with dropdown
-                    \\• Pagination with configurable page size
-                    \\• Virtual scrolling for large datasets
-                    \\• JSON export of selected rows
-                    \\• Row actions with custom handlers
-                    \\• Horizontal scrolling for many columns
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            Docs.exampleLabel("Behaviour");
+            Docs.sectionDesc("What the table does for you.");
+            Docs.ApiBox("Behaviour", &behaviours);
         });
     });
+}
+
+/// A preview card that scrolls a tall table inside it.
+fn TableCard() Vapor.Builder(.pure) {
+    return Docs.PreviewCard()
+        .height(.px(400))
+        .layout(.top_center)
+        .scroll(.scrollY());
 }

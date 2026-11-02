@@ -1,239 +1,60 @@
-// page.zig
-const std = @import("std");
 const Vapor = @import("vapor");
 const Hero = @import("../../../../components/Hero.zig").Hero;
-const Text = Vapor.Text;
 const Row = Vapor.Row;
-const Stack = Vapor.Stack;
-const Opaque = @import("opaque-ui");
-const Select = Opaque.Select;
-const Vaporize = @import("vaporize");
-const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
-const SideBar = Opaque.SideBar;
+const SyntaxHighlighter = @import("vaporize").SyntaxHighlighter;
 const CodeBox = @import("../CodeBox.zig").CodeBox;
-
-// ============================================================================
-// THEME
-// ============================================================================
-
-const Theme = struct {
-    const text = Vapor.Types.Color.palette(.text_color);
-    const text_muted = Vapor.Types.Color.hex("#71717a");
-    const border = Vapor.Types.Color.palette(.border_color_light);
-    const code_bg = Vapor.Types.Color.hex("#1a1a1a");
-};
-
-// ============================================================================
-// SYNTAX HIGHLIGHTERS
-// ============================================================================
+const Docs = @import("../Docs.zig");
+// Rendered and shown as code: what you read is what runs.
+const BasicSidebar = @import("examples/BasicSidebar.zig");
 
 var hl_basic: SyntaxHighlighter = undefined;
-var hl_groups: SyntaxHighlighter = undefined;
-var hl_menu_items: SyntaxHighlighter = undefined;
-var hl_render: SyntaxHighlighter = undefined;
-
-// ============================================================================
-// SIDEBAR INSTANCE
-// ============================================================================
-
-var sidebar: SideBar = .{
-    .groups = &groups,
-    .title = "Vapor UI",
-    .show_menu = true,
-};
-
-const GroupItem = SideBar.GroupItem;
-const MenuItem = SideBar.MenuItem;
-
-var groups = [_]GroupItem{
-    GroupItem{
-        .title = "Dashboard",
-        .items = menu_items[0..2],
-        .show = true,
-        .icon = .grid_3x3,
-    },
-    GroupItem{
-        .title = "Projects",
-        .items = menu_items[2..4],
-        .show = true,
-        .icon = .folder,
-    },
-    GroupItem{
-        .title = "Routes",
-        .items = menu_items[4..6],
-        .show = true,
-        .icon = .diagram_3,
-    },
-};
-
-const menu_items: []const MenuItem = &.{
-    MenuItem{
-        .title = "Dashboard",
-        .link = "/nightwatch/dashboard",
-        .icon = .house,
-    },
-    MenuItem{
-        .title = "Projects",
-        .link = "/nightwatch/projects",
-        .icon = .folder,
-    },
-    MenuItem{
-        .title = "Routes",
-        .link = "/nightwatch/routes",
-        .icon = .diagram_3,
-    },
-    MenuItem{
-        .title = "Treehouse",
-        .link = "/nightwatch/treehouse",
-        .icon = .tree,
-    },
-    MenuItem{
-        .title = "Database",
-        .link = "/nightwatch/database",
-        .icon = .database,
-    },
-    MenuItem{
-        .title = "Activity",
-        .link = "/nightwatch/activity",
-        .icon = .activity,
-    },
-    MenuItem{
-        .title = "Memory",
-        .link = "/nightwatch/memory",
-        .icon = .memory,
-    },
-    MenuItem{
-        .title = "Logs",
-        .link = "/nightwatch/logs",
-        .icon = .lightbulb,
-    },
-    MenuItem{
-        .title = "Sql Editor",
-        .link = "/nightwatch/sql-editor",
-        .icon = .code_slash,
-    },
-};
-
-// ============================================================================
-// INIT
-// ============================================================================
+var hl_api: SyntaxHighlighter = undefined;
 
 pub fn init() void {
-    const allocator = Vapor.arena(.persist);
-    SideBar.init();
-
-    // Initialize syntax highlighters
-    hl_basic = SyntaxHighlighter.init(allocator);
-    hl_basic.show_toolbar = true;
-    hl_basic.parse(
-        \\var sidebar: SideBar = .{
-        \\    .groups = &groups,
-        \\    .title = "Vapor UI",
-        \\    .show_menu = true,
-        \\};
+    hl_basic = Docs.highlighter(@embedFile("examples/BasicSidebar.zig"));
+    hl_api = Docs.highlighter(
+        \\const SideBar = @import("opaque-ui").SideBar;
         \\
-        \\sidebar.render();
-    ) catch unreachable;
-
-    hl_groups = SyntaxHighlighter.init(allocator);
-    hl_groups.show_toolbar = true;
-    hl_groups.parse(
-        \\const GroupItem = SideBar.GroupItem;
+        \\// Once, in your init: sets up the sidebar's animations.
+        \\pub fn init() void
+        \\// Draws it, filling its container.
+        \\pub fn render(sidebar: *SideBar) void
         \\
-        \\var groups = [_]GroupItem{
-        \\    GroupItem{
-        \\        .title = "Dashboard",
-        \\        .items = menu_items[0..2],
-        \\        .show = true,
-        \\        .icon = .grid_3x3,
-        \\    },
-        \\    GroupItem{
-        \\        .title = "Projects",
-        \\        .items = menu_items[2..4],
-        \\        .show = true,
-        \\        .icon = .folder,
-        \\    },
-        \\};
-    ) catch unreachable;
-
-    hl_menu_items = SyntaxHighlighter.init(allocator);
-    hl_menu_items.show_toolbar = true;
-    hl_menu_items.parse(
-        \\const MenuItem = SideBar.MenuItem;
-        \\
-        \\const menu_items: []const MenuItem = &.{
-        \\    MenuItem{
-        \\        .title = "Dashboard",
-        \\        .link = "/dashboard",
-        \\        .icon = .house,
-        \\    },
-        \\    MenuItem{
-        \\        .title = "Projects",
-        \\        .link = "/projects",
-        \\        .icon = .folder,
-        \\    },
-        \\};
-    ) catch unreachable;
-
-    hl_render = SyntaxHighlighter.init(allocator);
-    hl_render.show_toolbar = true;
-    hl_render.parse(
-        \\pub fn render() void {
-        \\    Row()
-        \\        .direction(.row)
-        \\        .children({
-        \\        sidebar.render();
-        \\        // Your main content here
-        \\    });
-        \\}
-    ) catch unreachable;
+        \\// The sidebar is a struct you fill in, kept in a global var.
+        \\var sidebar: SideBar = .{ .title = "App", .groups = &groups };
+    );
+    BasicSidebar.init();
 
     Vapor.Page(.{ .src = @src() }, render, null);
 }
 
-// ============================================================================
-// UI COMPONENTS
-// ============================================================================
+const fields = [_]Docs.Field{
+    .{ .name = "groups", .type = "?[]GroupItem", .default = "null", .desc = "The groups, top to bottom. A var: opening one writes into it." },
+    .{ .name = "title", .type = "[]const u8", .default = "\"\"", .desc = "The sidebar's title." },
+    .{ .name = "show_menu", .type = "bool", .default = "false", .desc = "Whether it's open, with labels; closed, it shows only icons. The menu button flips it." },
+    .{ .name = "on_item_click", .type = "?*const fn (*const MenuItem) void", .default = "null", .desc = "Called with the item clicked, after it's marked current. Navigate or switch content here." },
+    .{ .name = "on_group_click", .type = "?*const fn (*const GroupItem) void", .default = "null", .desc = "Called with the group clicked, after it opens or closes." },
+    .{ .name = "current_path", .type = "?[]const u8", .default = "null", .desc = "The link of the current item. Set to the page's path when it appears, and to an item's link when clicked." },
+};
 
-fn sectionTitle(title: []const u8) void {
-    Text(title)
-        .font(24, 600, Theme.text)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .top = 48 })
-        .end();
-}
+const group_fields = [_]Docs.Field{
+    .{ .name = "title", .type = "[]const u8", .desc = "The group's heading, which opens and closes it." },
+    .{ .name = "icon", .type = "IconTokens", .desc = "Shown beside the heading, and alone when the sidebar is closed." },
+    .{ .name = "items", .type = "[]const MenuItem", .desc = "The group's items." },
+    .{ .name = "show", .type = "bool", .default = "false", .desc = "Whether the group starts open." },
+};
 
-fn sectionDesc(desc: []const u8) void {
-    Text(desc)
-        .font(14, 400, Theme.text_muted)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .bottom = 16 })
-        .end();
-}
+const item_fields = [_]Docs.Field{
+    .{ .name = "title", .type = "[]const u8", .desc = "The item's label." },
+    .{ .name = "link", .type = "[]const u8", .desc = "The path it stands for. The item whose link is current_path is marked." },
+    .{ .name = "icon", .type = "IconTokens", .desc = "Shown beside the label; any Vapor icon." },
+};
 
-fn exampleLabel(label: []const u8) void {
-    Text(label)
-        .font(14, 500, Theme.text_muted)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .top = 24 })
-        .end();
-}
-
-fn PreviewCard() Vapor.Builder(.pure) {
-    return Row()
-        .background(.transparentize(.palette(.background), 0.5))
-        .border(.round(.palette(.border_color_light), .all(12)))
-        .width(.percent(100))
-        .height(.px(512))
-        .padding(.all(24))
-        .direction(.column)
-        .layout(.center)
-        .spacing(16);
-}
-
-// ============================================================================
-// RENDER
-// ============================================================================
+const behaviours = [_]Docs.Field{
+    .{ .name = "Clicking", .desc = "An item is marked current and on_item_click is called; the sidebar doesn't navigate by itself." },
+    .{ .name = "Keyboard", .desc = "Headings and items are buttons: Tab reaches them, Enter or Space uses them. A closed group's items are skipped." },
+    .{ .name = "Screen readers", .desc = "Headings and the menu button report aria-expanded; the current item reports aria-pressed. A closed group is hidden." },
+};
 
 pub fn render() void {
     Row()
@@ -241,122 +62,37 @@ pub fn render() void {
         .layout(.top_center)
         .direction(.column)
         .children({
-
-        // Hero
         Hero("sidebar-ui", "A collapsible navigation sidebar with grouped menu items, icons, and customizable styling.");
 
-        // Content
-        Stack()
-            .width(.percent(50))
-            .responsive(.mobile, .{ .size = .w(.percent(92)) })
-            .height(.percent(100))
-            .spacing(12)
-            .padding(.{ .bottom = 120 })
-            .children({
-
-            // ============================================================
-            // BASIC
-            // ============================================================
-            exampleLabel("Basic");
-            sectionDesc("A sidebar with grouped navigation items and collapsible sections.");
-            PreviewCard()
-                .direction(.row)
-                .children({
-                Vapor.Row()
-                    .width(.percent(50))
-                    .height(.percent(100))
-                    .children({
-                    sidebar.render();
-                });
-                Row()
-                    .width(.expand)
-                    .layout(.center)
-                    .children({
-                    Text("Content Over Here").fontFamily("Montserrat").font(18, null, null).end();
-                });
+        Docs.Content().children({
+            Docs.exampleLabel("Basic Sidebar");
+            Docs.sectionDesc("Groups of items that fold away, and a button that shrinks it to icons.");
+            Docs.PreviewCard().height(.px(512)).children({
+                BasicSidebar.render();
             });
             CodeBox(&hl_basic, "BasicSidebar");
 
-            // ============================================================
-            // API REFERENCE
-            // ============================================================
-            sectionTitle("API Reference");
+            Docs.sectionTitle("API Reference");
 
-            exampleLabel("Initialization");
-            sectionDesc("Create a SideBar with groups, title, and menu visibility.");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\var sidebar: SideBar = .{
-                    \\    .groups = &groups,     // Array of GroupItem
-                    \\    .title = "My App",     // Sidebar header title
-                    \\    .show_menu = true,     // Toggle menu visibility
-                    \\};
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            Docs.exampleLabel("SideBar");
+            Docs.sectionDesc("Fill in a SideBar and render it where it goes.");
+            CodeBox(&hl_api, "SideBar");
 
-            exampleLabel("GroupItem Structure");
-            sectionDesc("Each group contains a title, menu items, visibility state, and an optional icon.");
-            CodeBox(&hl_groups, "GroupItem");
+            Docs.exampleLabel("Fields");
+            Docs.sectionDesc("Set them in the struct, or later.");
+            Docs.ApiBox("SideBar", &fields);
 
-            exampleLabel("MenuItem Structure");
-            sectionDesc("Each menu item requires a title, link, and optional icon.");
-            CodeBox(&hl_menu_items, "MenuItem");
+            Docs.exampleLabel("GroupItem");
+            Docs.sectionDesc("A heading and the items under it.");
+            Docs.ApiBox("GroupItem", &group_fields);
 
-            exampleLabel("Properties");
-            sectionDesc("Configure the sidebar after initialization.");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\sidebar.title = "App Name";        // Header title
-                    \\sidebar.show_menu = true;          // Show/hide menu
-                    \\sidebar.groups = &my_groups;       // Set navigation groups
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            Docs.exampleLabel("MenuItem");
+            Docs.sectionDesc("One entry.");
+            Docs.ApiBox("MenuItem", &item_fields);
 
-            exampleLabel("Render");
-            sectionDesc("Call render() to display the sidebar alongside your content.");
-            CodeBox(&hl_render, "Sidebar.render()");
-
-            exampleLabel("Available Icons");
-            sectionDesc("Use any icon from the Vapor icon set.");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\.icon = .house       // Home icon
-                    \\.icon = .folder      // Folder icon
-                    \\.icon = .database    // Database icon
-                    \\.icon = .activity    // Activity graph icon
-                    \\.icon = .grid_3x3    // Grid icon
-                    \\.icon = .diagram_3   // Diagram/routes icon
-                    \\.icon = .tree        // Tree structure icon
-                    \\.icon = .code_slash  // Code editor icon
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            Docs.exampleLabel("Behaviour");
+            Docs.sectionDesc("What the sidebar does for you.");
+            Docs.ApiBox("Behaviour", &behaviours);
         });
     });
 }

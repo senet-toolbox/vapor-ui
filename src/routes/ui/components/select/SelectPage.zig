@@ -1,15 +1,9 @@
-// page.zig
-const std = @import("std");
 const Vapor = @import("vapor");
 const Hero = @import("../../../../components/Hero.zig").Hero;
-const Text = Vapor.Text;
 const Row = Vapor.Row;
-const Stack = Vapor.Stack;
-const Opaque = @import("opaque-ui");
-const Select = Opaque.Select;
-const Vaporize = @import("vaporize");
-const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
+const SyntaxHighlighter = @import("vaporize").SyntaxHighlighter;
 const CodeBox = @import("../CodeBox.zig").CodeBox;
+const Docs = @import("../Docs.zig");
 // Rendered and shown as code: what you read is what runs.
 const BasicSelect = @import("examples/BasicSelect.zig");
 const WithIcons = @import("examples/WithIcons.zig");
@@ -17,54 +11,43 @@ const Grouped = @import("examples/Grouped.zig");
 const CustomTrigger = @import("examples/CustomTrigger.zig");
 const Detached = @import("examples/Detached.zig");
 
-// ============================================================================
-// THEME
-// ============================================================================
-
-const Theme = struct {
-    const text = Vapor.Types.Color.palette(.text_color);
-    const text_muted = Vapor.Types.Color.hex("#71717a");
-    const border = Vapor.Types.Color.palette(.border_color_light);
-    const code_bg = Vapor.Types.Color.hex("#1a1a1a");
-};
-
-// ============================================================================
-// SYNTAX HIGHLIGHTERS
-// ============================================================================
-
 var hl_basic: SyntaxHighlighter = undefined;
 var hl_with_icons: SyntaxHighlighter = undefined;
 var hl_grouped: SyntaxHighlighter = undefined;
 var hl_custom_trigger: SyntaxHighlighter = undefined;
 var hl_detached: SyntaxHighlighter = undefined;
-
-// ============================================================================
-// INIT
-// ============================================================================
+var hl_api: SyntaxHighlighter = undefined;
 
 pub fn init() void {
-    const allocator = Vapor.arena(.persist);
-
-    // Initialize syntax highlighters
-    hl_basic = SyntaxHighlighter.init(allocator);
-    hl_basic.show_toolbar = true;
-    hl_basic.parse(@embedFile("examples/BasicSelect.zig")) catch unreachable;
-
-    hl_with_icons = SyntaxHighlighter.init(allocator);
-    hl_basic.show_toolbar = true;
-    hl_with_icons.parse(@embedFile("examples/WithIcons.zig")) catch unreachable;
-
-    hl_grouped = SyntaxHighlighter.init(allocator);
-    hl_basic.show_toolbar = true;
-    hl_grouped.parse(@embedFile("examples/Grouped.zig")) catch unreachable;
-
-    hl_custom_trigger = SyntaxHighlighter.init(allocator);
-    hl_basic.show_toolbar = true;
-    hl_custom_trigger.parse(@embedFile("examples/CustomTrigger.zig")) catch unreachable;
-
-    hl_detached = SyntaxHighlighter.init(allocator);
-    hl_basic.show_toolbar = true;
-    hl_detached.parse(@embedFile("examples/Detached.zig")) catch unreachable;
+    hl_basic = Docs.highlighter(@embedFile("examples/BasicSelect.zig"));
+    hl_with_icons = Docs.highlighter(@embedFile("examples/WithIcons.zig"));
+    hl_grouped = Docs.highlighter(@embedFile("examples/Grouped.zig"));
+    hl_custom_trigger = Docs.highlighter(@embedFile("examples/CustomTrigger.zig"));
+    hl_detached = Docs.highlighter(@embedFile("examples/Detached.zig"));
+    hl_api = Docs.highlighter(
+        \\const Select = @import("opaque-ui").Select;
+        \\
+        \\// A select of values of type T, e.g. an enum.
+        \\pub fn Select(comptime T: type) type
+        \\
+        \\// A flat list; the trigger reads "Select" until one is picked.
+        \\pub fn fromItems(items: []const Item) Self
+        \\// Titled groups, with your placeholder.
+        \\pub fn init(trigger: []const u8, groups: []const Group) Self
+        \\
+        \\// The trigger with the list under it.
+        \\pub fn render(select: *Self) void
+        \\// Or each on its own, anywhere; set is_detached first.
+        \\pub fn renderTrigger(select: *Self) void
+        \\pub fn renderSelect(select: *Self) void
+        \\
+        \\// Picks the item with that label, without calling on_select.
+        \\pub fn default(select: *Self, item: Item) void
+        \\pub fn selectedValue(select: *Self) ?T
+        \\pub fn selectedItem(select: *Self) ?Item
+        \\
+        \\fn onSelect(select: *Select(T), item: *Select(T).Item) void { ... }
+    );
 
     BasicSelect.init();
     WithIcons.init();
@@ -75,49 +58,34 @@ pub fn init() void {
     Vapor.Page(.{ .src = @src() }, render, null);
 }
 
-// ============================================================================
-// UI COMPONENTS
-// ============================================================================
+const item_fields = [_]Docs.Field{
+    .{ .name = "value", .type = "T", .desc = "What selectedValue returns when it's picked." },
+    .{ .name = "label", .type = "[]const u8", .desc = "Its text in the list, and in the trigger once picked." },
+    .{ .name = "icon", .type = "?IconTokens", .default = "null", .desc = "An icon before the label." },
+};
 
-fn sectionTitle(title: []const u8) void {
-    Text(title)
-        .font(24, 600, Theme.text)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .top = 48 })
-        .end();
-}
+const group_fields = [_]Docs.Field{
+    .{ .name = "title", .type = "?[]const u8", .default = "null", .desc = "A heading above the group's items." },
+    .{ .name = "items", .type = "[]const Item", .desc = "The group's items." },
+};
 
-fn sectionDesc(desc: []const u8) void {
-    Text(desc)
-        .font(14, 400, Theme.text_muted)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .bottom = 16 })
-        .end();
-}
+const fields = [_]Docs.Field{
+    .{ .name = "on_select", .type = "?*const fn (*Self, *Item) void", .default = "null", .desc = "Called with the item clicked." },
+    .{ .name = "trigger", .type = "[]const u8", .desc = "The trigger's text until something is picked." },
+    .{ .name = "trigger_component", .type = "?*const fn (*Self) void", .default = "null", .desc = "Draws the trigger instead, inside the button that opens the list." },
+    .{ .name = "trigger_label", .type = "?[]const u8", .default = "null", .desc = "Names the trigger for screen readers; needed when your trigger has no text, like an icon." },
+    .{ .name = "is_detached", .type = "bool", .default = "false", .desc = "Set it when you render the trigger and the list apart." },
+    .{ .name = "max_height", .type = "f32", .default = "256", .desc = "The list's height before it scrolls; 512 with more than 12 items." },
+    .{ .name = "height", .type = "Sizing", .default = ".px(36)", .desc = "The trigger's height, and each item's." },
+    .{ .name = "border", .type = "Border", .default = ".round(.transparentize(.black, 0.2), .all(12))", .desc = "The list's border." },
+};
 
-fn exampleLabel(label: []const u8) void {
-    Text(label)
-        .font(14, 500, Theme.text_muted)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .top = 24 })
-        .end();
-}
-
-fn PreviewCard() Vapor.Builder(.pure) {
-    return Stack()
-        .background(.transparentize(.palette(.background), 0.5))
-        .border(.round(.palette(.border_color_light), .all(12)))
-        .width(.percent(100))
-        .height(.px(160))
-        .padding(.all(24))
-        .direction(.column)
-        .layout(.center)
-        .spacing(16);
-}
-
-// ============================================================================
-// RENDER
-// ============================================================================
+const behaviours = [_]Docs.Field{
+    .{ .name = "Picking", .desc = "Click an item to pick it; click the picked item again to clear it." },
+    .{ .name = "Closing", .desc = "Escape, or a click outside the list." },
+    .{ .name = "Keyboard", .desc = "The trigger and items are buttons: Tab reaches them, Enter or Space uses them." },
+    .{ .name = "Screen readers", .desc = "The trigger says it opens a listbox and whether it's open. The list has role=listbox; each item has role=option and reports aria-selected." },
+};
 
 pub fn render() void {
     Row()
@@ -125,172 +93,65 @@ pub fn render() void {
         .layout(.top_center)
         .direction(.column)
         .children({
-
-        // Hero
         Hero("select-ui", "A collection of ready-to-use select components built on top of Vapor, copy and paste into your apps.");
 
-        // Content
-        Stack()
-            .width(.percent(50))
-            .responsive(.mobile, .{ .size = .w(.percent(92)) })
-            .height(.percent(100))
-            .spacing(12)
-            .padding(.{ .bottom = 120 })
-            .children({
-
-            // ============================================================
-            // BASIC
-            // ============================================================
-            exampleLabel("Basic");
-            sectionDesc("A simple select with a flat list of items.");
-            PreviewCard().children({
+        Docs.Content().children({
+            Docs.exampleLabel("Basic Select");
+            Docs.sectionDesc("A flat list of items.");
+            Docs.PreviewCard().height(.px(160)).layout(.center).children({
                 BasicSelect.render();
             });
             CodeBox(&hl_basic, "BasicSelect");
 
-            // ============================================================
-            // WITH ICONS
-            // ============================================================
-            exampleLabel("With Icons");
-            sectionDesc("Items can include icons for visual clarity.");
-            PreviewCard().children({
+            Docs.exampleLabel("With Icons");
+            Docs.sectionDesc("Items can show an icon beside their label.");
+            Docs.PreviewCard().height(.px(160)).layout(.center).children({
                 WithIcons.render();
             });
             CodeBox(&hl_with_icons, "WithIcons");
 
-            // ============================================================
-            // GROUPED
-            // ============================================================
-            exampleLabel("Grouped");
-            sectionDesc("Organize items into labeled groups using .init() with Group structs.");
-            PreviewCard().children({
+            Docs.exampleLabel("Grouped");
+            Docs.sectionDesc("Items under titled groups, made with init.");
+            Docs.PreviewCard().height(.px(160)).layout(.center).children({
                 Grouped.render();
             });
             CodeBox(&hl_grouped, "Grouped");
 
-            // ============================================================
-            // CUSTOM TRIGGER
-            // ============================================================
-            exampleLabel("Custom Trigger");
-            sectionDesc("Replace the default trigger button with a custom component.");
-            PreviewCard().children({
+            Docs.exampleLabel("Custom Trigger");
+            Docs.sectionDesc("Your own trigger, here an icon, named for screen readers with trigger_label.");
+            Docs.PreviewCard().height(.px(160)).layout(.center).children({
                 CustomTrigger.render();
             });
             CodeBox(&hl_custom_trigger, "CustomTrigger");
 
-            // ============================================================
-            // DETACHED
-            // ============================================================
-            exampleLabel("Detached");
-            sectionDesc("Render the trigger and dropdown separately for custom layouts.");
-            PreviewCard().children({
+            Docs.exampleLabel("Detached");
+            Docs.sectionDesc("The trigger and the list rendered apart, each where you put it.");
+            Docs.PreviewCard().height(.px(160)).layout(.center).children({
                 Detached.render();
             });
             CodeBox(&hl_detached, "Detached");
 
-            // ============================================================
-            // API REFERENCE
-            // ============================================================
-            sectionTitle("API Reference");
+            Docs.sectionTitle("API Reference");
 
-            exampleLabel("Initialization");
-            sectionDesc("Two ways to create a Select:");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\// Flat list
-                    \\var select = Select(MyEnum).fromItems(&.{ ... });
-                    \\
-                    \\// Grouped list
-                    \\var select = Select(MyEnum).init("Placeholder", &.{
-                    \\    Select(MyEnum).Group{ .title = "Group", .items = &.{ ... } },
-                    \\});
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            Docs.exampleLabel("Select");
+            Docs.sectionDesc("Make one in your init from items or groups, and render it.");
+            CodeBox(&hl_api, "Select");
 
-            exampleLabel("Item Structure");
-            sectionDesc("Each item requires a value and label. Icon is optional.");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\.{ .value = MyEnum.option, .label = "Option Label", .icon = .icon_name }
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            Docs.exampleLabel("Item");
+            Docs.sectionDesc("One choice.");
+            Docs.ApiBox("Item", &item_fields);
 
-            exampleLabel("Properties");
-            sectionDesc("Configure behavior after initialization.");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\select.trigger = "Placeholder text";      // Custom placeholder
-                    \\select.trigger_component = myFn;          // Custom trigger component
-                    \\select.on_select = handleSelect;          // Selection callback
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            Docs.exampleLabel("Group");
+            Docs.sectionDesc("For init.");
+            Docs.ApiBox("Group", &group_fields);
 
-            exampleLabel("Render Methods");
-            sectionDesc("Choose how to render the component.");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\select.render();          // Render trigger + dropdown together
-                    \\select.renderTrigger();   // Render trigger only
-                    \\select.renderSelect();    // Render dropdown only
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            Docs.exampleLabel("Fields");
+            Docs.sectionDesc("Set them after init.");
+            Docs.ApiBox("Select(T)", &fields);
 
-            exampleLabel("Callback Signature");
-            sectionDesc("The on_select callback receives the select instance and selected item.");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\fn handleSelect(sel: *Select(MyEnum), item: *Select(MyEnum).Item) void {
-                    \\    // item.value - the enum value
-                    \\    // item.label - the display string
-                    \\    // item.icon  - optional icon
-                    \\}
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            Docs.exampleLabel("Behaviour");
+            Docs.sectionDesc("What the select does for you.");
+            Docs.ApiBox("Behaviour", &behaviours);
         });
     });
 }

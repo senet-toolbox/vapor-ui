@@ -1,99 +1,41 @@
-// page.zig
-const std = @import("std");
 const Vapor = @import("vapor");
 const Hero = @import("../../../../components/Hero.zig").Hero;
-const CodeBox = @import("../CodeBox.zig").CodeBox;
-const Text = Vapor.Text;
 const Row = Vapor.Row;
-const Stack = Vapor.Stack;
-const Opaque = @import("opaque-ui");
-const Select = Opaque.Select;
-const Vaporize = @import("vaporize");
-const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
-const Switch = Opaque.Switch;
-
-// ============================================================================
-// THEME
-// ============================================================================
-
-const Theme = struct {
-    const text = Vapor.Types.Color.palette(.text_color);
-    const text_muted = Vapor.Types.Color.hex("#71717a");
-    const border = Vapor.Types.Color.palette(.border_color_light);
-    const code_bg = Vapor.Types.Color.hex("#1a1a1a");
-};
-
-// ============================================================================
-// SYNTAX HIGHLIGHTERS
-// ============================================================================
+const SyntaxHighlighter = @import("vaporize").SyntaxHighlighter;
+const CodeBox = @import("../CodeBox.zig").CodeBox;
+const Docs = @import("../Docs.zig");
+// Rendered and shown as code: what you read is what runs.
+const BasicSwitch = @import("examples/BasicSwitch.zig");
 
 var hl_basic: SyntaxHighlighter = undefined;
-var hl_custom_switch: SyntaxHighlighter = undefined;
-var hl_grouped: SyntaxHighlighter = undefined;
-var hl_detached: SyntaxHighlighter = undefined;
-
-// ============================================================================
-// INIT
-// ============================================================================
+var hl_api: SyntaxHighlighter = undefined;
 
 pub fn init() void {
-    const allocator = Vapor.arena(.persist);
-
-    // Initialize syntax highlighters
-    hl_basic = SyntaxHighlighter.init(allocator);
-    hl_basic.show_toolbar = true;
-    hl_basic.parse("Switch.render(\"test-switch\", switchToggle, .{})") catch unreachable;
+    hl_basic = Docs.highlighter(@embedFile("examples/BasicSwitch.zig"));
+    hl_api = Docs.highlighter(
+        \\const Switch = @import("opaque-ui").Switch;
+        \\
+        \\// Draws a switch. Calls on_change with args on each flip.
+        \\pub fn render(aria_label: []const u8, on_change: anytype, args: anytype) void
+        \\
+        \\fn onChange() void { ... }
+    );
 
     Vapor.Page(.{ .src = @src() }, render, null);
 }
 
-// ============================================================================
-// UI COMPONENTS
-// ============================================================================
+const params = [_]Docs.Field{
+    .{ .name = "aria_label", .type = "[]const u8", .desc = "The switch's name for screen readers; it shows no text of its own, so put a label beside it." },
+    .{ .name = "on_change", .type = "anytype", .desc = "The function to call on each flip." },
+    .{ .name = "args", .type = "anytype", .desc = "A tuple of arguments for on_change; .{} for none." },
+};
 
-fn sectionTitle(title: []const u8) void {
-    Text(title)
-        .font(24, 600, Theme.text)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .top = 48 })
-        .end();
-}
-
-fn sectionDesc(desc: []const u8) void {
-    Text(desc)
-        .font(14, 400, Theme.text_muted)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .bottom = 16 })
-        .end();
-}
-
-fn exampleLabel(label: []const u8) void {
-    Text(label)
-        .font(14, 500, Theme.text_muted)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .top = 24 })
-        .end();
-}
-
-fn PreviewCard() Vapor.Builder(.pure) {
-    return Stack()
-        .background(.transparentize(.palette(.background), 0.5))
-        .border(.round(.palette(.border_color_light), .all(12)))
-        .width(.percent(100))
-        .height(.px(160))
-        .padding(.all(24))
-        .direction(.column)
-        .layout(.center)
-        .spacing(16);
-}
-
-fn switchToggle() void {
-    Vapor.alert("Switch Toggled", .{});
-}
-
-// ============================================================================
-// RENDER
-// ============================================================================
+const behaviours = [_]Docs.Field{
+    .{ .name = "State", .desc = "Each switch keeps whether it's on, starting off, and forgets it when it leaves the page." },
+    .{ .name = "Keyboard", .desc = "It's a button: Tab reaches it, Enter or Space flips it." },
+    .{ .name = "Screen readers", .desc = "It has role=switch and reports aria-checked." },
+    .{ .name = "Animation", .desc = "The knob slides across in 100ms." },
+};
 
 pub fn render() void {
     Row()
@@ -101,67 +43,29 @@ pub fn render() void {
         .layout(.top_center)
         .direction(.column)
         .children({
-
-        // Hero
         Hero("switch-ui", "A collection of ready-to-use switch components built on top of Vapor, copy and paste into your apps.");
 
-        // Content
-        Stack()
-            .width(.percent(50))
-            .responsive(.mobile, .{ .size = .w(.percent(92)) })
-            .height(.percent(100))
-            .spacing(12)
-            .padding(.{ .bottom = 120 })
-            .children({
-
-            // ============================================================
-            // BASIC
-            // ============================================================
-            exampleLabel("Basic");
-            sectionDesc("A simple switch with a Title and Content.");
-            PreviewCard().children({
-                Switch.render("test-switch", switchToggle, .{});
+        Docs.Content().children({
+            Docs.exampleLabel("Basic Switch");
+            Docs.sectionDesc("An on/off setting. The switch keeps its own state; your callback hears each flip.");
+            Docs.PreviewCard().height(.px(160)).layout(.center).children({
+                BasicSwitch.render();
             });
             CodeBox(&hl_basic, "BasicSwitch");
 
-            // ============================================================
-            // API REFERENCE
-            // ============================================================
-            sectionTitle("API Reference");
+            Docs.sectionTitle("API Reference");
 
-            exampleLabel("Switch.render");
-            sectionDesc("Renders a switch; each one keeps its own on/off state.");
-            apiSnippet(
-                \\Switch.render(aria_label: []const u8, on_change, args)
-            );
+            Docs.exampleLabel("Switch");
+            Docs.sectionDesc("One function draws it.");
+            CodeBox(&hl_api, "Switch");
 
-            exampleLabel("Callback");
-            sectionDesc("Called with args after each toggle.");
-            apiSnippet(
-                \\fn onChange() void { ... }
-            );
+            Docs.exampleLabel("Parameters");
+            Docs.sectionDesc("What render takes.");
+            Docs.ApiBox("Parameters", &params);
 
-            exampleLabel("Accessibility");
-            sectionDesc("The switch has role=switch and reports aria-checked; the label names it.");
-            apiSnippet(
-                \\Switch.render("Dark mode", toggleDark, .{});
-            );
+            Docs.exampleLabel("Behaviour");
+            Docs.sectionDesc("What the switch does for you.");
+            Docs.ApiBox("Behaviour", &behaviours);
         });
-    });
-}
-
-fn apiSnippet(code: []const u8) void {
-    Row()
-        .width(.percent(100))
-        .padding(.all(16))
-        .background(Theme.code_bg)
-        .scroll(.scrollX())
-        .border(.round(Theme.border, .all(8)))
-        .children({
-        Text(code)
-            .font(14, 400, .hex("#e4e4e7"))
-            .fontFamily("IBM Plex Mono,monospace")
-            .whiteSpace(.pre)
-            .end();
     });
 }

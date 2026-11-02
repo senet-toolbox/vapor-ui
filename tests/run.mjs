@@ -592,6 +592,54 @@ const tests = {
     await p.viewport(1440, 900);
   },
 
+  async "docs: every component's API reference uses the shared boxes"(p) {
+    // Each page, the API box it has first, and that box's first entry.
+    const pages = {
+      accordion: ["AccordionItem", "title"], alert: ["Alert", "content"], button: ["Defaults", "background"],
+      carousel: ["Options", "id"], checkbox: ["Parameters", "aria_label"], commandpalette: ["CommandPalette", "text"],
+      datepicker: ["DatePicker", "start_date"], dialog: ["Item(T)", "value"], progress: ["ProgressBar.Config", "id"],
+      radio: ["Group", "name"], select: ["Item", "value"], sidebar: ["SideBar", "groups"], slider: ["Slider", "min"],
+      switch: ["Parameters", "aria_label"], table: ["Column(T)", "title"], tabs: ["Tabs", "tag"], tooltip: ["Options", "content"],
+    };
+    for (const [page, [tab, first]] of Object.entries(pages)) {
+      await p.goto(`/ui/components/${page}`);
+      const got = await p.evaluate(`(() => {
+        // An API box: the 18px frame around an italic tab; its entries' names
+        // are DM Mono at weight 500.
+        const names = (b) => b ? [...b.querySelectorAll("p, span")].filter((e) => getComputedStyle(e).fontFamily.includes("DM Mono") && getComputedStyle(e).fontWeight === "500").map((e) => e.textContent) : [];
+        const frame = (tab) => { let b = tab; while (b && getComputedStyle(b).borderTopLeftRadius !== "18px") b = b.parentElement; return b; };
+        // A code box can share the title; the API box is the one with entries.
+        const box = (title) => [...document.querySelectorAll("p, span")]
+          .filter((e) => e.textContent === title && getComputedStyle(e).fontStyle === "italic")
+          .map(frame).find((b) => names(b).length > 0);
+        return {
+          title: document.body.textContent.includes("API Reference"),
+          first: names(box(${JSON.stringify(tab)}))[0] ?? null,
+          behaviours: names(box("Behaviour")).length,
+          // The old flat boxes were #1a1a1a.
+          flat: [...document.querySelectorAll("div")].filter((e) => getComputedStyle(e).backgroundColor === "rgb(26, 26, 26)").length,
+          bogus: document.body.textContent.includes("vapor add"),
+        };
+      })()`);
+      assert(got.title, `${page} has no API Reference`);
+      assert(got.first === first, `${page}'s ${tab} box starts with ${got.first}, not ${first}`);
+      assert(got.behaviours >= 2, `${page} has no Behaviour box`);
+      assert(got.flat === 0, `${page} still has ${got.flat} old flat code boxes`);
+      assert(!got.bogus, `${page} tells you to run vapor add, which doesn't exist`);
+    }
+  },
+
+  async "command palette: its shortcut opens your own dialog, and a pick closes both"(p) {
+    await p.goto("/ui/components/commandpalette");
+    const raised = `(() => { ${finders} return (__ui.byText("Open Dialog...")[0]?.getAttribute("style") ?? "").includes("translateY(-70%)"); })()`;
+    await p.waitText("Opened: nothing yet");
+    await p.press("i", "KeyI", 2); // Ctrl+I
+    await p.waitFor(raised, "Ctrl+I to open the palette");
+    await p.clickOption("Settings");
+    await p.waitText("Opened: Settings");
+    await p.waitFor(`!${raised}`, "the palette to rest once the dialog closes");
+  },
+
   async "alert: opens on its trigger and Cancel closes it"(p) {
     await p.goto("/ui/components/alert");
     await p.waitText("Are you sure?", { gone: true });
@@ -608,23 +656,26 @@ const tests = {
 
   async "switch: toggles its state and calls back"(p) {
     await p.goto("/ui/components/switch");
-    assert(await p.ariaOf("test-switch", "role") === "switch", "the switch has role=switch");
-    assert(await p.ariaOf("test-switch", "aria-checked") === "false", "it starts off");
-    await p.clickLabel("test-switch");
-    await p.waitDialog("Switch Toggled");
-    await p.waitAria("test-switch", "aria-checked", "true");
-    await p.clickLabel("test-switch");
-    await p.waitDialog("Switch Toggled");
-    await p.waitAria("test-switch", "aria-checked", "false");
+    assert(await p.ariaOf("Airplane mode", "role") === "switch", "the switch has role=switch");
+    assert(await p.ariaOf("Airplane mode", "aria-checked") === "false", "it starts off");
+    await p.clickLabel("Airplane mode");
+    await p.waitText("Airplane mode: on");
+    await p.waitAria("Airplane mode", "aria-checked", "true");
+    await p.clickLabel("Airplane mode");
+    await p.waitText("Airplane mode: off");
+    await p.waitAria("Airplane mode", "aria-checked", "false");
   },
 
   async "checkbox: toggles its state and calls back"(p) {
     await p.goto("/ui/components/checkbox");
-    assert(await p.ariaOf("test-checkbox", "role") === "checkbox", "the checkbox has role=checkbox");
-    assert(await p.ariaOf("test-checkbox", "aria-checked") === "false", "it starts unchecked");
-    await p.clickLabel("test-checkbox");
-    await p.waitDialog("Checkbox Toggled");
-    await p.waitAria("test-checkbox", "aria-checked", "true");
+    assert(await p.ariaOf("Email me updates", "role") === "checkbox", "the checkbox has role=checkbox");
+    assert(await p.ariaOf("Email me updates", "aria-checked") === "false", "it starts unchecked");
+    await p.clickLabel("Email me updates");
+    await p.waitText("Emails: on");
+    await p.waitAria("Email me updates", "aria-checked", "true");
+    // The custom one's callback gets the new state.
+    await p.clickLabel("Sound");
+    await p.waitAria("Sound", "aria-checked", "true");
   },
 
   async "radio: one choice at a time, starting on the default"(p) {

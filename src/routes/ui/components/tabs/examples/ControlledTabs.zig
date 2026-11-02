@@ -12,10 +12,6 @@ fn onTab(tabs: *Tabs) void {
     selected = tabs.active_tab orelse selected;
 }
 
-// ============================================================================
-// MAIN RENDER
-// ============================================================================
-
 pub fn render() void {
     Stack().width(.percent(100)).spacing(16).children({
         _ = Tabs.create("controlled-tabs", &.{ "Overview", "Activity", "Settings" })

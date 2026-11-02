@@ -1,82 +1,57 @@
-const std = @import("std");
 const Vapor = @import("vapor");
 const Hero = @import("../../../../components/Hero.zig").Hero;
-const Text = Vapor.Text;
 const Row = Vapor.Row;
-const Stack = Vapor.Stack;
-const Icon = Vapor.Icon;
-const Opaque = @import("opaque-ui");
-const Button = Opaque.Button;
+const SyntaxHighlighter = @import("vaporize").SyntaxHighlighter;
 const CodeBox = @import("../CodeBox.zig").CodeBox;
+const Docs = @import("../Docs.zig");
+// Rendered and shown as code: what you read is what runs.
+const ButtonVariants = @import("examples/ButtonVariants.zig");
+const ButtonIcons = @import("examples/ButtonIcons.zig");
+const ButtonLoading = @import("examples/ButtonLoading.zig");
 
-// ============================================================================
-// THEME
-// ============================================================================
-
-const Theme = struct {
-    const bg = Vapor.Types.Color.palette(.background);
-    const text = Vapor.Types.Color.palette(.text_color);
-    const text_muted = Vapor.Types.Color.hex("#71717a");
-    const border = Vapor.Types.Color.palette(.border_color_light);
-    const code_bg = Vapor.Types.Color.hex("#1a1a1a");
-};
-
-// ============================================================================
-// CODE SNIPPET COMPONENT
-// ============================================================================
-
-fn code_snippet(code: []const u8) void {
-    Row()
-        .width(.percent(100))
-        .padding(.all(16))
-        .background(Theme.code_bg)
-        .scroll(.scrollX())
-        .border(.round(Theme.border, .all(8)))
-        .children({
-        Text(code)
-            .font(14, 400, .hex("#e4e4e7"))
-            .fontFamily("IBM Plex Mono,monospace")
-            .end();
-    });
-}
-
-fn section_title(title: []const u8) void {
-    Text(title)
-        .font(24, 600, Theme.text)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .top = 32 })
-        .end();
-}
-
-fn section_description(desc: []const u8) void {
-    Text(desc)
-        .font(14, 400, Theme.text_muted)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .bottom = 16 })
-        .end();
-}
-
-// ============================================================================
-// MAIN RENDER
-// ============================================================================
+var hl_variants: SyntaxHighlighter = undefined;
+var hl_icons: SyntaxHighlighter = undefined;
+var hl_loading: SyntaxHighlighter = undefined;
+var hl_api: SyntaxHighlighter = undefined;
 
 pub fn init() void {
+    hl_variants = Docs.highlighter(@embedFile("examples/ButtonVariants.zig"));
+    hl_icons = Docs.highlighter(@embedFile("examples/ButtonIcons.zig"));
+    hl_loading = Docs.highlighter(@embedFile("examples/ButtonLoading.zig"));
+    hl_api = Docs.highlighter(
+        \\const Button = @import("opaque-ui").Button;
+        \\
+        \\// A Vapor.Button with opaque-ui's look. Clicking it calls
+        \\// func with args, as @call(func, args) would.
+        \\pub fn Button(func: anytype, args: anytype) Vapor.Builder(.pure)
+        \\
+        \\// The rest is Vapor's builder: any call changes the look,
+        \\// and children draw what's inside.
+        \\Button(save, .{&draft})
+        \\    .background(.palette(.tint))
+        \\    .children({
+        \\        Text("Save").end();
+        \\    });
+    );
+
     Vapor.Page(.{ .src = @src() }, render, null);
 }
 
-fn Card() Vapor.Builder(.pure) {
-    return Stack()
-        .background(.transparentize(.palette(.background), 0.5))
-        .border(.round(.palette(.border_color_light), .all(12)))
-        .width(.percent(100))
-        .height(.px(160))
-        .padding(.all(24))
-        .direction(.column)
-        .layout(.center)
-        .spacing(16);
-}
+const defaults = [_]Docs.Field{
+    .{ .name = "background", .default = ".transparentize(.hex(\"#F5F5F5\"), 0.2)", .desc = "A light wash that works on either theme." },
+    .{ .name = "border", .default = ".round(.palette(.border_color_light), .all(12))", .desc = "A thin line, in the theme's border colour." },
+    .{ .name = "padding", .default = ".xy(10, 8)", .desc = "Room around the content." },
+    .{ .name = "layout", .default = ".x_between_center", .desc = "Children in a row, centred vertically, 8px apart." },
+    .{ .name = "width, height", .default = ".fit", .desc = "As big as its content." },
+    .{ .name = "shadow", .desc = "A faint inset edge and a drop shadow, which go away on hover." },
+    .{ .name = "hover", .desc = "Darkens 5% and grows 1%, over 100ms." },
+};
 
-fn waiting() void {}
+const behaviours = [_]Docs.Field{
+    .{ .name = "Keyboard", .desc = "It's a real button: Tab reaches it, Enter or Space clicks it." },
+    .{ .name = "Screen readers", .desc = "Its text names it. A button with only an icon needs .ariaLabel." },
+    .{ .name = "Busy", .desc = "Mark it disabled and busy with .a11y, and give it a handler that does nothing, as Loading does." },
+};
 
 pub fn render() void {
     Row()
@@ -86,236 +61,41 @@ pub fn render() void {
         .children({
         Hero("button-ui", "A collection of ready-to-use button components built on top of Vapor. Copy and paste into your apps.");
 
-        Stack()
-            .width(.px(720))
-            .responsive(.mobile, .{ .size = .w(.percent(92)) })
-            .height(.percent(100))
-            .spacing(12)
-            .children({
-            // Page Title
-            Text("Button")
-                .font(36, 700, Theme.text)
-                .fontFamily("IBM Plex Mono,monospace")
-                .end();
-
-            Text("Displays a button or a component that looks like a button.")
-                .font(16, 400, Theme.text_muted)
-                .fontFamily("IBM Plex Mono,monospace")
-                .margin(.{ .bottom = 24 })
-                .end();
-
-            // Preview Section
-
-            // Primary
-            Text("Primary")
-                .font(14, 500, Theme.text_muted)
-                .fontFamily("IBM Plex Mono,monospace")
-                .end();
-            Card().children({
-                Button(std.log.info, .{ "Primary button clicked", .{} })
-                    .background(.palette(.tint))
-                    .children({
-                    Text("Button")
-                        .fontFamily("Montserrat")
-                        .font(14, 500, .palette(.background)).end();
-                });
+        Docs.Content().children({
+            Docs.exampleLabel("Variants");
+            Docs.sectionDesc("One button, styled for each kind of action.");
+            Docs.PreviewCard().layout(.center).children({
+                ButtonVariants.render();
             });
+            CodeBox(&hl_variants, "ButtonVariants");
 
-            // Secondary
-            Text("Secondary")
-                .font(14, 500, Theme.text_muted)
-                .fontFamily("IBM Plex Mono,monospace")
-                .end();
-            Card().children({
-                Button(std.log.info, .{ "Secondary button clicked", .{} })
-                    .background(.transparent)
-                    .border(.round(.palette(.border_color_light), .all(8)))
-                    .children({
-                    Text("Secondary")
-                        .fontFamily("Montserrat")
-                        .font(14, 500, .palette(.text_color)).end();
-                });
+            Docs.exampleLabel("With Icon");
+            Docs.sectionDesc("Icons go in the children, beside the text or on their own.");
+            Docs.PreviewCard().layout(.center).children({
+                ButtonIcons.render();
             });
+            CodeBox(&hl_icons, "ButtonIcons");
 
-            // Outline
-            Text("Outline")
-                .font(14, 500, Theme.text_muted)
-                .fontFamily("IBM Plex Mono,monospace")
-                .end();
-            Card().children({
-                Button(std.log.info, .{ "Outline button clicked", .{} })
-                    .background(.transparent)
-                    .border(.round(.palette(.tint), .all(8)))
-                    .children({
-                    Text("Outline")
-                        .fontFamily("Montserrat")
-                        .font(14, 500, .palette(.tint)).end();
-                });
+            Docs.exampleLabel("Loading");
+            Docs.sectionDesc("While a button waits on its work, it can't be clicked, and screen readers hear that it's busy.");
+            Docs.PreviewCard().layout(.center).children({
+                ButtonLoading.render();
             });
+            CodeBox(&hl_loading, "ButtonLoading");
 
-            // Ghost
-            Text("Ghost")
-                .font(14, 500, Theme.text_muted)
-                .fontFamily("IBM Plex Mono,monospace")
-                .end();
-            Card().children({
-                Button(std.log.info, .{ "Ghost button clicked", .{} })
-                    .background(.transparent)
-                    .children({
-                    Text("Ghost")
-                        .fontFamily("Montserrat")
-                        .font(14, 500, .palette(.text_color)).end();
-                });
-            });
+            Docs.sectionTitle("API Reference");
 
-            // Destructive
-            Text("Destructive")
-                .font(14, 500, Theme.text_muted)
-                .fontFamily("IBM Plex Mono,monospace")
-                .end();
-            Card().children({
-                Button(std.log.info, .{ "Destructive button clicked", .{} })
-                    .background(.hex("#ef4444"))
-                    .children({
-                    Text("Delete")
-                        .fontFamily("Montserrat")
-                        .font(14, 500, .white).end();
-                });
-            });
+            Docs.exampleLabel("Button");
+            Docs.sectionDesc("Takes the function to call and its arguments, and returns a builder.");
+            CodeBox(&hl_api, "Button");
 
-            // With Icon
-            Text("With Icon")
-                .font(14, 500, Theme.text_muted)
-                .fontFamily("IBM Plex Mono,monospace")
-                .end();
-            Card().children({
-                Button(std.log.info, .{ "Button with icon clicked", .{} })
-                    .background(.palette(.tint))
-                    .children({
-                    Icon(.envelope)
-                        .font(14, 500, .palette(.background))
-                        .end();
-                    Text("Login with Email")
-                        .fontFamily("Montserrat")
-                        .font(14, 500, .palette(.background)).end();
-                });
-            });
+            Docs.exampleLabel("Defaults");
+            Docs.sectionDesc("The look it starts with. Each one is a builder call you can make again to change it.");
+            Docs.ApiBox("Defaults", &defaults);
 
-            // Icon Only
-            Text("Icon")
-                .font(14, 500, Theme.text_muted)
-                .fontFamily("IBM Plex Mono,monospace")
-                .end();
-            Card().children({
-                Button(std.log.info, .{ "Icon button clicked", .{} })
-                    // An icon alone needs a name for screen readers.
-                    .ariaLabel("Next")
-                    .background(.transparent)
-                    .border(.round(.palette(.border_color_light), .all(8)))
-                    .children({
-                    Icon(.chevron_right)
-                        .font(16, 500, .palette(.text_color))
-                        .end();
-                });
-            });
-
-            // Loading
-            Text("Loading")
-                .font(14, 500, Theme.text_muted)
-                .fontFamily("IBM Plex Mono,monospace")
-                .end();
-            Card().children({
-                // While it waits, it does nothing and says so.
-                Button(waiting, .{})
-                    .a11y(Vapor.Accessibility.init().setDisabled(true).setBusy(true))
-                    .cursor(.default)
-                    .background(.palette(.tint))
-                    .children({
-                    Icon(.arrow_clockwise)
-                        .font(14, 500, .palette(.background))
-                        .end();
-                    Text("Please wait")
-                        .fontFamily("Montserrat")
-                        .font(14, 500, .palette(.background)).end();
-                });
-            });
-
-            // Installation Section
-            section_title("Installation");
-            section_description("Install the button component from your command line.");
-
-            code_snippet("vapor add button");
-
-            // Usage Section
-            section_title("Usage");
-            section_description("Import and use the Button component in your code.");
-
-            code_snippet("const Button = @import(\"opaque-ui\").Button;");
-
-            // Examples Section
-            section_title("Examples");
-
-            // Primary Button
-            Text("Primary")
-                .font(18, 500, Theme.text)
-                .fontFamily("IBM Plex Mono,monospace")
-                .margin(.{ .top = 16 })
-                .end();
-
-            code_snippet(
-                \\Button(handleClick, .{})
-                \\    .background(.palette(.tint))
-                \\    .children({
-                \\        Text("Primary").end();
-                \\    });
-            );
-
-            // Secondary Button
-            Text("Secondary")
-                .font(18, 500, Theme.text)
-                .fontFamily("IBM Plex Mono,monospace")
-                .margin(.{ .top = 16 })
-                .end();
-
-            code_snippet(
-                \\Button(handleClick, .{})
-                \\    .background(.transparent)
-                \\    .border(.round(.palette(.border_color_light), .all(8)))
-                \\    .children({
-                \\        Text("Secondary").end();
-                \\    });
-            );
-
-            // With Icon
-            Text("With Icon")
-                .font(18, 500, Theme.text)
-                .fontFamily("IBM Plex Mono,monospace")
-                .margin(.{ .top = 16 })
-                .end();
-
-            code_snippet(
-                \\Button(handleClick, .{})
-                \\    .children({
-                \\        Icon(.arrow_right).end();
-                \\        Text("Continue").end();
-                \\    });
-            );
-
-            // API Reference Section
-            section_title("API Reference");
-            section_description("The Button component accepts the following properties.");
-
-            code_snippet(
-                \\// Handler and arguments
-                \\Button(handler_fn, .{ arg1, arg2 })
-                \\
-                \\// Styling
-                \\.background(.palette(.tint))
-                \\.border(.round(.palette(.border_color_light), .all(8)))
-                \\.padding(.xy(16, 10))
-                \\.layout(.center)
-                \\.spacing(8)
-            );
+            Docs.exampleLabel("Behaviour");
+            Docs.sectionDesc("What the button does for you.");
+            Docs.ApiBox("Behaviour", &behaviours);
         });
     });
 }

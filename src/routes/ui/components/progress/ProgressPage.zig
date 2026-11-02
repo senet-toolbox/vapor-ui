@@ -1,240 +1,87 @@
-// page.zig
-const std = @import("std");
 const Vapor = @import("vapor");
 const Hero = @import("../../../../components/Hero.zig").Hero;
-const Text = Vapor.Text;
 const Row = Vapor.Row;
-const Stack = Vapor.Stack;
-const Opaque = @import("opaque-ui");
-const Select = Opaque.Select;
-const Vaporize = @import("vaporize");
-const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
-const Switch = Opaque.Switch;
-const ProgressBar = Opaque.ProgressBar;
-const ProgressCircle = Opaque.ProgressCircle;
-const Button = Opaque.Button;
+const SyntaxHighlighter = @import("vaporize").SyntaxHighlighter;
 const CodeBox = @import("../CodeBox.zig").CodeBox;
+const Docs = @import("../Docs.zig");
+// Rendered and shown as code: what you read is what runs.
+const ProgressBarBasic = @import("examples/ProgressBarBasic.zig");
+const ProgressCircleBasic = @import("examples/ProgressCircleBasic.zig");
+const ProgressBarAnimated = @import("examples/ProgressBarAnimated.zig");
+const ProgressCircleLabel = @import("examples/ProgressCircleLabel.zig");
 
-// ============================================================================
-// THEME
-// ============================================================================
-
-const Theme = struct {
-    const text = Vapor.Types.Color.palette(.text_color);
-    const text_muted = Vapor.Types.Color.hex("#71717a");
-    const border = Vapor.Types.Color.palette(.border_color_light);
-    const code_bg = Vapor.Types.Color.hex("#1a1a1a");
-};
-
-// ============================================================================
-// SYNTAX HIGHLIGHTERS
-// ============================================================================
-
-var hl_bar_basic: SyntaxHighlighter = undefined;
-var hl_circle_basic: SyntaxHighlighter = undefined;
+var hl_bar: SyntaxHighlighter = undefined;
+var hl_circle: SyntaxHighlighter = undefined;
 var hl_bar_animated: SyntaxHighlighter = undefined;
 var hl_circle_label: SyntaxHighlighter = undefined;
-
-// ============================================================================
-// INIT
-// ============================================================================
-
-var bar: ProgressBar = undefined;
-var circle: ProgressCircle = undefined;
-
-var bar_with_label: ProgressBar = undefined;
-var circle_with_label: ProgressCircle = undefined;
+var hl_api: SyntaxHighlighter = undefined;
 
 pub fn init() void {
-    const allocator = Vapor.arena(.persist);
-
-    // Initialize syntax highlighters
-    hl_bar_basic = SyntaxHighlighter.init(allocator);
-    hl_bar_basic.show_toolbar = true;
-    hl_bar_basic.parse(
-        \\bar = ProgressBar.init(allocator, .{
-        \\    .width = 128,
-        \\    .height = 6,
-        \\    .color = .palette(.tint),
-        \\    .background = .transparentize(.palette(.text_color), 0.1),
-        \\});
-        \\bar.setProgress(0.34);
-        \\bar.render();
-    ) catch unreachable;
-
-    hl_circle_basic = SyntaxHighlighter.init(allocator);
-    hl_circle_basic.show_toolbar = true;
-    hl_circle_basic.parse(
-        \\circle = ProgressCircle.init(allocator, .{
-        \\    .size = 120,
-        \\    .stroke_width = 10,
-        \\    .track_color = .palette(.highlight_color),
-        \\    .color = .palette(.text_color),
-        \\    .clockwise = false,
-        \\    .show_label = false,
-        \\});
-        \\circle.setProgress(0.75);
-        \\circle.render();
-    ) catch unreachable;
-
-    hl_bar_animated = SyntaxHighlighter.init(allocator);
-    hl_bar_animated.show_toolbar = true;
-    hl_bar_animated.parse(
-        \\bar_with_label = ProgressBar.init(allocator, .{
-        \\    .width = 256,
-        \\    .height = 16,
-        \\    .color = .palette(.danger),
-        \\    .background = .transparentize(.palette(.text_color), 0.1),
-        \\});
-        \\bar_with_label.setProgress(0.0);
+    hl_bar = Docs.highlighter(@embedFile("examples/ProgressBarBasic.zig"));
+    hl_circle = Docs.highlighter(@embedFile("examples/ProgressCircleBasic.zig"));
+    hl_bar_animated = Docs.highlighter(@embedFile("examples/ProgressBarAnimated.zig"));
+    hl_circle_label = Docs.highlighter(@embedFile("examples/ProgressCircleLabel.zig"));
+    hl_api = Docs.highlighter(
+        \\const Opaque = @import("opaque-ui");
+        \\const ProgressBar = Opaque.ProgressBar;
+        \\const ProgressCircle = Opaque.ProgressCircle;
         \\
-        \\// Animate progress with interval
-        \\Vapor.lib.loopInterval("progress-bar-toggle", 60, progressBarToggle, .{});
+        \\// Both have the same methods.
+        \\pub fn init(allocator: std.mem.Allocator, config: Config) ProgressBar
+        \\// Sets the value, 0 to 1, before the next render.
+        \\pub fn setProgress(self: *ProgressBar, value: f64) void
+        \\// Moves it to the value now, animated, without a rerender.
+        \\pub fn updateProgress(self: *ProgressBar, value: f64) void
+        \\// setProgress, from 0 to 100.
+        \\pub fn setPercent(self: *ProgressBar, percent: f64) void
+        \\pub fn render(self: *ProgressBar) void
         \\
-        \\fn progressBarToggle() void {
-        \\    if (bar_with_label.progress == 1) {
-        \\        Vapor.lib.cancelTimeout("progress-bar-toggle");
-        \\        return;
-        \\    }
-        \\    bar_with_label.updateProgress(bar_with_label.progress + 0.01);
-        \\}
-    ) catch unreachable;
-
-    hl_circle_label = SyntaxHighlighter.init(allocator);
-    hl_circle_label.show_toolbar = true;
-    hl_circle_label.parse(
-        \\circle_with_label = ProgressCircle.init(allocator, .{
-        \\    .size = 120,
-        \\    .stroke_width = 10,
-        \\    .track_color = .palette(.highlight_color),
-        \\    .color = .palette(.text_color),
-        \\    .clockwise = true,
-        \\    .show_label = true,
-        \\    .label_font_size = 12,
-        \\    .label_color = .palette(.text_color),
-        \\});
-        \\circle_with_label.setProgress(0.9);
-        \\
-        \\// Toggle between values
-        \\fn progressCircleToggle() void {
-        \\    if (circle_with_label.progress != 0.3) {
-        \\        circle_with_label.updateProgress(0.3);
-        \\    } else {
-        \\        circle_with_label.updateProgress(0.8);
-        \\    }
-        \\}
-    ) catch unreachable;
-
-    circle = ProgressCircle.init(Vapor.arena(.persist), .{
-        .size = 120,
-        .stroke_width = 10,
-        .track_color = .palette(.highlight_color),
-        .color = .palette(.text_color),
-        .clockwise = false,
-        .show_label = false,
-    });
-    circle.setProgress(0.75); // 75%
-
-    bar = ProgressBar.init(Vapor.arena(.persist), .{
-        .width = 128,
-        .height = 6,
-        .color = .palette(.tint),
-        .background = .transparentize(.palette(.text_color), 0.1),
-    });
-    bar.setProgress(0.34);
-
-    circle_with_label = ProgressCircle.init(Vapor.arena(.persist), .{
-        .size = 120,
-        .stroke_width = 10,
-        .track_color = .palette(.highlight_color),
-        .color = .palette(.text_color),
-        .clockwise = true,
-        .show_label = true,
-        .label_font_size = 12,
-        .label_color = .palette(.text_color),
-    });
-    circle_with_label.setProgress(0.9); // 75%
-
-    bar_with_label = ProgressBar.init(Vapor.arena(.persist), .{
-        .width = 256,
-        .height = 16,
-        .color = .palette(.danger),
-        .background = .transparentize(.palette(.text_color), 0.1),
-        .show_label = true,
-        .label_font_size = 12,
-        .label_position = .above,
-        .label_color = .palette(.text_color),
-    });
-    bar_with_label.setProgress(0.0);
+        \\// The value, 0 to 1.
+        \\progress: f64
+    );
+    ProgressBarBasic.init();
+    ProgressCircleBasic.init();
+    ProgressBarAnimated.init();
+    ProgressCircleLabel.init();
 
     Vapor.Page(.{ .src = @src() }, render, null);
 }
 
-// ============================================================================
-// UI COMPONENTS
-// ============================================================================
+const bar_config = [_]Docs.Field{
+    .{ .name = "id", .type = "?[]const u8", .default = "null", .desc = "Names its elements. Without it they're numbered in creation order, so create your bars in the same order everywhere." },
+    .{ .name = "width", .type = "u32", .default = "200", .desc = "In px." },
+    .{ .name = "height", .type = "u32", .default = "20", .desc = "In px." },
+    .{ .name = "color", .type = "Color", .default = ".hex(\"#3b82f6\")", .desc = "The filled part." },
+    .{ .name = "track_color", .type = "Color", .default = ".hex(\"#e5e7eb\")", .desc = "The unfilled part." },
+    .{ .name = "border_radius", .type = "?f32", .default = "null", .desc = "The corners; null rounds the ends fully." },
+    .{ .name = "show_label", .type = "bool", .default = "false", .desc = "Shows the percentage." },
+    .{ .name = "label_position", .type = "LabelPosition", .default = ".inside", .desc = ".inside, .above, .below or .right of the bar." },
+    .{ .name = "label_font_size", .type = "u32", .default = "12", .desc = "In px." },
+    .{ .name = "label_color", .type = "?Color", .default = "null", .desc = "The label's colour." },
+    .{ .name = "animated", .type = "bool", .default = "true", .desc = "Slides to each new value." },
+    .{ .name = "direction", .type = "Direction", .default = ".ltr", .desc = "Fills from the left, or with .rtl from the right." },
+    .{ .name = "striped", .type = "bool", .default = "false", .desc = "Diagonal stripes on the fill, in stripe_color (white unless set)." },
+};
 
-fn sectionTitle(title: []const u8) void {
-    Text(title)
-        .font(24, 600, Theme.text)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .top = 48 })
-        .end();
-}
+const circle_config = [_]Docs.Field{
+    .{ .name = "id", .type = "?[]const u8", .default = "null", .desc = "As for the bar." },
+    .{ .name = "size", .type = "u32", .default = "120", .desc = "The diameter, in px." },
+    .{ .name = "stroke_width", .type = "f32", .default = "10", .desc = "The ring's thickness, in px." },
+    .{ .name = "color", .type = "?Color", .default = ".hex(\"#3b82f6\")", .desc = "The filled part of the ring. linearGradient and radialGradient replace it with a gradient." },
+    .{ .name = "track_color", .type = "Color", .default = ".hex(\"#e5e7eb\")", .desc = "The unfilled part." },
+    .{ .name = "rounded_caps", .type = "bool", .default = "true", .desc = "Rounds the ends of the filled part." },
+    .{ .name = "show_label", .type = "bool", .default = "true", .desc = "Shows the percentage in the middle." },
+    .{ .name = "label_font_size", .type = "u32", .default = "24", .desc = "In px." },
+    .{ .name = "label_color", .type = "?Color", .default = "null", .desc = "The label's colour." },
+    .{ .name = "clockwise", .type = "bool", .default = "true", .desc = "Which way it fills." },
+    .{ .name = "start_angle", .type = "f64", .default = "-90", .desc = "Where it starts, in degrees; -90 is the top." },
+};
 
-fn sectionDesc(desc: []const u8) void {
-    Text(desc)
-        .font(14, 400, Theme.text_muted)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .bottom = 16 })
-        .end();
-}
-
-fn exampleLabel(label: []const u8) void {
-    Text(label)
-        .font(14, 500, Theme.text_muted)
-        .fontFamily("IBM Plex Mono,monospace")
-        .margin(.{ .top = 24 })
-        .end();
-}
-
-fn PreviewCard() Vapor.Builder(.pure) {
-    return Row()
-        .background(.transparentize(.palette(.background), 0.5))
-        .border(.round(.palette(.border_color_light), .all(12)))
-        .width(.percent(100))
-        .height(.px(160))
-        .padding(.all(24))
-        .direction(.column)
-        .layout(.center)
-        .spacing(16);
-}
-
-fn startAnimation() void {
-    // Run it again from the start once it has finished.
-    if (bar_with_label.progress >= 1) bar_with_label.updateProgress(0);
-    Vapor.lib.loopInterval("progress-bar-toggle", 60, progressBarToggle, .{});
-}
-
-fn progressBarToggle() void {
-    if (bar_with_label.progress == 1) {
-        Vapor.lib.cancelTimeout("progress-bar-toggle");
-        return;
-    }
-    bar_with_label.updateProgress(bar_with_label.progress + 0.01);
-}
-
-fn progressCircleToggle() void {
-    if (circle_with_label.progress != 0.3) {
-        circle_with_label.updateProgress(0.3);
-    } else {
-        circle_with_label.updateProgress(0.8);
-    }
-}
-
-// ============================================================================
-// RENDER
-// ============================================================================
+const behaviours = [_]Docs.Field{
+    .{ .name = "Screen readers", .desc = "Both have role=progressbar, named Progress, and report their value from 0 to 100, also after updateProgress." },
+    .{ .name = "Animation", .desc = "updateProgress glides to the new value in 300ms." },
+    .{ .name = "Over time", .desc = "Call updateProgress from a Vapor.lib.loopInterval, as Animated Progress Bar does." },
+};
 
 pub fn render() void {
     Row()
@@ -242,200 +89,54 @@ pub fn render() void {
         .layout(.top_center)
         .direction(.column)
         .children({
-
-        // Hero
         Hero("progress-ui", "A collection of ready-to-use progress components built on top of Vapor, copy and paste into your apps.");
 
-        // Content
-        Stack()
-            .width(.percent(50))
-            .responsive(.mobile, .{ .size = .w(.percent(92)) })
-            .height(.percent(100))
-            .spacing(12)
-            .padding(.{ .bottom = 120 })
-            .children({
-
-            // ============================================================
-            // PROGRESS BAR BASIC
-            // ============================================================
-            exampleLabel("Progress Bar");
-            sectionDesc("A horizontal progress bar with customizable width, height, and colors.");
-            PreviewCard().children({
-                bar.render();
+        Docs.Content().children({
+            Docs.exampleLabel("Progress Bar");
+            Docs.sectionDesc("A horizontal bar, any size and colours.");
+            Docs.PreviewCard().height(.px(160)).layout(.center).children({
+                ProgressBarBasic.render();
             });
-            CodeBox(&hl_bar_basic, "ProgressBar");
+            CodeBox(&hl_bar, "ProgressBarBasic");
 
-            // ============================================================
-            // PROGRESS CIRCLE BASIC
-            // ============================================================
-            exampleLabel("Progress Circle");
-            sectionDesc("A circular progress indicator with configurable size and stroke width.");
-            PreviewCard().children({
-                circle.render();
+            Docs.exampleLabel("Progress Circle");
+            Docs.sectionDesc("A ring, any size and thickness.");
+            Docs.PreviewCard().height(.px(200)).layout(.center).children({
+                ProgressCircleBasic.render();
             });
-            CodeBox(&hl_circle_basic, "ProgressCircle");
+            CodeBox(&hl_circle, "ProgressCircleBasic");
 
-            // ============================================================
-            // ANIMATED PROGRESS BAR
-            // ============================================================
-            exampleLabel("Animated Progress Bar");
-            sectionDesc("A progress bar with animated updates using interval-based progression.");
-            PreviewCard().children({
-                Button(startAnimation, .{})
-                    .border(.round(.palette(.border_color_light), .all(4)))
-                    .padding(.xy(12, 8))
-                    .background(.palette(.background))
-                    .children({
-                    Text("Start Animation")
-                        .font(14, 300, .palette(.text_color))
-                        .fontFamily("IBM Plex Mono,monospace")
-                        .end();
-                });
-                bar_with_label.render();
+            Docs.exampleLabel("Animated Progress Bar");
+            Docs.sectionDesc("updateProgress, called on an interval, runs the bar up to 100%.");
+            Docs.PreviewCard().height(.px(200)).layout(.center).children({
+                ProgressBarAnimated.render();
             });
-            CodeBox(&hl_bar_animated, "ProgressBar Animation");
+            CodeBox(&hl_bar_animated, "ProgressBarAnimated");
 
-            // ============================================================
-            // PROGRESS CIRCLE WITH LABEL
-            // ============================================================
-            exampleLabel("Progress Circle with Label");
-            sectionDesc("A circular progress indicator displaying the percentage value.");
-            PreviewCard()
-                .direction(.row)
-                .spacing(16)
-                .children({
-                Button(progressCircleToggle, .{})
-                    .padding(.xy(12, 8))
-                    .background(.palette(.tint))
-                    .children({
-                    Text("Toggle Progress")
-                        .font(14, 300, .palette(.background))
-                        .fontFamily("IBM Plex Mono,monospace")
-                        .end();
-                });
-                circle_with_label.render();
+            Docs.exampleLabel("Progress Circle with Label");
+            Docs.sectionDesc("The percentage in the middle, kept up to date.");
+            Docs.PreviewCard().height(.px(200)).layout(.center).children({
+                ProgressCircleLabel.render();
             });
-            CodeBox(&hl_circle_label, "ProgressCircle Label");
+            CodeBox(&hl_circle_label, "ProgressCircleLabel");
 
-            // ============================================================
-            // API REFERENCE
-            // ============================================================
-            sectionTitle("API Reference");
+            Docs.sectionTitle("API Reference");
 
-            exampleLabel("ProgressBar Initialization");
-            sectionDesc("Create a progress bar with custom dimensions and colors.");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\var bar = ProgressBar.init(allocator, .{
-                    \\    .width = 128,        // Width in pixels
-                    \\    .height = 6,         // Height in pixels
-                    \\    .color = .palette(.tint),              // Fill color
-                    \\    .background = .transparentize(...),    // Track color
-                    \\});
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            Docs.exampleLabel("ProgressBar and ProgressCircle");
+            Docs.sectionDesc("Make one in your init, set its value, and render it.");
+            CodeBox(&hl_api, "Progress");
 
-            exampleLabel("ProgressCircle Initialization");
-            sectionDesc("Create a circular progress indicator with configurable options.");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\var circle = ProgressCircle.init(allocator, .{
-                    \\    .size = 120,                           // Diameter in pixels
-                    \\    .stroke_width = 10,                    // Ring thickness
-                    \\    .track_color = .palette(.highlight_color),
-                    \\    .color = .palette(.text_color),        // Progress color
-                    \\    .clockwise = true,                     // Direction
-                    \\    .show_label = true,                    // Show percentage
-                    \\    .label_font_size = 12,                 // Label size
-                    \\    .label_color = .palette(.text_color),
-                    \\});
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            Docs.exampleLabel("ProgressBar.Config");
+            Docs.sectionDesc("Passed to init.");
+            Docs.ApiBox("ProgressBar.Config", &bar_config);
 
-            exampleLabel("Setting Progress");
-            sectionDesc("Set or update the progress value (0.0 to 1.0).");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\// Set initial progress (no animation)
-                    \\bar.setProgress(0.5);       // 50%
-                    \\circle.setProgress(0.75);   // 75%
-                    \\
-                    \\// Update progress (with animation)
-                    \\bar.updateProgress(0.8);    // Animate to 80%
-                    \\circle.updateProgress(0.9); // Animate to 90%
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            Docs.exampleLabel("ProgressCircle.Config");
+            Docs.sectionDesc("Passed to init.");
+            Docs.ApiBox("ProgressCircle.Config", &circle_config);
 
-            exampleLabel("Render Methods");
-            sectionDesc("Render the progress component.");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\bar.render();      // Render the progress bar
-                    \\circle.render();   // Render the progress circle
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
-
-            exampleLabel("Animation with Intervals");
-            sectionDesc("Create smooth progress animations using Vapor intervals.");
-            Row()
-                .width(.percent(100))
-                .padding(.all(16))
-                .background(Theme.code_bg)
-                .scroll(.scrollX())
-                .border(.round(Theme.border, .all(8)))
-                .children({
-                Text(
-                    \\// Start animation loop (60ms interval)
-                    \\Vapor.lib.loopInterval("my-progress", 60, updateFn, .{});
-                    \\
-                    \\fn updateFn() void {
-                    \\    if (bar.progress >= 1.0) {
-                    \\        Vapor.lib.cancelTimeout("my-progress");
-                    \\        return;
-                    \\    }
-                    \\    bar.updateProgress(bar.progress + 0.01);
-                    \\}
-                )
-                    .font(14, 400, .hex("#e4e4e7"))
-                    .fontFamily("IBM Plex Mono,monospace")
-                    .end();
-            });
+            Docs.exampleLabel("Behaviour");
+            Docs.sectionDesc("What both do for you.");
+            Docs.ApiBox("Behaviour", &behaviours);
         });
     });
 }

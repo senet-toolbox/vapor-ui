@@ -25,17 +25,10 @@ var hl_basic: SyntaxHighlighter = undefined;
 var hl_custom_render: SyntaxHighlighter = undefined;
 var hl_api: SyntaxHighlighter = undefined;
 
-fn highlighter(source: []const u8) SyntaxHighlighter {
-    var hl = SyntaxHighlighter.init(Vapor.arena(.persist));
-    hl.show_toolbar = true;
-    hl.parse(source) catch unreachable;
-    return hl;
-}
-
 pub fn init() void {
-    hl_basic = highlighter(@embedFile("examples/BasicAccordion.zig"));
-    hl_custom_render = highlighter(@embedFile("examples/CustomAccordion.zig"));
-    hl_api = highlighter(
+    hl_basic = Docs.highlighter(@embedFile("examples/BasicAccordion.zig"));
+    hl_custom_render = Docs.highlighter(@embedFile("examples/CustomAccordion.zig"));
+    hl_api = Docs.highlighter(
         \\const Accordion = @import("opaque-ui").Accordion;
         \\
         \\// Keeps the items, which keep whether each is open.
@@ -91,12 +84,7 @@ pub fn render() void {
         .children({
         Hero("accordion-ui", "Highly customizable, accessible collapsible sections for organizing content.");
 
-        Stack()
-            .width(.percent(50))
-            .responsive(.mobile, .{ .size = .w(.percent(92)) })
-            .spacing(12)
-            .padding(.{ .bottom = 120 })
-            .children({
+        Docs.Content().children({
             Docs.exampleLabel("Basic Accordion");
             Docs.sectionDesc("Each item has a title and some text. Two small functions of yours draw its header and its panel.");
             Docs.PreviewCard().children({
