@@ -1142,7 +1142,7 @@ const tests = {
   },
 
   async "chart: its labels and grid follow the theme"(p) {
-    for (const [scheme, text] of [["light", "rgb(0, 0, 0)"], ["dark", "rgb(234, 234, 234)"]]) {
+    for (const [scheme, text, page] of [["light", "rgb(0, 0, 0)", "rgb(255, 255, 255)"], ["dark", "rgb(234, 234, 234)", "rgb(17, 17, 17)"]]) {
       await p.colorScheme(scheme);
       await p.goto("/ui/components/chart");
       const svg = `document.querySelector("svg:has(.series-line)")`;
@@ -1153,6 +1153,53 @@ const tests = {
       })()`);
       for (const [what, color] of Object.entries(got))
         assert(color === text, `in ${scheme} mode the chart's ${what} text is ${color}, not ${text}`);
+      // A dot's ring is cut from the background, not drawn in white.
+      const ring = await p.evaluate(`getComputedStyle(${svg}.querySelector(".series-dot")).stroke`);
+      assert(ring === page, `in ${scheme} mode a dot's ring is ${ring}, on a ${page} page`);
+    }
+    await p.colorScheme(null);
+  },
+
+  async "chart: a pie's legend names each slice, in its colour"(p) {
+    await p.goto("/ui/components/chart");
+    await p.clickText("Pie Charts");
+    const svg = `document.querySelector("svg:has(.pie-slice)")`;
+    await p.waitFor(`!!${svg}`, "the pie chart");
+    const got = await p.evaluate(`(() => {
+      const s = ${svg};
+      return {
+        names: [...s.querySelectorAll(".legend-text")].map((e) => e.textContent),
+        swatches: [...s.querySelectorAll('rect[id^="chart-legend-"]')].map((e) => e.getAttribute("fill")),
+        slices: [...s.querySelectorAll(".pie-slice")].map((e) => e.getAttribute("fill")),
+      };
+    })()`);
+    assert(JSON.stringify(got.names) === JSON.stringify(["Direct", "Search", "Social", "Email"]), `the pie's legend reads ${JSON.stringify(got.names)}`);
+    assert(JSON.stringify(got.swatches) === JSON.stringify(got.slices), `the legend's colours ${JSON.stringify(got.swatches)} aren't the slices' ${JSON.stringify(got.slices)}`);
+  },
+
+  async "chart: an area chart's fill is see-through"(p) {
+    await p.goto("/ui/components/chart");
+    await p.clickText("Area Charts");
+    await p.waitFor(`!!document.querySelector(".series-area")`, "the area chart");
+    const opacity = await p.evaluate(`getComputedStyle(document.querySelector(".series-area")).fillOpacity`);
+    assert(opacity === "0.3", `the area's fill-opacity is ${opacity}`);
+  },
+
+  async "chart: the bar chart's colours stand apart, and from the page, in both themes"(p) {
+    const lum = (rgb) => {
+      const [r, g, b] = rgb.match(/\d+/g).map(Number).map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const contrast = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
+    for (const [scheme, page] of [["light", "rgb(255, 255, 255)"], ["dark", "rgb(17, 17, 17)"]]) {
+      await p.colorScheme(scheme);
+      await p.goto("/ui/components/chart");
+      await p.clickText("Bar Charts");
+      const svg = `document.querySelector("svg:has(.stacked-bar)")`;
+      await p.waitFor(`!!${svg}`, "the bar chart");
+      const swatches = await p.evaluate(`[...${svg}.querySelectorAll('rect[id^="chart-legend-"]')].map((e) => getComputedStyle(e).fill)`);
+      assert(new Set(swatches).size === swatches.length, `in ${scheme} mode the legend repeats a colour: ${swatches.join(", ")}`);
+      for (const c of swatches) assert(contrast(c, page) >= 2, `in ${scheme} mode ${c} barely shows on ${page} (contrast ${contrast(c, page).toFixed(2)})`);
     }
     await p.colorScheme(null);
   },
