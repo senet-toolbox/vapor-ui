@@ -313,6 +313,22 @@ var show_user_profile: bool = false;
 var show_new_chat_modal: bool = false;
 var is_typing: bool = false;
 
+/// Messages per page: the thread renders the newest page, and an older one
+/// each time it is scrolled up to the top of what is there.
+const page_size = 50;
+/// The index of the first message rendered in the open conversation.
+var window_start: usize = 0;
+/// The thread is at (or near) its newest message, so new ones keep it there.
+var at_bottom: bool = true;
+/// Messages that arrived while the thread was scrolled up.
+var unseen: usize = 0;
+/// The thread's content height before an older page went in above it, to
+/// keep the reader's place.
+var anchor_height: ?f32 = null;
+/// How many messages the open conversation had when it opened; those after
+/// are new, and animate in.
+var opened_len: usize = 0;
+
 // --- Filter State ---
 var filter_unread: bool = false;
 var filter_pinned: bool = false;
@@ -435,6 +451,35 @@ fn initSampleData() void {
     const base_time = Vapor.Kit.timestamp() - 3600; // 1 hour ago
     const conv1_messages = getMessagesForConversation(1);
 
+    // Older history, so the thread has pages to scroll back through.
+    const older = [_][]const u8{
+        "Morning! Did you see the latest build?",
+        "Yes, the dashboard loads much faster now",
+        "Nice, the caching change really helped",
+        "Should we move the standup to 10?",
+        "Works for me",
+        "I pushed the fixes for the login flow",
+        "Great, I'll review them after lunch",
+        "The client liked the new colours",
+        "Told you the darker theme would win",
+        "Can you check the staging deploy?",
+        "On it",
+        "All green on staging",
+    };
+    for (0..113) |i| {
+        conv1_messages.append(.{
+            .id = 1000 + i,
+            .conversation_id = 1,
+            .sender_id = if (i % 2 == 0) 2 else 1,
+            .content = older[i % older.len],
+            .message_type = .text,
+            .timestamp = base_time - @as(i64, @intCast(113 - i)) * 300,
+            .is_read = true,
+            .reactions = Vapor.array(Reaction, .persist),
+            .state = if (i % 2 == 0) .delivered else .read,
+        }) catch {};
+    }
+
     conv1_messages.appendSlice(&.{
         .{ .id = 1, .conversation_id = 1, .sender_id = 2, .content = "Hey! How's the project going?", .message_type = .text, .timestamp = base_time, .is_read = true, .reactions = Vapor.array(Reaction, .persist), .state = .delivered },
         .{ .id = 2, .conversation_id = 1, .sender_id = 1, .content = "Going well! Just finished the main features", .message_type = .text, .timestamp = base_time + 120, .is_read = true, .reactions = Vapor.array(Reaction, .persist), .state = .read },
@@ -446,6 +491,8 @@ fn initSampleData() void {
     }) catch |err| Vapor.print(.err, "Failed to init messages: {any}", .{err});
 
     selected_conversation = &sample_conversations[0];
+    window_start = conv1_messages.items.len -| page_size;
+    opened_len = conv1_messages.items.len;
 }
 
 // =============================================================================
@@ -591,9 +638,58 @@ fn sendMessage() void {
     conv.last_message = local_msg.content;
     conv.last_message_time = formatRelativeTime(timestamp);
 
-    // Clear input and scroll to bottom
+    // Clear input and take the thread to the new message
     message_input = "";
-    Vapor.onLayout(autoScroll, .{});
+    trimWindow(msg_list.items.len);
+    Vapor.onLayout(scrollToEnd, .{true});
+
+    // With no server, the other person answers, so the demo has someone to
+    // talk to. A burst of messages gets one answer.
+    if (wss == null) {
+        Vapor.lib.cancelTimeout("chat-demo-typing");
+        Vapor.lib.cancelTimeout("chat-demo-reply");
+        Vapor.timeout("chat-demo-typing", 700, demoTyping, .{conv.id});
+        Vapor.timeout("chat-demo-reply", 2200, demoReply, .{conv.id});
+    }
+}
+
+const demo_replies = [_][]const u8{
+    "Got it, thanks!",
+    "Makes sense to me",
+    "Let me check and get back to you",
+    "Sounds good!",
+    "Ha, fair point",
+};
+var demo_reply_count: usize = 0;
+
+fn demoTyping(conv_id: usize) void {
+    const conv = selected_conversation orelse return;
+    if (conv.id != conv_id) return;
+    is_typing = true;
+    if (at_bottom) Vapor.onLayout(scrollToEnd, .{true});
+}
+
+/// The other person's answer, through the same path a server's would take.
+fn demoReply(conv_id: usize) void {
+    const conv = conversationById(conv_id) orelse return;
+    const other = if (conv.participants.len > 1) conv.participants[1] else return;
+    const content = demo_replies[demo_reply_count % demo_replies.len];
+    demo_reply_count += 1;
+    handleIncomingMessage(.{
+        .id = Vapor.fmtln("{d}", .{generateMessageId()}),
+        .conversation_id = Vapor.fmtln("{d}", .{conv_id}),
+        .sender_id = Vapor.fmtln("{d}", .{other.id}),
+        .content = content,
+        .timestamp = Vapor.Kit.timestamp(),
+        .msg_type = "message",
+    });
+}
+
+fn conversationById(conv_id: usize) ?*Conversation {
+    for (&sample_conversations) |*conv| {
+        if (conv.id == conv_id) return conv;
+    }
+    return null;
 }
 
 /// Send a WebSocket message over the wire
@@ -643,9 +739,15 @@ fn retryFailedMessages() void {
 }
 
 /// Generate a unique message ID
+var last_message_id: usize = 0;
+
+/// A new message's id: from the time, and never one already given, even
+/// for two messages in the same second.
 fn generateMessageId() usize {
     const timestamp: u64 = @intCast(Vapor.Kit.timestamp());
-    return @as(usize, @truncate(timestamp)) +% current_user.id;
+    const from_time = @as(usize, @truncate(timestamp)) +% current_user.id;
+    last_message_id = @max(last_message_id + 1, from_time);
+    return last_message_id;
 }
 
 // =============================================================================
@@ -750,7 +852,14 @@ fn handleIncomingMessage(ws_msg: WebSocketMessage) void {
     // Notify if not in this conversation
     if (selected_conversation) |conv| {
         if (conv.id == conv_id) {
-            Vapor.onLayout(autoScroll, .{});
+            // Followed only if the reader is at the newest; scrolled up,
+            // they keep their place and the button counts it.
+            if (at_bottom) {
+                trimWindow(msg_list.items.len);
+                Vapor.onLayout(scrollToEnd, .{true});
+            } else {
+                unseen += 1;
+            }
         } else {
             incrementUnreadCount(conv_id);
             Toast.info(.{ .title = "New Message", .description = ws_msg.content });
@@ -835,7 +944,7 @@ fn appendIncomingMessage(ws_msg: WebSocketMessage, sender_id: usize) void {
     };
 
     Toast.success(.{ .title = "New Message", .description = "" });
-    Vapor.onLayout(autoScroll);
+    Vapor.onLayout(scrollToEnd, .{true});
 }
 
 // =============================================================================
@@ -889,8 +998,12 @@ fn selectConversation(conv: *Conversation) void {
     // Send read receipts for unread messages
     markConversationAsRead(conv.id);
 
-    // Scroll to bottom
-    Vapor.onLayout(autoScroll, .{});
+    // Open at the newest page, at once
+    window_start = msg_list.items.len -| page_size;
+    opened_len = msg_list.items.len;
+    unseen = 0;
+    anchor_height = null;
+    Vapor.onLayout(scrollToEnd, .{false});
 }
 
 /// Load conversation history from server (placeholder for API integration)
@@ -938,14 +1051,56 @@ fn onMessageEnter(_: *Vapor.Event) void {
     sendMessage();
 }
 
-fn autoScroll() void {
+/// Takes the thread to its newest message: at once when a conversation
+/// opens, smoothly for a new message.
+fn scrollToEnd(smooth: bool) void {
     const height = scroll_container.scrollHeight();
-    scroll_container.scrollTo(.{ .top = height, .behavior = .smooth });
-    scroll_container.scrollToTop(height);
+    if (smooth) {
+        scroll_container.scrollTo(.{ .top = height, .behavior = .smooth });
+    } else {
+        scroll_container.scrollToTop(height);
+    }
+    at_bottom = true;
+    unseen = 0;
 }
 
-fn startAutoScroll() void {
-    Vapor.lib.runOnAnimationFrame(autoScroll, .{});
+fn jumpToNewest() void {
+    scrollToEnd(true);
+}
+
+/// At the newest message, the thread renders only the newest page again,
+/// rather than everything scrolled back through.
+fn trimWindow(len: usize) void {
+    if (!at_bottom) return;
+    if (len - @min(window_start, len) > 2 * page_size) window_start = len - page_size;
+}
+
+/// Tracks whether the reader is at the newest message, and puts the next
+/// older page above once they scroll near the top of what is there.
+fn onThreadScroll(_: *Vapor.Event) void {
+    const top = scroll_container.scrollTop();
+    const height = scroll_container.scrollHeight();
+    const view: f32 = @floatFromInt(scroll_container.getAttributeNumber("clientHeight"));
+    at_bottom = top + view >= height - 48;
+    if (at_bottom and unseen > 0) {
+        unseen = 0;
+        Vapor.cycle();
+    }
+    if (top < 200 and window_start > 0 and anchor_height == null) {
+        anchor_height = height;
+        window_start -|= page_size;
+        Vapor.onLayout(keepPlace, .{});
+        Vapor.cycle();
+    }
+}
+
+/// After an older page went in above, moves the scroll by as much as it
+/// added, so what the reader was looking at stays where it was.
+fn keepPlace() void {
+    const before = anchor_height orelse return;
+    anchor_height = null;
+    const added = scroll_container.scrollHeight() - before;
+    scroll_container.scrollToTop(scroll_container.scrollTop() + added);
 }
 
 fn toggleEmojiPicker() void {
@@ -1419,21 +1574,58 @@ fn renderChatArea() void {
             // Chat header
             renderChatHeader(conv);
 
-            // Messages area
+            // Messages area, with the new-messages button over its foot
             Stack()
-                .ref(&scroll_container)
                 .width(.percent(100))
                 .height(.grow)
-                .padding(.all(24))
-                .spacing(12)
-                .scroll(.scrollY())
+                .pos(.relative)
+                .inlineStyle("min-height: 0;", .{})
                 .children({
-                for (msg_list.items) |*msg| {
-                    renderMessage(msg);
-                }
+                Stack()
+                    .ref(&scroll_container)
+                    .width(.percent(100))
+                    .height(.percent(100))
+                    .padding(.all(24))
+                    .spacing(12)
+                    .scroll(.scrollY())
+                    // The place is kept by hand when older messages go in.
+                    .inlineStyle("overflow-anchor: none;", .{})
+                    // Opens at the newest message.
+                    .onMount(scrollToEnd, .{false})
+                    .onEvent(.scroll, onThreadScroll, .{})
+                    .children({
+                    // Only the newest messages, and older pages scrolled back to.
+                    const first = @min(window_start, msg_list.items.len);
+                    for (msg_list.items[first..], first..) |*msg, i| {
+                        renderMessage(msg, i >= opened_len);
+                    }
 
-                if (is_typing) {
-                    renderTypingIndicator();
+                    if (is_typing) {
+                        renderTypingIndicator();
+                    }
+                });
+
+                if (unseen > 0) {
+                    Row()
+                        .pos(.bl(.px(12), .percent(50), .absolute))
+                        .inlineStyle("transform: translateX(-50%);", .{})
+                        .children({
+                        Button(jumpToNewest, .{})
+                            .ariaLabel("Jump to new messages")
+                            .padding(.xy(14, 6))
+                            .background(.palette(.tint))
+                            .border(.round(.transparent, .all(16)))
+                            .layout(.center)
+                            .spacing(6)
+                            .pointer()
+                            .shadow(Vapor.Types.NewShadow.init().drop(0, 2, 8, .transparentize(.black, 0.3)))
+                            .children({
+                            TextFmt("\u{2193} {d} new message{s}", .{ unseen, if (unseen == 1) "" else "s" })
+                                .font(12, 600, .palette(.background))
+                                .fontFamily("Montserrat")
+                                .end();
+                        });
+                    });
                 }
             });
 
@@ -1597,15 +1789,19 @@ fn renderEmptyState() void {
 // RENDER - MESSAGE COMPONENTS
 // =============================================================================
 
-fn renderMessage(msg: *Message) void {
+/// A message, keyed by its id so its element stays its own when older
+/// messages go in above. Only `fresh` ones (sent or received since the
+/// conversation opened) animate in; history loading back in does not.
+fn renderMessage(msg: *Message, fresh: bool) void {
     const is_own_message = msg.sender_id == current_user.id;
 
-    Row()
+    var row = Row()
+        .id(Vapor.fmtln("chat-msg-{d}", .{msg.id}))
         .width(.percent(100))
         .minHeight(.px(52))
-        .layout(if (is_own_message) .top_right else .top_left)
-        .animationEnter("chat-message-enter")
-        .children({
+        .layout(if (is_own_message) .top_right else .top_left);
+    if (fresh) row = row.animationEnter("chat-message-enter");
+    row.children({
         Row()
             .direction(.column)
             .spacing(4)

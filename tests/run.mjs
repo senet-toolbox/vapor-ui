@@ -2205,6 +2205,58 @@ const tests = {
     await p.viewport(1440, 900);
   },
 
+  async "chat: only the newest messages render; scrolling up loads older ones in place"(p) {
+    await p.goto("/ui/templates");
+    const box = `document.querySelector('textarea[aria-label="Type a message..."]')`;
+    await p.evaluate(`${box}.scrollIntoView({ block: "center" })`);
+    const thread = `(() => { let w = ${box}; while (w && !w.querySelector('[aria-label="New chat"]')) w = w.parentElement; return [...w.querySelectorAll("div")].find((d) => /auto|scroll/.test(getComputedStyle(d).overflowY) && d.textContent.includes("project going")); })()`;
+    await sleep(300);
+    const count = () => p.evaluate(`${thread}.children.length`);
+    assert((await count()) === 50, `the thread renders ${await count()} messages, not the newest 50 of 120`);
+    assert(await p.evaluate(`${thread}.scrollTop + ${thread}.clientHeight >= ${thread}.scrollHeight - 2`), "the thread doesn't open at its newest message");
+    // Scroll to the top of what is there: the next page goes in above, and
+    // the message that was first stays where it was on screen, the same
+    // element, without animating in again.
+    const loadOlder = async (expect) => {
+      const top = await p.evaluate(`(() => { const t = ${thread}; t.scrollTop = 0; window.__first = t.children[0]; return window.__first.getBoundingClientRect().top; })()`);
+      await p.waitFor(`${thread}.children.length === ${expect}`, `${expect} messages after scrolling up`);
+      await sleep(100);
+      const now = await p.evaluate(`(() => { const e = window.__first; return { kept: e.isConnected, top: e.getBoundingClientRect().top, anim: e.getAnimations().length }; })()`);
+      assert(now.kept, "the message that was on screen was replaced by a new element");
+      assert(Math.abs(now.top - top) <= 1, `loading older messages moved the reader's place from ${top} to ${now.top}`);
+      assert(now.anim === 0, "the message on screen animated in again");
+    };
+    await loadOlder(100);
+    await loadOlder(120);
+    await p.evaluate(`${thread}.scrollTop = 0`);
+    await sleep(300);
+    assert((await count()) === 120, `with nothing older left the thread has ${await count()} messages`);
+    assert(await p.evaluate(`${thread}.textContent.includes("Morning! Did you see the latest build?")`), "the oldest message never showed");
+  },
+
+  async "chat: a reply while scrolled up keeps your place, and a button takes you to it"(p) {
+    await p.goto("/ui/templates");
+    const box = `document.querySelector('textarea[aria-label="Type a message..."]')`;
+    await p.evaluate(`${box}.scrollIntoView({ block: "center" })`);
+    const thread = `(() => { let w = ${box}; while (w && !w.querySelector('[aria-label="New chat"]')) w = w.parentElement; return [...w.querySelectorAll("div")].find((d) => /auto|scroll/.test(getComputedStyle(d).overflowY) && d.textContent.includes("project going")); })()`;
+    await p.evaluate(`${box}.focus()`);
+    await p.typeKeys("Are you around later?");
+    await p.press("Enter");
+    await p.waitFor(`${box}.value === ""`, "the message to send");
+    await sleep(500);
+    // Up a screen or so, to read back, before the demo's reply comes.
+    const before = await p.evaluate(`(() => { const t = ${thread}; t.scrollTop = t.scrollTop - 600; return t.scrollTop; })()`);
+    const button = `document.querySelector('[aria-label="Jump to new messages"]')`;
+    await p.waitFor(`!!${button}`, "a Jump to new messages button when the reply comes", 6000);
+    const after = await p.evaluate(`${thread}.scrollTop`);
+    assert(Math.abs(after - before) <= 2, `the reply moved the thread from ${before} to ${after}`);
+    const label = await p.evaluate(`${button}.textContent`);
+    assert(label === "\u2193 1 new message", `the button reads ${JSON.stringify(label)}`);
+    await p.clickSelector('[aria-label="Jump to new messages"]');
+    await p.waitFor(`${thread}.scrollTop + ${thread}.clientHeight >= ${thread}.scrollHeight - 2`, "the button to take the thread to the newest message");
+    await p.waitFor(`!${button}`, "the button to go");
+  },
+
   async "chat: the message box's text follows the theme"(p) {
     const box = `document.querySelector('textarea[aria-label="Type a message..."]')`;
     for (const [scheme, text] of [["light", "rgb(0, 0, 0)"], ["dark", "rgb(234, 234, 234)"]]) {
