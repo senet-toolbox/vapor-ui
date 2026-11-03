@@ -2,8 +2,9 @@ const std = @import("std");
 const Vapor = @import("vapor");
 const Chart = @import("opaque-ui").Chart;
 
-// Drag a box over a chart to zoom into it. Double-click the chart, or press
-// the Reset zoom button it shows, to zoom back out.
+// Drag across a chart to zoom into that stretch of x; the y axis fits the
+// points inside it. Double-click the chart, or press the Reset zoom button
+// it shows, to zoom back out.
 var chart: Chart = undefined;
 
 const sales = [_]Chart.Point{
@@ -19,13 +20,15 @@ fn onZoom(x_min: f64, x_max: f64, y_min: f64, y_max: f64) void {
 }
 
 pub fn init() void {
-    chart = Chart.init(Vapor.arena(.persist), .{ .height = 400 });
+    chart = Chart.init(Vapor.arena(.persist), .{
+        .height = 400,
+        // .xy drags a box on both axes; .none turns zooming off.
+        .zoom = .x,
+    });
     chart.addSeries(.line, "Sales", &sales, .{}) catch unreachable;
     chart.xAxis(.{ .label = "Month" });
     chart.yAxis(.{ .label = "USD ($)" });
     chart.onendselection = onZoom;
-    // Or turn zooming off:
-    // chart.zoom_enabled = false;
     chart.build() catch unreachable;
 }
 

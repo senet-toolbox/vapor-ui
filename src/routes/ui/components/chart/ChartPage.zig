@@ -9,6 +9,7 @@ const Opaque = @import("opaque-ui");
 const Tabs = Opaque.Tabs;
 const Chart = Opaque.Chart;
 const SyntaxHighlighter = @import("vaporize").SyntaxHighlighter;
+const std = @import("std");
 
 var chart: Chart = undefined;
 var requests_chart: Chart = undefined;
@@ -19,12 +20,14 @@ var hl_basic: SyntaxHighlighter = undefined;
 var hl_pie: SyntaxHighlighter = undefined;
 var hl_zoom: SyntaxHighlighter = undefined;
 var hl_style: SyntaxHighlighter = undefined;
+var hl_legend: SyntaxHighlighter = undefined;
+var hl_format: SyntaxHighlighter = undefined;
+var hl_reference: SyntaxHighlighter = undefined;
+var hl_api: SyntaxHighlighter = undefined;
 
-fn highlighter(comptime source: []const u8) SyntaxHighlighter {
-    var hl = SyntaxHighlighter.init(Vapor.arena(.persist));
-    hl.show_toolbar = true;
-    hl.parse(source) catch unreachable;
-    return hl;
+// The area chart's ticks and tooltip read in dollars.
+fn dollars(value: f64, buf: []u8) []const u8 {
+    return std.fmt.bufPrint(buf, "${d:.0}", .{value}) catch "";
 }
 
 const data = [_]Chart.Point{
@@ -205,8 +208,9 @@ pub fn init() void {
 
     area_chart.addSeries(.area, "Sales", &data, .{ .color = .palette(.tint) }) catch unreachable;
     area_chart.xAxis(.{ .label = "Month", .tick_count = 6 });
-    area_chart.yAxis(.{ .label = "USD ($)", .tick_count = 5 });
+    area_chart.yAxis(.{ .label = "USD ($)", .tick_count = 5, .formatter = dollars });
     area_chart.legend(.{ .position = .top_right, .direction = .row });
+    area_chart.reference(.{ .value = 100, .label = "Target" }) catch unreachable;
     area_chart.build() catch unreachable;
 
     // Initialize chart
@@ -239,13 +243,92 @@ pub fn init() void {
 
     requests_chart.build() catch unreachable;
 
-    hl_basic = highlighter(@embedFile("examples/BasicChart.zig"));
-    hl_pie = highlighter(@embedFile("examples/PieChart.zig"));
-    hl_zoom = highlighter(@embedFile("examples/ChartZoom.zig"));
-    hl_style = highlighter(@embedFile("examples/ChartStyle.zig"));
+    hl_basic = Docs.highlighter(@embedFile("examples/BasicChart.zig"));
+    hl_pie = Docs.highlighter(@embedFile("examples/PieChart.zig"));
+    hl_zoom = Docs.highlighter(@embedFile("examples/ChartZoom.zig"));
+    hl_style = Docs.highlighter(@embedFile("examples/ChartStyle.zig"));
+    hl_legend = Docs.highlighter(@embedFile("examples/ChartLegend.zig"));
+    hl_format = Docs.highlighter(@embedFile("examples/ChartFormat.zig"));
+    hl_reference = Docs.highlighter(@embedFile("examples/ChartReference.zig"));
+    hl_api = Docs.highlighter(
+        \\const Chart = @import("opaque-ui").Chart;
+        \\
+        \\pub fn init(allocator: std.mem.Allocator, config: Config) Chart
+        \\pub fn addSeries(self: *Chart, series_type: SeriesType, name: []const u8, data: []const Point, options: SeriesOptions) !void
+        \\pub fn xAxis(self: *Chart, config: AxisConfig) void
+        \\pub fn yAxis(self: *Chart, config: AxisConfig) void
+        \\pub fn legend(self: *Chart, config: LegendConfig) void
+        \\pub fn reference(self: *Chart, ref: Reference) !void
+        \\// Lays the chart out; call it once set up, and after changing it.
+        \\pub fn build(self: *Chart) !void
+        \\pub fn render(self: *Chart) void
+        \\
+        \\// New data for named series, drawn without a full rebuild.
+        \\pub fn updateSeries(self: *Chart, series: []const SeriesData) void
+        \\pub fn isShown(self: *const Chart, index: usize) bool
+        \\pub fn setShown(self: *Chart, index: usize, shown: bool) void
+        \\pub fn resetZoom(self: *Chart) void
+        \\
+        \\// Called with the ranges a zoom went to.
+        \\onendselection: ?*const fn (x_min: f64, x_max: f64, y_min: f64, y_max: f64) void
+    );
 
     Vapor.Page(.{ .src = @src() }, render, null);
 }
+
+const config_fields = [_]Docs.Field{
+    .{ .name = "height", .type = "u32", .default = "400", .desc = "The plot's height in pixels. Its width follows its parent's." },
+    .{ .name = "margin", .type = "Margin", .default = ".{ .top = 20, .right = 20, .bottom = 40, .left = 50 }", .desc = "Room around the plot for the axes' labels." },
+    .{ .name = "palette", .type = "Palette", .default = "category10", .desc = "Colours for series, and a pie's slices, that set none of their own." },
+    .{ .name = "zoom", .type = "ZoomMode", .default = ".x", .desc = "What a drag zooms: .x a stretch of x, the y axis fitted to it; .xy a box on both axes; .none nothing." },
+    .{ .name = "animate", .type = "bool", .default = "true", .desc = "The chart fades in when it first shows; never for someone whose system asks for less motion." },
+    .{ .name = "empty_text", .type = "[]const u8", .default = "\"No data\"", .desc = "Shown in place of the plot while no series has a point." },
+    .{ .name = "tooltip_total", .type = "?bool", .default = "null", .desc = "A Total row in the tooltip. Unset, only stacked bars have one." },
+    .{ .name = "show_line", .type = "bool", .default = "false", .desc = "A vertical line through the hovered x." },
+    .{ .name = "background", .type = "?Color", .default = "null", .desc = "Fills the chart's box." },
+};
+
+const axis_fields = [_]Docs.Field{
+    .{ .name = "label", .type = "?[]const u8", .default = "null", .desc = "The axis's name, beside it, and before the x value in the tooltip." },
+    .{ .name = "tick_count", .type = "u32", .default = "5", .desc = "About how many ticks; they land on round numbers." },
+    .{ .name = "formatter", .type = "?Formatter", .default = "null", .desc = "fn (value: f64, buf: []u8) []const u8. Writes tick labels, and for the y axis the tooltip's values. Unset, numbers get the decimals their ticks need, and an x with a point label shows the label." },
+    .{ .name = "grid", .type = "bool", .default = "true", .desc = "Lines across the plot at the y axis's ticks." },
+    .{ .name = "scale", .type = "ScaleConfig", .default = ".{}", .desc = "Linear or log, and a domain: .auto, .auto_zero, or .manual for fixed ends." },
+    .{ .name = "color", .type = "Color", .default = ".palette(.text_color)", .desc = "The axis line's colour." },
+};
+
+const series_fields = [_]Docs.Field{
+    .{ .name = "color", .type = "?Color", .default = "null", .desc = "The series' colour; unset, the palette's next." },
+    .{ .name = "stroke_width", .type = "f32", .default = "2", .desc = "A line's thickness." },
+    .{ .name = "show_dots", .type = "bool", .default = "true", .desc = "A dot on each point of a line or area. The hovered one grows." },
+    .{ .name = "fill_opacity", .type = "f64", .default = "0.3", .desc = "How solid an area's fill is." },
+    .{ .name = "bar_radius", .type = "f64", .default = "0", .desc = "Rounds a bar's corners." },
+    .{ .name = "hovered_color", .type = "?Color", .default = "null", .desc = "A point's colour while hovered." },
+    .{ .name = "inner_radius_ratio", .type = "f64", .default = "0", .desc = "A pie's hole, as a share of its radius; .donut uses 0.5 when this is unset." },
+};
+
+const legend_fields = [_]Docs.Field{
+    .{ .name = "position", .type = "Position", .default = ".top_right", .desc = "Which corner it takes: .top_left, .top_right, .bottom_left or .bottom_right." },
+    .{ .name = "direction", .type = "Direction", .default = ".row", .desc = ".row runs above or below the plot, .column down its side." },
+    .{ .name = "fields", .type = "[]const LegendField", .default = "&.{}", .desc = "More items after the series'. On a stacked bar chart they name the segments after the first, and toggle them." },
+    .{ .name = "text_color", .type = "?Color", .default = "null", .desc = "The items' text; unset, the theme's." },
+};
+
+const reference_fields = [_]Docs.Field{
+    .{ .name = "axis", .type = "enum { x, y }", .default = ".y", .desc = ".y lies across the plot at a y value, .x stands at an x value." },
+    .{ .name = "value", .type = "f64", .desc = "Where it is." },
+    .{ .name = "to", .type = "?f64", .default = "null", .desc = "Set, it shades a band from value to here." },
+    .{ .name = "label", .type = "?[]const u8", .default = "null", .desc = "Written at its end." },
+    .{ .name = "color", .type = "?Color", .default = "null", .desc = "Unset, the theme's text colour." },
+    .{ .name = "dashed", .type = "bool", .default = "true", .desc = "A dashed line, or a solid one." },
+};
+
+const behaviours = [_]Docs.Field{
+    .{ .name = "Tooltip", .desc = "Over the plot it names the nearest x and lists each series' value there; on a pie, the slice's value and share. It hides over the margins, sits beside the point on the side with room, and never takes a click." },
+    .{ .name = "Zoom", .desc = "Drag to zoom; double-click or Reset zoom to go back. Reset zoom sits outside the plot, so pointing at it hides the tooltip and pressing it starts no drag." },
+    .{ .name = "Legend", .desc = "Buttons that hide and show their series, with aria-pressed, so a keyboard and a screen reader can use them too. The axes fit what is shown." },
+    .{ .name = "Size", .desc = "Follows its parent's width as the page resizes." },
+};
 
 pub fn render() void {
     Row()
@@ -316,12 +399,53 @@ pub fn render() void {
             CodeBox(&hl_pie, "PieChart");
 
             Docs.sectionTitle("Zooming");
-            Docs.sectionDesc("Drag a box over a chart to zoom into it. Double-click, or press Reset zoom, to zoom back out. Try it on the charts above.");
+            Docs.sectionDesc("Drag across a chart to zoom into that stretch; the y axis fits what is in it. Double-click, or press Reset zoom, to zoom back out. Try it on the charts above.");
             CodeBox(&hl_zoom, "ChartZoom");
+
+            Docs.sectionTitle("Legend");
+            Docs.sectionDesc("Click an item to hide its series and again to bring it back; point at one to fade the rest. Try it on the bar chart's 4XX.");
+            CodeBox(&hl_legend, "ChartLegend");
+
+            Docs.sectionTitle("Formatting values");
+            Docs.sectionDesc("Write ticks and tooltip values your way, as dollars, percentages or dates. The area chart above shows dollars.");
+            CodeBox(&hl_format, "ChartFormat");
+
+            Docs.sectionTitle("Reference lines");
+            Docs.sectionDesc("Mark a target, a limit or a range on the plot. The area chart above marks its target.");
+            CodeBox(&hl_reference, "ChartReference");
 
             Docs.sectionTitle("Styling");
             Docs.sectionDesc("Labels, grid lines and legend text follow your theme in light and dark mode. Colours, fills, lines and dots are set per chart, axis or series.");
             CodeBox(&hl_style, "ChartStyle");
+
+            Docs.sectionTitle("API Reference");
+
+            Docs.exampleLabel("Chart");
+            Docs.sectionDesc("Set up once in init, then rendered each frame. It keeps its zoom, legend and tooltip itself.");
+            CodeBox(&hl_api, "Chart");
+
+            Docs.exampleLabel("Config");
+            Docs.sectionDesc("Passed to init.");
+            Docs.ApiBox("Config", &config_fields);
+
+            Docs.exampleLabel("AxisConfig");
+            Docs.sectionDesc("Passed to xAxis and yAxis.");
+            Docs.ApiBox("AxisConfig", &axis_fields);
+
+            Docs.exampleLabel("SeriesOptions");
+            Docs.sectionDesc("Passed to addSeries; the most used.");
+            Docs.ApiBox("SeriesOptions", &series_fields);
+
+            Docs.exampleLabel("LegendConfig");
+            Docs.ApiBox("LegendConfig", &legend_fields);
+
+            Docs.exampleLabel("Reference");
+            Docs.sectionDesc("Passed to reference.");
+            Docs.ApiBox("Reference", &reference_fields);
+
+            Docs.exampleLabel("Behaviour");
+            Docs.sectionDesc("What the chart does for you.");
+            Docs.ApiBox("Behaviour", &behaviours);
         });
     });
 }

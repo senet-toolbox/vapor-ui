@@ -298,6 +298,12 @@ function makePage(cdp, origin) {
       const features = scheme ? [{ name: "prefers-color-scheme", value: scheme }] : [];
       await cdp.send("Emulation.setEmulatedMedia", { features });
     },
+    // Whether the system asks for less motion, "reduce" or "no-preference";
+    // none for Chrome's own (headless Chrome reduces). Goto after.
+    async reducedMotion(value) {
+      const features = value ? [{ name: "prefers-reduced-motion", value }] : [];
+      await cdp.send("Emulation.setEmulatedMedia", { features });
+    },
     // How fast CSS animations play: 0.1 is ten times slower, 1 normal.
     async animationSpeed(rate) {
       await cdp.send("Animation.enable");
@@ -596,7 +602,7 @@ const tests = {
     // Each page, the API box it has first, and that box's first entry.
     const pages = {
       accordion: ["AccordionItem", "title"], alert: ["Alert", "content"], button: ["Defaults", "background"],
-      carousel: ["Options", "id"], checkbox: ["Parameters", "aria_label"], commandpalette: ["CommandPalette", "text"],
+      carousel: ["Options", "id"], chart: ["Config", "height"], checkbox: ["Parameters", "aria_label"], commandpalette: ["CommandPalette", "text"],
       datepicker: ["DatePicker", "start_date"], dialog: ["Item(T)", "value"], progress: ["ProgressBar.Config", "id"],
       radio: ["Group", "name"], select: ["Item", "value"], sidebar: ["SideBar", "groups"], slider: ["Slider", "min"],
       switch: ["Parameters", "aria_label"], table: ["Column(T)", "title"], tabs: ["Tabs", "tag"], tooltip: ["Options", "content"],
@@ -1204,6 +1210,230 @@ const tests = {
     await p.waitFor(`Math.abs(${svg}.querySelector(".series-line").getBoundingClientRect().width - ${full}) < 2`, "a double-click to zoom the chart back out");
   },
 
+  async "chart: pointing at Reset zoom hides the tooltip and nothing covers the button"(p) {
+    await p.goto("/ui/components/chart");
+    const svg = `document.querySelector("svg:has(.series-line)")`;
+    await p.waitFor(`!!${svg}`, "a line chart");
+    await p.evaluate(`${svg}.scrollIntoView({ block: "center" })`);
+    await sleep(200);
+    const plot = await p.evaluate(`(() => {
+      const s = ${svg}, x = s.querySelector("#chart-axis-x").getBoundingClientRect(), y = s.querySelector("#chart-axis-y").getBoundingClientRect();
+      return { left: y.left, right: x.right, top: y.top, bottom: x.bottom };
+    })()`);
+    const w = plot.right - plot.left, h = plot.bottom - plot.top;
+    await p.drag({ x: plot.left + w * 0.35, y: plot.top + h * 0.3 }, { x: plot.left + w * 0.6, y: plot.top + h * 0.7 });
+    const reset = `document.querySelector('button[aria-label="Reset zoom"]')`;
+    await p.waitFor(`!!${reset}`, "a Reset zoom button");
+    const tipShown = `(() => {
+      const t = [...${svg}.parentElement.parentElement.querySelectorAll("div")].filter((e) => /^Month \\d/.test(e.textContent) && e.textContent.includes("Sales")).pop();
+      return !!t && getComputedStyle(t).visibility === "visible";
+    })()`;
+    assert(await p.evaluate(tipShown), "no tooltip in the plot after zooming");
+    // Slide over from the plot to the button, as a hand would.
+    const btn = await p.evaluate(`(() => { const r = ${reset}.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; })()`);
+    const from = { x: plot.left + w * 0.6, y: plot.top + h * 0.7 };
+    for (let i = 1; i <= 6; i++) {
+      await p.mouseTo(from.x + ((btn.x - from.x) * i) / 6, from.y + ((btn.y - from.y) * i) / 6);
+    }
+    await sleep(100);
+    await p.waitFor(`!${tipShown}`, "the tooltip to go while the pointer is on Reset zoom");
+    assert(await p.evaluate(`${reset}.contains(document.elementFromPoint(${btn.x}, ${btn.y}))`), "something covers the Reset zoom button");
+    const zoomed = await p.evaluate(`Math.round(${svg}.querySelector(".series-line").getBoundingClientRect().width)`);
+    await p.clickSelector('button[aria-label="Reset zoom"]');
+    await p.waitFor(`!${reset}`, "the button to zoom the chart back out");
+    assert(await p.evaluate(`${svg}.querySelector(".series-line").getBoundingClientRect().width < ${zoomed}`), "the chart is still zoomed in");
+  },
+
+  async "chart: the tooltip shows only over the plot, and names the point it is at"(p) {
+    await p.goto("/ui/components/chart");
+    const svg = `document.querySelector("svg:has(.series-line)")`;
+    await p.waitFor(`!!${svg}`, "a line chart");
+    await p.evaluate(`${svg}.scrollIntoView({ block: "center" })`);
+    await sleep(200);
+    const plot = await p.evaluate(`(() => {
+      const s = ${svg}, x = s.querySelector("#chart-axis-x").getBoundingClientRect(), y = s.querySelector("#chart-axis-y").getBoundingClientRect();
+      return { left: y.left, right: x.right, top: y.top, bottom: x.bottom };
+    })()`);
+    const tip = `(() => {
+      const t = [...${svg}.parentElement.querySelectorAll("div")].filter((e) => /^Month \\d/.test(e.textContent) && getComputedStyle(e).pointerEvents === "none").pop();
+      return t && getComputedStyle(t).visibility === "visible" ? t.textContent : null;
+    })()`;
+    await p.mouseTo((plot.left + plot.right) / 2, (plot.top + plot.bottom) / 2);
+    await sleep(150);
+    const text = await p.evaluate(tip);
+    assert(text !== null, "no tooltip over the plot");
+    assert(/^Month \d+Sales\d+$/.test(text), `the tooltip reads ${JSON.stringify(text)}: not the point's x, its value, and no Total for one series`);
+    // Over the y axis's labels, outside the plot.
+    await p.mouseTo(plot.left - 20, (plot.top + plot.bottom) / 2);
+    await sleep(150);
+    await p.waitFor(`${tip} === null`, "the tooltip to go over the axis labels");
+  },
+
+  async "chart: a drag zooms into an x range, and the y axis fits what is in it"(p) {
+    await p.goto("/ui/components/chart");
+    const svg = `document.querySelector("svg:has(.series-line)")`;
+    await p.waitFor(`!!${svg}`, "a line chart");
+    await p.evaluate(`${svg}.scrollIntoView({ block: "center" })`);
+    await sleep(200);
+    const ticks = (axis) => p.evaluate(`[...${svg}.querySelectorAll('[id^="chart-axis-${axis}-"][id$="-text-label"]')].map((e) => Number(e.textContent))`);
+    const plot = await p.evaluate(`(() => {
+      const s = ${svg}, x = s.querySelector("#chart-axis-x").getBoundingClientRect(), y = s.querySelector("#chart-axis-y").getBoundingClientRect();
+      return { left: y.left, right: x.right, top: y.top, bottom: x.bottom };
+    })()`);
+    const w = plot.right - plot.left, h = plot.bottom - plot.top;
+    const yBefore = await ticks("y");
+    // A flat drag: an x zoom needs no height.
+    await p.drag({ x: plot.left + w * 0.3, y: plot.top + h * 0.5 }, { x: plot.left + w * 0.5, y: plot.top + h * 0.5 });
+    await p.waitFor(`!!document.querySelector('button[aria-label="Reset zoom"]')`, "a flat drag to zoom");
+    await sleep(200);
+    const xAfter = await ticks("x"), yAfter = await ticks("y");
+    assert(Math.max(...xAfter) - Math.min(...xAfter) < 10, `the x axis runs ${xAfter.join(", ")}: not the dragged range`);
+    assert(Math.max(...yAfter) < Math.max(...yBefore), `the y axis still runs to ${Math.max(...yAfter)}: it doesn't fit the zoomed points`);
+  },
+
+  async "chart: the legend shows and hides a series, and pointing at one fades the rest"(p) {
+    await p.goto("/ui/components/chart");
+    await p.clickText("Bar Charts");
+    const svg = `document.querySelector("svg:has(.stacked-bar)")`;
+    await p.waitFor(`!!${svg}`, "the bar chart");
+    const item = (name) => `[...document.querySelectorAll("button[aria-pressed]")].find((b) => b.textContent === ${JSON.stringify(name)})`;
+    const count = () => p.evaluate(`${svg}.querySelectorAll(".stacked-bar.item-2").length`);
+    assert((await count()) > 0, "no 4XX segments to begin with");
+    await p.clickText("4XX");
+    await p.waitFor(`${item("4XX")}.getAttribute("aria-pressed") === "false"`, "4XX to read as off");
+    assert((await count()) === 0, "the 4XX segments are still drawn");
+    await p.clickText("4XX");
+    await p.waitFor(`${svg}.querySelectorAll(".stacked-bar.item-2").length > 0`, "4XX to come back");
+    await p.hoverText("5XX");
+    await sleep(250);
+    const faded = await p.evaluate(`(() => {
+      const s = ${svg};
+      return { other: getComputedStyle(s.querySelector(".stacked-bar.item-0")).opacity, own: getComputedStyle(s.querySelector(".stacked-bar.item-3")).opacity };
+    })()`);
+    assert(Number(faded.other) < 0.5 && faded.own === "1", `pointing at 5XX leaves the others at ${faded.other} and 5XX at ${faded.own}`);
+  },
+
+  async "chart: pointing at a pie's slice shows its value and share"(p) {
+    await p.goto("/ui/components/chart");
+    await p.clickText("Pie Charts");
+    const svg = `document.querySelector("svg:has(.pie-slice)")`;
+    await p.waitFor(`!!${svg}`, "the pie chart");
+    await sleep(600);
+    // The middle of the Search slice (40 of 100), measured along its arc.
+    const at = await p.evaluate(`(() => {
+      const s = [...${svg}.querySelectorAll(".pie-slice")][1], b = s.getBoundingClientRect();
+      const g = ${svg}.querySelector(".pie-slice").closest("g[transform]").getBoundingClientRect();
+      const cx = (g.left + g.right) / 2, cy = (g.top + g.bottom) / 2, r = (g.right - g.left) / 2 * 0.6;
+      const mid = -Math.PI / 2 + 2 * Math.PI * (0.35 + 0.2);
+      return { x: cx + r * Math.cos(mid), y: cy + r * Math.sin(mid) };
+    })()`);
+    await p.mouseTo(at.x, at.y);
+    await sleep(200);
+    const text = await p.evaluate(`(() => {
+      const t = [...document.querySelectorAll("div")].filter((e) => /^Traffic/.test(e.textContent) && getComputedStyle(e).pointerEvents === "none").pop();
+      return t && getComputedStyle(t).visibility === "visible" ? t.textContent : null;
+    })()`);
+    assert(text === "TrafficSearch40 (40%)", `over the Search slice the tooltip reads ${JSON.stringify(text)}`);
+  },
+
+  async "chart: a chart fades in when it first shows, and not again"(p) {
+    const svg = `document.querySelector("svg:has(.series-line)")`;
+    const anim = () => p.evaluate(`getComputedStyle(${svg}.querySelector("g.chart")).animationName`);
+    // Not for anyone who asks for less motion.
+    await p.reducedMotion("reduce");
+    await p.goto("/ui/components/chart");
+    await p.waitFor(`!!${svg}`, "a line chart");
+    assert((await anim()) === "none", `with less motion asked for, the chart still animates (${await anim()})`);
+    await p.reducedMotion("no-preference");
+    await p.goto("/ui/components/chart");
+    await p.waitFor(`!!${svg}`, "a line chart");
+    assert((await anim()) === "chart-fade", `the chart's first animation is ${await anim()}`);
+    // A fade, so nothing in it moves.
+    const moving = await p.evaluate(`[...${svg}.querySelectorAll("*")].filter((e) => getComputedStyle(e).animationName !== "none" && !e.matches("g.chart")).length`);
+    assert(moving === 0, `${moving} of the chart's parts animate on their own`);
+    await p.evaluate(`${svg}.scrollIntoView({ block: "center" })`);
+    await sleep(200);
+    const plot = await p.evaluate(`(() => {
+      const s = ${svg}, x = s.querySelector("#chart-axis-x").getBoundingClientRect(), y = s.querySelector("#chart-axis-y").getBoundingClientRect();
+      return { left: y.left, right: x.right, top: y.top, bottom: x.bottom };
+    })()`);
+    const w = plot.right - plot.left, h = plot.bottom - plot.top;
+    await p.drag({ x: plot.left + w * 0.3, y: plot.top + h * 0.5 }, { x: plot.left + w * 0.6, y: plot.top + h * 0.5 });
+    await p.waitFor(`!!document.querySelector('button[aria-label="Reset zoom"]')`, "the chart to zoom");
+    assert((await anim()) === "none", `after a zoom the chart fades in again (${await anim()})`);
+    await p.reducedMotion(null);
+  },
+
+  async "chart: the tooltip fades in where it belongs, and slides only between points"(p) {
+    await p.goto("/ui/components/chart");
+    const svg = `document.querySelector("svg:has(.series-line)")`;
+    await p.waitFor(`!!${svg}`, "a line chart");
+    await p.evaluate(`${svg}.scrollIntoView({ block: "center" })`);
+    await sleep(500);
+    const plot = await p.evaluate(`(() => {
+      const s = ${svg}, x = s.querySelector("#chart-axis-x").getBoundingClientRect(), y = s.querySelector("#chart-axis-y").getBoundingClientRect();
+      return { left: y.left, right: x.right, top: y.top, bottom: x.bottom };
+    })()`);
+    const w = plot.right - plot.left, h = plot.bottom - plot.top;
+    // Where the tooltip box is, each frame for a while, at a twentieth of the speed.
+    const track = `new Promise((done) => {
+      const t = [...${svg}.parentElement.querySelectorAll("div")].filter((e) => getComputedStyle(e).pointerEvents === "none" && e.style.transform).find((e) => /Sales/.test(e.textContent));
+      const frames = [], start = performance.now();
+      const tick = () => {
+        const r = t.getBoundingClientRect();
+        frames.push({ x: Math.round(r.left), y: Math.round(r.top), o: Number(getComputedStyle(t).opacity) });
+        if (performance.now() - start < 600) requestAnimationFrame(tick); else done(frames);
+      };
+      tick();
+    })`;
+    await p.animationSpeed(0.05);
+    // Shown once and hidden, so it has somewhere else to have been.
+    await p.mouseTo(plot.left + w * 0.2, plot.top + h * 0.5);
+    await sleep(100);
+    await p.mouseTo(plot.left - 30, plot.top + h * 0.5);
+    await sleep(100);
+    await p.animationSpeed(0.05);
+    await p.mouseTo(plot.left + w * 0.7, plot.top + h * 0.5);
+    const frames = await p.evaluate(track);
+    await p.animationSpeed(1);
+    const seen = frames.filter((f) => f.o > 0.02);
+    assert(seen.length > 0, "the tooltip never showed");
+    const xs = new Set(seen.map((f) => f.x)), ys = new Set(seen.map((f) => f.y));
+    assert(xs.size === 1 && ys.size === 1, `the tooltip moved while it faded in: x ${[...xs].join(", ")}, y ${[...ys].join(", ")}`);
+    assert(seen[0].o < 0.9, `the tooltip came in at opacity ${seen[0].o}, not fading`);
+  },
+
+  async "chart: the area chart marks its target, and shows dollars"(p) {
+    await p.goto("/ui/components/chart");
+    await p.clickText("Area Charts");
+    const svg = `document.querySelector("svg:has(.series-area)")`;
+    await p.waitFor(`!!${svg}`, "the area chart");
+    const got = await p.evaluate(`(() => {
+      const s = ${svg};
+      return {
+        line: !!s.querySelector(".ref-line"),
+        label: s.querySelector(".ref-label")?.textContent,
+        ticks: [...s.querySelectorAll('[id^="chart-axis-y-"][id$="-text-label"]')].map((e) => e.textContent),
+      };
+    })()`);
+    assert(got.line && got.label === "Target", `the target line: ${JSON.stringify(got)}`);
+    assert(got.ticks.length > 0 && got.ticks.every((t) => t.startsWith("$")), `the y ticks read ${got.ticks.join(", ")}`);
+  },
+
+  async "chart: a chart follows its parent's width as the page resizes"(p) {
+    await p.goto("/ui/components/chart");
+    const svg = `document.querySelector("svg:has(.series-line)")`;
+    await p.waitFor(`!!${svg}`, "a line chart");
+    // The drawing's own width, against the box it fills.
+    const fit = `(() => { const s = ${svg}; return Math.abs(s.viewBox.baseVal.width - s.parentElement.getBoundingClientRect().width) <= 1; })()`;
+    assert(await p.evaluate(fit), "the chart is not as wide as its box");
+    const before = await p.evaluate(`${svg}.viewBox.baseVal.width`);
+    await p.viewport(1100, 900);
+    await p.waitFor(`${svg}.viewBox.baseVal.width < ${before} - 50 && ${fit}`, "the chart to narrow with the page");
+    await p.viewport(1440, 900);
+    await p.waitFor(`${svg}.viewBox.baseVal.width > ${before} - 2 && ${fit}`, "the chart to widen again");
+  },
+
   async "chart: after zooming, the tooltip shows the values under the pointer"(p) {
     await p.goto("/ui/components/chart");
     const svg = `document.querySelector("svg:has(.series-line)")`;
@@ -1217,14 +1447,14 @@ const tests = {
     const w = plot.right - plot.left, h = plot.bottom - plot.top;
     await p.drag({ x: plot.left + w * 0.35, y: plot.top + h * 0.3 }, { x: plot.left + w * 0.6, y: plot.top + h * 0.7 });
     await sleep(300);
-    // The tooltip: the box that reads the axis label, then each series, then Total.
+    // The tooltip: the box that names the point, then each series' value.
     const tip = await p.evaluate(`(() => {
       const c = ${svg}.parentElement;
-      const t = [...c.querySelectorAll("div")].filter((e) => /^Month/.test(e.textContent) && e.textContent.includes("Total")).pop();
+      const t = [...c.querySelectorAll("div")].filter((e) => /^Month \\d/.test(e.textContent) && e.textContent.includes("Sales")).pop();
       return t ? t.textContent : null;
     })()`);
     assert(tip !== null, "no tooltip after zooming");
-    assert(tip.includes("Sales") && !/Total0$/.test(tip), `after zooming the tooltip reads ${JSON.stringify(tip)}`);
+    assert(/^Month \d+Sales\d+$/.test(tip), `after zooming the tooltip reads ${JSON.stringify(tip)}`);
   },
 
   async "chart: its labels and grid follow the theme"(p) {
@@ -1235,7 +1465,8 @@ const tests = {
       await p.waitFor(`!!${svg}`, "a line chart");
       const got = await p.evaluate(`(() => {
         const s = ${svg}, fill = (q) => getComputedStyle(s.querySelector(q)).fill;
-        return { axis: fill(".axis-label"), tick: fill(".tick-label"), legend: fill(".legend-text") };
+        const legend = [...document.querySelectorAll("button[aria-pressed]")].find((b) => b.textContent === "Sales");
+        return { axis: fill(".axis-label"), tick: fill(".tick-label"), legend: getComputedStyle(legend.lastElementChild).color };
       })()`);
       for (const [what, color] of Object.entries(got))
         assert(color === text, `in ${scheme} mode the chart's ${what} text is ${color}, not ${text}`);
@@ -1252,11 +1483,11 @@ const tests = {
     const svg = `document.querySelector("svg:has(.pie-slice)")`;
     await p.waitFor(`!!${svg}`, "the pie chart");
     const got = await p.evaluate(`(() => {
-      const s = ${svg};
+      const s = ${svg}, items = [...document.querySelectorAll("button[aria-pressed]")];
       return {
-        names: [...s.querySelectorAll(".legend-text")].map((e) => e.textContent),
-        swatches: [...s.querySelectorAll('rect[id^="chart-legend-"]')].map((e) => e.getAttribute("fill")),
-        slices: [...s.querySelectorAll(".pie-slice")].map((e) => e.getAttribute("fill")),
+        names: items.map((e) => e.textContent),
+        swatches: items.map((e) => getComputedStyle(e.firstElementChild).backgroundColor),
+        slices: [...s.querySelectorAll(".pie-slice")].map((e) => getComputedStyle(e).fill),
       };
     })()`);
     assert(JSON.stringify(got.names) === JSON.stringify(["Direct", "Search", "Social", "Email"]), `the pie's legend reads ${JSON.stringify(got.names)}`);
@@ -1283,7 +1514,7 @@ const tests = {
       await p.clickText("Bar Charts");
       const svg = `document.querySelector("svg:has(.stacked-bar)")`;
       await p.waitFor(`!!${svg}`, "the bar chart");
-      const swatches = await p.evaluate(`[...${svg}.querySelectorAll('rect[id^="chart-legend-"]')].map((e) => getComputedStyle(e).fill)`);
+      const swatches = await p.evaluate(`[...document.querySelectorAll("button[aria-pressed]")].map((e) => getComputedStyle(e.firstElementChild).backgroundColor)`);
       assert(new Set(swatches).size === swatches.length, `in ${scheme} mode the legend repeats a colour: ${swatches.join(", ")}`);
       for (const c of swatches) assert(contrast(c, page) >= 2, `in ${scheme} mode ${c} barely shows on ${page} (contrast ${contrast(c, page).toFixed(2)})`);
     }

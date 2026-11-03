@@ -17,6 +17,12 @@ pub fn init() void {
         .height = 320,
         // Series without a colour of their own take these in turn.
         .palette = .{ .colors = &.{ "#6366f1", "#10b981" } },
+        // Shows at once, without fading in.
+        .animate = false,
+        // In place of the plot while no series has a point.
+        .empty_text = "No visits yet",
+        // A Total row in the tooltip; only stacked bars have one unasked.
+        .tooltip_total = true,
     });
     chart.addSeries(.area_smooth, "Visits", &visits, .{
         .fill_opacity = 0.15,
