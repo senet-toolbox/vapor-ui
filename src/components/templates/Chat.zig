@@ -1410,9 +1410,11 @@ fn renderConversationItem(conv: *Conversation) void {
 fn renderChatArea() void {
     if (selected_conversation) |conv| {
         const msg_list = getMessagesForConversation(conv.id);
+        // The rest of the window: on phones, the height under the list.
         Stack()
             .width(.grow)
             .height(.percent(100))
+            .responsive(.mobile, .{ .size = .hw(.px(600), .percent(100)) })
             .children({
             // Chat header
             renderChatHeader(conv);
@@ -1608,6 +1610,8 @@ fn renderMessage(msg: *Message) void {
             .direction(.column)
             .spacing(4)
             .width(.elastic(72, 512))
+            // No wider than the thread, on a phone too.
+            .inlineStyle("max-width: min(512px, 100%);", .{})
             .layout(if (is_own_message) .top_right else .top_left)
             .children({
             // Message bubble with tooltip for reactions
@@ -1704,6 +1708,9 @@ fn TriggerContent(msg: *Message) void {
         Text(msg.content)
             .font(14, 400, if (is_own_message) .palette(.background) else .white)
             .fontFamily("Montserrat")
+            // Keeps its line breaks, and breaks a word too long for the
+            // bubble rather than widening it.
+            .inlineStyle("white-space: pre-wrap; overflow-wrap: anywhere;", .{})
             .end();
     });
 }
@@ -2157,10 +2164,12 @@ fn renderUserOption(user: *const User) void {
 
 /// Main render function. Call this in your application's render loop.
 pub fn render() void {
+    // A height of its own, so messages scroll inside it rather than grow
+    // it. On phones the list (480) sits above the chat (600).
     Row()
         .width(.percent(100))
-        .height(.percent(100))
-        .responsive(.mobile, .{ .direction = .column })
+        .height(.px(720))
+        .responsive(.mobile, .{ .direction = .column, .size = .hw(.px(1080), .percent(100)) })
         .margin(.{ .bottom = 128 })
         .background(Theme.bg_base)
         .layout(.top_left)

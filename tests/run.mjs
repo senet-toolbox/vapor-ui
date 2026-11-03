@@ -2159,6 +2159,52 @@ const tests = {
     assert(spill === null, `the box spills out of the bar that holds it: ${JSON.stringify(spill)}`);
   },
 
+  async "chat: long and many messages stay inside the window, and the thread scrolls"(p) {
+    for (const [vw, vh, mobile] of [[1440, 900, false], [1440, 1600, false], [390, 844, true]]) {
+      const at = `at ${vw}x${vh}`;
+      await p.viewport(vw, vh, mobile);
+      await p.goto("/ui/templates");
+      const box = `document.querySelector('textarea[aria-label="Type a message..."]')`;
+      await p.evaluate(`${box}.scrollIntoView({ block: "center" })`);
+      // The window: the box holding the conversation list and the message box.
+      const win = `(() => { let w = ${box}; while (w && !w.querySelector('[aria-label="New chat"]')) w = w.parentElement; return w; })()`;
+      // The thread: the scrolling box the messages sit in.
+      const thread = `[...${win}.querySelectorAll("div")].find((d) => /auto|scroll/.test(getComputedStyle(d).overflowY) && d.textContent.includes("project going"))`;
+      const size = () => p.evaluate(`(() => { const r = ${win}.getBoundingClientRect(); return { w: Math.round(r.width), h: Math.round(r.height) }; })()`);
+      const before = await size();
+      const send = async (text) => {
+        await p.evaluate(`${box}.focus()`);
+        await p.typeKeys(text);
+        await p.press("Enter");
+        await p.waitFor(`${box}.value === ""`, "the message box to empty");
+      };
+      await send("a long message that keeps going ".repeat(12) + "x".repeat(160));
+      for (let i = 1; i <= 12; i++) await send(`Hello number ${i}`);
+      await sleep(600);
+      const after = await size();
+      assert(Math.abs(after.w - before.w) <= 1 && Math.abs(after.h - before.h) <= 1, `${at} the window went from ${before.w}x${before.h} to ${after.w}x${after.h}`);
+      const got = await p.evaluate(`(() => {
+        const t = ${thread}, w = ${win}.getBoundingClientRect();
+        if (!t) return { error: "no scrolling thread" };
+        const r = t.getBoundingClientRect();
+        const bubble = [...t.querySelectorAll("*")].filter((d) => d.textContent.startsWith("a long message") && d.textContent.endsWith("x")).pop().getBoundingClientRect();
+        return {
+          overflowing: t.scrollHeight > t.clientHeight + 1,
+          atEnd: t.scrollTop + t.clientHeight >= t.scrollHeight - 2,
+          threadIn: r.left >= w.left - 1 && r.right <= w.right + 1 && r.bottom <= w.bottom + 1,
+          bubbleIn: bubble.left >= r.left - 1 && bubble.right <= r.right + 1,
+          pageWide: document.documentElement.scrollWidth > innerWidth,
+        };
+      })()`);
+      assert(!got.error, `${at}: ${got.error}`);
+      assert(got.threadIn, `${at} the thread spills out of the window (${JSON.stringify(got)})`);
+      assert(got.overflowing, `${at} thirteen messages fit without the thread scrolling: it grew instead`);
+      assert(got.atEnd, `${at} the thread isn't scrolled to the newest message`);
+      assert(got.bubbleIn && !got.pageWide, `${at} the long message runs out sideways (${JSON.stringify(got)})`);
+    }
+    await p.viewport(1440, 900);
+  },
+
   async "chat: the message box's text follows the theme"(p) {
     const box = `document.querySelector('textarea[aria-label="Type a message..."]')`;
     for (const [scheme, text] of [["light", "rgb(0, 0, 0)"], ["dark", "rgb(234, 234, 234)"]]) {
