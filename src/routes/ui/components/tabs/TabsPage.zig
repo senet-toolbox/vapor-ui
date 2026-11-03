@@ -24,6 +24,8 @@ pub fn init() void {
         \\// Draws the tabs and returns the selected index. The tabs are
         \\// kept under tag, so the selection survives rerenders.
         \\pub fn NavBar(tag: []const u8, names: []const []const u8) usize
+        \\// The same, with the tab list named for screen readers.
+        \\pub fn NavBarLabelled(tag: []const u8, names: []const []const u8, label: []const u8) usize
         \\
         \\// The same, configured first.
         \\pub fn create(tag: []const u8, names: []const []const u8) *Tabs
@@ -31,6 +33,8 @@ pub fn init() void {
         \\pub fn default(tabs: *Tabs, name: ?[]const u8) *Tabs
         \\// Called after a tab is clicked or picked by key.
         \\pub fn onClick(tabs: *Tabs, callback: *const fn (*Tabs) void) *Tabs
+        \\// Names the tab list for screen readers.
+        \\pub fn ariaLabel(tabs: *Tabs, label: []const u8) *Tabs
         \\// Draws the standard tabs; returns the selected index.
         \\pub fn render(tabs: *Tabs) usize
         \\// Draws each tab with your function; returns the selected index.
@@ -48,11 +52,12 @@ const fields = [_]Docs.Field{
     .{ .name = "names", .type = "[]const []const u8", .desc = "The tabs, in order. Each name is also its label." },
     .{ .name = "active_tab", .type = "?[]const u8", .default = "null", .desc = "The selected tab's name; null means the first. Read it in onClick." },
     .{ .name = "selected_index", .type = "usize", .default = "0", .desc = "The selected tab's index, as of the last render." },
+    .{ .name = "aria_label", .type = "[]const u8", .default = "\"Tabs\"", .desc = "Names the tab list for screen readers: what the tabs switch between. Set it with ariaLabel or NavBarLabelled." },
 };
 
 const behaviours = [_]Docs.Field{
     .{ .name = "Keyboard", .desc = "Tab reaches the selected tab. Left and Right move to the next one, Home and End to the first and last, selecting it and taking focus with it." },
-    .{ .name = "Screen readers", .desc = "The row has role=tablist; each tab has role=tab and reports aria-selected." },
+    .{ .name = "Screen readers", .desc = "The row has role=tablist and its aria_label; each tab has role=tab and reports aria-selected." },
     .{ .name = "Narrow screens", .desc = "Tabs that don't fit scroll sideways rather than widen the page." },
     .{ .name = "Panels", .desc = "Yours to draw: switch on the returned index." },
 };

@@ -50,10 +50,11 @@ const options = [_]Docs.Field{
     .{ .name = "stroke_color", .type = "Color", .default = ".black", .desc = "The outline of the arrow pointing at the trigger." },
     .{ .name = "border", .type = "Border", .default = ".round(.transparent, .all(6))", .desc = "The popup's border and corners." },
     .{ .name = "id", .type = "[]const u8", .default = "\"\"", .desc = "Names the trigger for the popup to anchor to. Made for you when empty." },
+    .{ .name = "trigger_focusable", .type = "bool", .default = "false", .desc = "Set it when your custom trigger is a button or link: it takes the focus itself. Otherwise the box around a custom trigger takes it, so a keyboard can show the tooltip." },
 };
 
 const behaviours = [_]Docs.Field{
-    .{ .name = "Showing", .desc = "After half a second's hover, or as soon as the trigger has keyboard focus." },
+    .{ .name = "Showing", .desc = "After half a second's hover, or as soon as the trigger has keyboard focus. Custom triggers can be tabbed to as well." },
     .{ .name = "Hiding", .desc = "Shortly after the pointer leaves or focus moves on, or at once on Escape." },
     .{ .name = "Placement", .desc = "Beside the trigger, never over it, with an arrow pointing at it." },
     .{ .name = "Screen readers", .desc = "The popup has role=tooltip." },

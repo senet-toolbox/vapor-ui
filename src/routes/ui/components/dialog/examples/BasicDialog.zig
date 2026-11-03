@@ -18,8 +18,18 @@ const basic_items = &.{
     Item(Status){ .value = .err, .label = "Error" },
 };
 
+var closed_count: usize = 0;
+
+fn onClose() void {
+    closed_count += 1;
+}
+
 pub fn init() void {
     basic_dialog = .fromItems(basic_items);
+    // Names it for screen readers.
+    basic_dialog.aria_label = "Pick a status";
+    // Once per close: Escape, a pick, or a click outside.
+    basic_dialog.on_close = onClose;
 }
 
 pub fn render() void {
@@ -37,5 +47,8 @@ pub fn render() void {
             .font(16, 500, .palette(.background))
             .end();
     });
+    Text(Vapor.fmtln("Closed {d} time{s}", .{ closed_count, if (closed_count == 1) "" else "s" }))
+        .font(14, 300, .palette(.text_color))
+        .end();
     basic_dialog.render();
 }

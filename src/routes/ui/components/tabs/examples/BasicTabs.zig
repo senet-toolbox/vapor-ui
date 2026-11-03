@@ -6,7 +6,7 @@ const Tabs = @import("opaque-ui").Tabs;
 pub fn render() void {
     Stack().width(.percent(100)).spacing(16).children({
         // NavBar draws the tabs and returns the index of the selected one.
-        const index = Tabs.NavBar("basic-tabs", &.{ "Account", "Password", "Notifications" });
+        const index = Tabs.NavBarLabelled("basic-tabs", &.{ "Account", "Password", "Notifications" }, "Account settings");
         switch (index) {
             0 => Panel("Change your name, email and avatar."),
             1 => Panel("Update your password. You will be signed out of other devices."),

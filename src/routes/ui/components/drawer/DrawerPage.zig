@@ -12,6 +12,7 @@ const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
 const Icon = Vapor.Icon;
 const Button = Opaque.Button;
 const CodeBox = @import("../CodeBox.zig").CodeBox;
+const Docs = @import("../Docs.zig");
 // Rendered and shown as code: what you read is what runs.
 const BasicDrawer = @import("examples/BasicDrawer.zig");
 
@@ -71,6 +72,17 @@ var top_drawer: Drawer = undefined;
 var hl_basic: SyntaxHighlighter = undefined;
 
 pub fn init() void {
+    hl_api = Docs.highlighter(
+        \\const Drawer = @import("opaque-ui").Sheet;
+        \\
+        \\// Slides in from .right, .left, .top or .bottom.
+        \\pub fn init(direction: SheetDirection) Sheet
+        \\pub fn open(sheet: *Sheet) void
+        \\pub fn close(sheet: *Sheet) void
+        \\pub fn toggle(sheet: *Sheet) void
+        \\// Draws it while it's open; call it every render.
+        \\pub fn render(sheet: *Sheet) void
+    );
     const allocator = Vapor.arena(.persist);
 
     hl_basic = SyntaxHighlighter.init(allocator);
@@ -269,6 +281,20 @@ fn render() void {
             PreviewCard().children({
                 posBtn("Open Top", &top_drawer);
             });
+
+            Docs.sectionTitle("API Reference");
+
+            Docs.exampleLabel("Drawer");
+            Docs.sectionDesc("A Sheet: set it up once, open it from anything, and render it every frame.");
+            CodeBox(&hl_api, "Drawer");
+
+            Docs.exampleLabel("Fields");
+            Docs.sectionDesc("Set after init.");
+            Docs.ApiBox("Sheet", &fields);
+
+            Docs.exampleLabel("Behaviour");
+            Docs.sectionDesc("What the drawer does for you.");
+            Docs.ApiBox("Behaviour", &behaviours);
         });
     });
 
@@ -286,3 +312,21 @@ fn posBtn(label: []const u8, drawer: *Drawer) void {
         Text(label).font(14, 500, .palette(.background)).end();
     });
 }
+
+var hl_api: SyntaxHighlighter = undefined;
+
+const fields = [_]Docs.Field{
+    .{ .name = "content", .type = "?*const fn (*Sheet) void", .default = "null", .desc = "Draws what's inside. Your buttons can call close." },
+    .{ .name = "label", .type = "[]const u8", .default = "\"Drawer\"", .desc = "Names it for screen readers." },
+    .{ .name = "size", .type = "f32", .default = "384", .desc = "Its width from the left or right, its height from the top or bottom, in pixels." },
+    .{ .name = "max_width", .type = "f32", .default = "512", .desc = "The largest a drag of its handle makes it." },
+    .{ .name = "mode", .type = ".overlay or .push", .default = ".overlay", .desc = ".overlay dims and blurs the page behind, and a click there closes it; .push draws no backdrop." },
+    .{ .name = "on_close", .type = "?*const fn (*Sheet) void", .default = "null", .desc = "Called when it closes: Escape, the backdrop, or close." },
+};
+
+const behaviours = [_]Docs.Field{
+    .{ .name = "Opening", .desc = "Slides in from its side." },
+    .{ .name = "Closing", .desc = "Escape, a click on the backdrop, or your call to close." },
+    .{ .name = "Resizing", .desc = "Drag the handle on its inner edge, up to max_width." },
+    .{ .name = "Screen readers", .desc = "The panel has role=dialog, aria-modal and its label. The backdrop is a button named Close drawer that Tab skips." },
+};

@@ -344,7 +344,7 @@ pub fn render() void {
             .width(.percent(60))
             .responsive(.mobile, .{ .size = .w(.percent(92)) })
             .children({
-            const index = Tabs.NavBar("chart_tabs", &.{ "Line Charts", "Bar Charts", "Pie Charts", "Area Charts" });
+            const index = Tabs.NavBarLabelled("chart_tabs", &.{ "Line Charts", "Bar Charts", "Pie Charts", "Area Charts" }, "Chart types");
             // An id per tab, so one chart's elements are never reused for
             // another chart (which would not measure itself again).
             switch (index) {

@@ -2,6 +2,7 @@ const std = @import("std");
 const Vapor = @import("vapor");
 const Hero = @import("../../../../components/Hero.zig").Hero;
 const CodeBox = @import("../CodeBox.zig").CodeBox;
+const Docs = @import("../Docs.zig");
 const Text = Vapor.Text;
 const Row = Vapor.Row;
 const Stack = Vapor.Stack;
@@ -40,6 +41,21 @@ var hl_style: SyntaxHighlighter = undefined;
 var prev_position: Toast.StackPosition = .top_right;
 
 pub fn init() void {
+    hl_api = Docs.highlighter(
+        \\const Toast = @import("opaque-ui").Toast;
+        \\
+        \\// Shows a toast of each type.
+        \\pub fn success(options: Options) void
+        \\pub fn err(options: Options) void
+        \\pub fn warning(options: Options) void
+        \\pub fn info(options: Options) void
+        \\
+        \\// Draws the stack, once, in your layout.
+        \\pub fn renderStack() void
+        \\pub fn renderStackAt(position: StackPosition) void
+        \\
+        \\Toast.success(.{ .title = "Saved", .description = "Your changes are live." });
+    );
     hl_style = SyntaxHighlighter.init(Vapor.arena(.persist));
     hl_style.show_toolbar = true;
     hl_style.parse(@embedFile("examples/ToastStyle.zig")) catch unreachable;
@@ -211,6 +227,23 @@ fn render() void {
             sectionTitle("Styling");
             sectionDesc("Toasts follow your theme, light or dark. Change every toast, or one type, by setting these once.");
             CodeBox(&hl_style, "ToastStyle");
+
+            Docs.sectionTitle("API Reference");
+
+            Docs.exampleLabel("Toast");
+            Docs.sectionDesc("Call one of these from anywhere; the stack in your layout shows it.");
+            CodeBox(&hl_api, "Toast");
+
+            Docs.exampleLabel("Options");
+            Docs.ApiBox("Options", &options);
+
+            Docs.exampleLabel("Settings");
+            Docs.sectionDesc("Set once, before showing a toast. See Styling above.");
+            Docs.ApiBox("Toast", &settings);
+
+            Docs.exampleLabel("Behaviour");
+            Docs.sectionDesc("What toasts do for you.");
+            Docs.ApiBox("Behaviour", &behaviours);
         });
     });
 
@@ -362,3 +395,30 @@ fn multiToastBtn(label: []const u8) void {
         Text(label).font(14, 500, .palette(.background)).end();
     });
 }
+
+var hl_api: SyntaxHighlighter = undefined;
+
+const options = [_]Docs.Field{
+    .{ .name = "title", .type = "[]const u8", .desc = "The bold first line; up to 128 bytes." },
+    .{ .name = "description", .type = "[]const u8", .desc = "The line under it; up to 256 bytes, cut short with an ellipsis if it's too long to fit." },
+};
+
+const settings = [_]Docs.Field{
+    .{ .name = "stack_position", .type = "StackPosition", .default = ".top_right", .desc = "Which corner the stack sits in: .top_right, .top_left, .bottom_right or .bottom_left." },
+    .{ .name = "stack_margin", .type = "f32", .default = "24", .desc = "Pixels between the stack and the edges of the window." },
+    .{ .name = "background", .type = "Color", .default = ".palette(.background)", .desc = "Every toast's background." },
+    .{ .name = "text_color", .type = "Color", .default = ".palette(.text)", .desc = "Every toast's text." },
+    .{ .name = "border_color", .type = "Color", .default = ".palette(.border_color_light)", .desc = "Every toast's border." },
+    .{ .name = "border_radius", .type = "BorderRadius", .default = ".all(16)", .desc = "Every toast's corners." },
+    .{ .name = "success_background", .type = "?Color", .default = "null", .desc = "One type's background; likewise err_, warning_ and info_. Unset, it takes background." },
+    .{ .name = "success_text_color", .type = "?Color", .default = "null", .desc = "One type's text; likewise for the other types." },
+    .{ .name = "success_icon_color", .type = "Color", .default = ".hex(\"#22c55e\")", .desc = "One type's icon, which tells the types apart; likewise for the others." },
+    .{ .name = "success_blur", .type = "u8", .default = "0", .desc = "Blurs the page behind a see-through toast of that type; likewise for the others." },
+};
+
+const behaviours = [_]Docs.Field{
+    .{ .name = "Stacking", .desc = "Newest in front. Only the front toast shows its text until the stack is hovered, when it spreads out." },
+    .{ .name = "Closing", .desc = "On its own after 3 seconds, or by its close button. Hovering the stack holds them." },
+    .{ .name = "Screen readers", .desc = "An error is an alert, read out at once; the others are status messages, read out when the reader is free. The close button is named Dismiss notification." },
+    .{ .name = "Animation", .desc = "Slides in from its side of the window and back out." },
+};

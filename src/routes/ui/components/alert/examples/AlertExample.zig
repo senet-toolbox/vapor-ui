@@ -8,14 +8,35 @@ const Icon = Vapor.Icon;
 const Button = Opaque.Button;
 
 var alert: Alert = undefined;
+var answer: []const u8 = "none yet";
 
 pub fn init() void {
     // Initialize Alert with the content callback
     alert = .init(alertContent);
+    // Names it for screen readers.
+    alert.label = "Delete account";
+    // Escape, or a click outside.
+    alert.on_close = onDismiss;
+}
+
+fn onDismiss() void {
+    answer = "dismissed";
+}
+
+fn cancel() void {
+    answer = "cancelled";
+    alert.close();
+}
+
+fn proceed() void {
+    answer = "continued";
+    alert.close();
 }
 
 pub fn render() void {
     Button(Alert.open, .{&alert})
+        // Focus comes back here when the alert closes.
+        .ref(&alert.trigger)
         .ariaLabel("open alert")
         .padding(.xy(12, 8))
         .background(.palette(.tint))
@@ -24,6 +45,9 @@ pub fn render() void {
         Text("Trigger Confirmation").font(14, 300, .palette(.background)).fontFamily("Montserrat").end();
         Icon(.arrow_right).font(16, 500, .palette(.background)).end();
     });
+    Text(Vapor.fmtln("Answer: {s}", .{answer}))
+        .font(14, 300, .palette(.text_color))
+        .end();
     alert.render();
 }
 
@@ -49,7 +73,7 @@ fn alertContent(_: *Alert) void {
             .layout(.right_center)
             .children({
             // Cancel Button
-            Button(Alert.close, .{&alert})
+            Button(cancel, .{})
                 .cursor(.pointer)
                 .padding(.xy(20, 10))
                 .background(.palette(.text_color))
@@ -60,7 +84,7 @@ fn alertContent(_: *Alert) void {
             });
 
             // Action Button
-            Button(Alert.close, .{&alert})
+            Button(proceed, .{})
                 .cursor(.pointer)
                 .padding(.xy(20, 10))
                 .border(.round(.palette(.text_color), .all(8)))

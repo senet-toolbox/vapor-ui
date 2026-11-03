@@ -352,6 +352,13 @@ function makePage(cdp, origin) {
       await mouse("mouseReleased", pos.x, pos.y);
       await sleep(60);
     },
+    // A real click at a point of the page.
+    async clickAt(x, y) {
+      await mouse("mouseMoved", x, y, { button: "none", clickCount: 0 });
+      await mouse("mousePressed", x, y);
+      await mouse("mouseReleased", x, y);
+      await sleep(60);
+    },
     // Clicks a point outside every overlay: the page's top-left corner area.
     async clickAway() {
       await mouse("mousePressed", 700, 880);
@@ -606,6 +613,7 @@ const tests = {
       datepicker: ["DatePicker", "start_date"], dialog: ["Item(T)", "value"], progress: ["ProgressBar.Config", "id"],
       radio: ["Group", "name"], select: ["Item", "value"], sidebar: ["SideBar", "groups"], slider: ["Slider", "min"],
       switch: ["Parameters", "aria_label"], table: ["Column(T)", "title"], tabs: ["Tabs", "tag"], tooltip: ["Options", "content"],
+      combobox: ["Item", "value"], drawer: ["Sheet", "content"], marquee: ["Options", "direction"], textfield: ["Field", "label"], toasts: ["Options", "title"],
     };
     for (const [page, [tab, first]] of Object.entries(pages)) {
       await p.goto(`/ui/components/${page}`);
@@ -660,6 +668,59 @@ const tests = {
     await p.waitText("Are you sure?", { gone: true });
   },
 
+  async "alert: a labelled modal dialog that takes the focus and gives it back"(p) {
+    await p.goto("/ui/components/alert");
+    const dialog = `[...document.querySelectorAll("[role=alertdialog]")].find((e) => e.getBoundingClientRect().width > 0)`;
+    // Opened from the keyboard.
+    await p.evaluate(`document.querySelector('[aria-label="open alert"]').focus()`);
+    await p.press("Enter");
+    await p.waitText("Are you sure?");
+    await p.waitFor(`!!${dialog} && ${dialog}.contains(document.activeElement)`, "the focus to move into the alert").catch(() => {});
+    const got = await p.evaluate(`(() => {
+      const d = ${dialog};
+      return {
+        dialog: !!d, modal: d?.getAttribute("aria-modal"), label: d?.getAttribute("aria-label"),
+        focusInside: !!d && d.contains(document.activeElement),
+        // Buttons a keyboard can reach that say nothing: the click-catcher behind it.
+        mute: [...document.querySelectorAll("button")].filter((b) => b.tabIndex >= 0 && b.getBoundingClientRect().width > 0 && !b.textContent.trim() && !b.getAttribute("aria-label")).length,
+      };
+    })()`);
+    assert(got.dialog && got.modal === "true" && got.label, `the alert is not a labelled modal alertdialog: ${JSON.stringify(got)}`);
+    assert(got.focusInside, "focus stays behind the alert when it opens");
+    assert(got.mute === 0, `${got.mute} unnamed buttons can be tabbed to`);
+    await p.press("Escape");
+    await p.waitText("Are you sure?", { gone: true });
+    await p.waitFor(`document.activeElement?.getAttribute("aria-label") === "open alert"`, "focus to return to the button that opened it");
+    await p.waitText("Answer: dismissed");
+    // A click outside dismisses it too, and says so. (Each time, the alert
+    // finishes leaving before the next click.)
+    await sleep(300);
+    await p.clickText("Trigger Confirmation");
+    await p.waitText("Are you sure?");
+    await p.clickText("Continue");
+    await p.waitText("Answer: continued");
+    await p.waitText("Are you sure?", { gone: true });
+    await sleep(300);
+    await p.clickText("Trigger Confirmation");
+    await p.waitText("Are you sure?");
+    await p.waitFor(`!!${dialog}`, "the alert to open");
+    // Beside the panel, on the backdrop.
+    const out = await p.evaluate(`(() => { const r = ${dialog}.getBoundingClientRect(); return { x: Math.max(5, r.left - 40), y: r.top + r.height / 2 }; })()`);
+    await p.clickAt(out.x, out.y);
+    await p.waitFor(`!${dialog}`, "a click outside to close the alert");
+    await p.waitText("Answer: dismissed");
+  },
+
+  async "alert: its border follows the theme"(p) {
+    await p.colorScheme("dark");
+    await p.goto("/ui/components/alert");
+    await p.clickText("Trigger Confirmation");
+    await p.waitText("Are you sure?");
+    const border = await p.evaluate(`(() => { let e = [...document.querySelectorAll("*")].find((x) => x.textContent === "Are you sure?" && !x.children.length); while (e && getComputedStyle(e).borderTopWidth === "0px") e = e.parentElement; return e ? getComputedStyle(e).borderTopColor : null; })()`);
+    await p.colorScheme(null);
+    assert(border && border !== "rgb(228, 228, 228)", `in dark mode the alert keeps its light border (${border})`);
+  },
+
   async "switch: toggles its state and calls back"(p) {
     await p.goto("/ui/components/switch");
     assert(await p.ariaOf("Airplane mode", "role") === "switch", "the switch has role=switch");
@@ -698,6 +759,24 @@ const tests = {
     assert(await p.evaluate(`document.querySelectorAll('[role=radiogroup][aria-label="Density"]').length`) === 1, "the group is labelled");
   },
 
+  async "radio: arrow keys move the choice and the focus; one tab stop"(p) {
+    await p.goto("/ui/components/radio");
+    const radio = (name) => `[...document.querySelectorAll("[role=radio]")].find((e) => e.textContent.trim() === ${JSON.stringify(name)})`;
+    const stops = await p.evaluate(`[...document.querySelectorAll("[role=radio]")].filter((e) => e.tabIndex >= 0).map((e) => e.textContent.trim())`);
+    assert(JSON.stringify(stops) === '["Default"]', `the group's tab stops are ${JSON.stringify(stops)}, not just the chosen one`);
+    await p.evaluate(`${radio("Default")}.focus()`);
+    await p.press("ArrowDown");
+    await p.waitText("Density: comfortable");
+    await p.waitFor(`document.activeElement === ${radio("Comfortable")}`, "focus to follow the choice");
+    await p.press("ArrowRight");
+    await p.waitText("Density: compact");
+    await p.press("ArrowDown");
+    await p.waitText("Density: default");
+    await p.press("ArrowUp");
+    await p.waitText("Density: compact");
+    await p.waitFor(`document.activeElement === ${radio("Compact")}`, "focus to wrap round with the choice");
+  },
+
   async "dialog: opens, filters as you type, closes on Escape"(p) {
     await p.goto("/ui/components/dialog");
     const dialogOpen = `(() => { ${finders} return [...document.querySelectorAll("[role=dialog]")].some((e) => __ui.visible(e)); })()`;
@@ -712,6 +791,18 @@ const tests = {
     await p.waitText("Success");
     await p.press("Escape");
     await p.waitFor(`!${dialogOpen}`, "Escape to close the dialog");
+  },
+
+  async "dialog: is labelled, and Escape closes it once"(p) {
+    await p.goto("/ui/components/dialog");
+    await p.waitText("Closed 0 times");
+    await p.clickLabel("open basic dialog");
+    await p.waitFor(`!!document.querySelector('[role=dialog][aria-label="Pick a status"]')`, "the dialog, labelled by its example");
+    await p.press("Escape");
+    await p.waitText("Closed 1 time");
+    await sleep(200);
+    assert(!(await p.evaluate(`document.body.textContent.includes("Closed 2 times")`)), "Escape called on_close twice");
+    assert(!(await p.evaluate(`!!document.querySelector('[aria-label="Command Palette"]')`)), "a dialog still calls itself Command Palette");
   },
 
   async "dialog: a click outside closes it"(p) {
@@ -947,6 +1038,20 @@ const tests = {
     await p.waitText(tip, { gone: true });
   },
 
+  async "tooltip: a custom trigger can be reached and opened from the keyboard"(p) {
+    await p.goto("/ui/components/tooltip");
+    const tip = "This is a custom trigger tooltip";
+    const focused = await p.evaluate(`(() => {
+      let e = [...document.querySelectorAll("*")].find((x) => x.textContent === "Custom Tooltip" && !x.children.length);
+      while (e && e.tabIndex < 0) e = e.parentElement;
+      if (!e || e === document.body) return false;
+      e.focus();
+      return document.activeElement === e;
+    })()`);
+    assert(focused, "nothing around the custom trigger takes the focus");
+    await p.waitText(tip);
+  },
+
   async "tooltip: custom triggers and custom content"(p) {
     await p.goto("/ui/components/tooltip");
     await p.hoverText("Custom Tooltip");
@@ -1070,6 +1175,28 @@ const tests = {
     await p.clickOption("1992");
     await p.waitFor(`!!document.querySelector('[aria-label="August 15, 1992"]')`, "August 1992");
     assert(await p.evaluate(pressed("August 15, 1992")) === "false", "August 15, 1992 is not chosen");
+  },
+
+  async "datepicker: the chosen day is filled, in its own text colour"(p) {
+    await p.goto("/ui/components/datepicker");
+    await p.clickLabel("August 15, 1991");
+    await p.waitFor(`document.querySelector('[aria-label="August 15, 1991"]').getAttribute("aria-pressed") === "true"`, "Aug 15 chosen");
+    await sleep(300);
+    const got = await p.evaluate(`(() => {
+      const day = (l) => document.querySelector('[aria-label="' + l + '"]');
+      const look = (e) => ({ bg: getComputedStyle(e).backgroundColor, text: getComputedStyle(e.querySelector("*") || e).color });
+      return { chosen: look(day("August 15, 1991")), other: look(day("August 16, 1991")) };
+    })()`);
+    assert(got.chosen.bg !== got.other.bg, `the chosen day has the same background as the rest (${got.chosen.bg})`);
+    assert(got.chosen.text === "rgb(255, 255, 255)", `the chosen day's number is ${got.chosen.text}, not selected_text_color`);
+  },
+
+  async "tabs: tab lists are named for what they hold"(p) {
+    await p.goto("/ui/components/tabs");
+    assert(await p.evaluate(`!!document.querySelector('[role=tablist][aria-label="Account settings"]')`), "the basic tabs aren't labelled Account settings");
+    await p.goto("/ui/components/chart");
+    assert(await p.evaluate(`!!document.querySelector('[role=tablist][aria-label="Chart types"]')`), "the chart's tabs aren't labelled Chart types");
+    assert(!(await p.evaluate(`!!document.querySelector('[aria-label="Main navigation tabs"]')`)), "a tab list is still called Main navigation tabs");
   },
 
   async "slider: keys, a press on the track and a drag set the value"(p) {

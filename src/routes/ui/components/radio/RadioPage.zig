@@ -46,7 +46,7 @@ const item_params = [_]Docs.Field{
 const behaviours = [_]Docs.Field{
     .{ .name = "Choosing", .desc = "One item at a time. Clicking the chosen one again does nothing." },
     .{ .name = "State", .desc = "The group keeps its choice across renders, and forgets it when it leaves the page." },
-    .{ .name = "Keyboard", .desc = "Each item is a button: Tab reaches it, Enter or Space chooses it." },
+    .{ .name = "Keyboard", .desc = "Tab stops once, on the chosen item. The arrow keys move the choice and the focus to the next or previous item, wrapping round." },
     .{ .name = "Screen readers", .desc = "The group has role=radiogroup and its name; each item has role=radio and reports aria-checked." },
 };
 

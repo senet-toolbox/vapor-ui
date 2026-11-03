@@ -10,6 +10,7 @@ const Vaporize = @import("vaporize");
 const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
 const Page = Vapor.Page;
 const CodeBox = @import("../CodeBox.zig").CodeBox;
+const Docs = @import("../Docs.zig");
 // Rendered and shown as code: what you read is what runs.
 const MarqueeLeft = @import("examples/MarqueeLeft.zig");
 const MarqueeRight = @import("examples/MarqueeRight.zig");
@@ -54,6 +55,18 @@ var hl_fields: SyntaxHighlighter = undefined;
 // ============================================================================
 
 pub fn init() void {
+    hl_api = Docs.highlighter(
+        \\const Marquee = @import("opaque-ui").Marquee;
+        \\
+        \\// Moves what its children draw, round and round.
+        \\pub fn render(options: Options) *Marquee
+        \\pub fn children(marquee: *const Marquee, _: void) void
+        \\
+        \\Marquee.render(.{ .direction = .left }).children({
+        \\    Text("Fast").end();
+        \\    Text("Small").end();
+        \\});
+    );
     const allocator = Vapor.arena(.persist);
 
     // Direction examples
@@ -247,6 +260,34 @@ pub fn render() void {
             sectionTitle("Installation");
             sectionDesc("Marquee uses CSS keyframes that must be registered once at startup. Call Marquee.new() before mounting any pages.");
             Opaque.Copy("metal add vapor-ui opaque-marquee");
+
+            Docs.sectionTitle("API Reference");
+
+            Docs.exampleLabel("Marquee");
+            Docs.sectionDesc("Call render with its options, then draw its items in children.");
+            CodeBox(&hl_api, "Marquee");
+
+            Docs.exampleLabel("Options");
+            Docs.ApiBox("Options", &options);
+
+            Docs.exampleLabel("Behaviour");
+            Docs.sectionDesc("What the marquee does for you.");
+            Docs.ApiBox("Behaviour", &behaviours);
         });
     });
 }
+
+var hl_api: SyntaxHighlighter = undefined;
+
+const options = [_]Docs.Field{
+    .{ .name = "direction", .type = "Direction", .default = ".left", .desc = "Which way it moves: .left, .right, .up or .down." },
+    .{ .name = "speed_ms", .type = "u32", .default = "8000", .desc = "How long one loop takes, in milliseconds; lower is faster." },
+    .{ .name = "gap", .type = "u8", .default = "16", .desc = "Pixels between items." },
+    .{ .name = "repeat", .type = "usize", .default = "4", .desc = "How many copies of your items make up the strip, so short content still fills it." },
+};
+
+const behaviours = [_]Docs.Field{
+    .{ .name = "Looping", .desc = "Your items repeat end to end, so the loop has no seam whatever their number or size." },
+    .{ .name = "Hover", .desc = "Pointing at it pauses it; it carries on when the pointer leaves." },
+    .{ .name = "Size", .desc = "It fills its parent; give the parent a height for .up and .down." },
+};

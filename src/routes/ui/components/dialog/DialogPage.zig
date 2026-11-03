@@ -53,7 +53,8 @@ const item_fields = [_]Docs.Field{
 
 const fields = [_]Docs.Field{
     .{ .name = "on_select", .type = "?*const fn (item: *Item(T)) void", .default = "null", .desc = "Called with the item picked or unpicked." },
-    .{ .name = "on_close", .type = "?*const fn () void", .default = "null", .desc = "Called when the dialog closes." },
+    .{ .name = "on_close", .type = "?*const fn () void", .default = "null", .desc = "Called once each time the dialog closes." },
+    .{ .name = "aria_label", .type = "[]const u8", .default = "\"Search\"", .desc = "Names the dialog for screen readers." },
     .{ .name = "row_component", .type = "?*const fn (*Self, *Item(T)) void", .default = "null", .desc = "Draws each row yourself; the dialog keeps the highlight, clicks and keys." },
 };
 
@@ -61,7 +62,7 @@ const behaviours = [_]Docs.Field{
     .{ .name = "Searching", .desc = "The search box has focus when it opens; typing shows only the items whose label contains it." },
     .{ .name = "Keyboard", .desc = "Up and Down move the highlight, Enter picks the highlighted item, Tab picks it and closes, Escape closes." },
     .{ .name = "Closing", .desc = "Escape, Tab, or a click outside." },
-    .{ .name = "Screen readers", .desc = "The box has role=dialog; the search is a combobox that points at the highlighted option, and the count of results is announced." },
+    .{ .name = "Screen readers", .desc = "The box has role=dialog and its aria_label; the search is a combobox that points at the highlighted option, and the count of results is announced." },
 };
 
 pub fn render() void {

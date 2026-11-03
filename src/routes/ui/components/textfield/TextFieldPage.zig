@@ -5,6 +5,8 @@ const Text = Vapor.Text;
 const Row = Vapor.Row;
 const Stack = Vapor.Stack;
 const Opaque = @import("opaque-ui");
+const Docs = @import("../Docs.zig");
+const CodeBox = @import("../CodeBox.zig").CodeBox;
 const Field = Opaque.Field;
 const Vaporize = @import("vaporize");
 const SyntaxHighlighter = Vaporize.SyntaxHighlighter;
@@ -38,6 +40,19 @@ var cardnumber: []const u8 = "";
 // ============================================================================
 
 pub fn init() void {
+    hl_api = Docs.highlighter(
+        \\const Field = @import("opaque-ui").Field;
+        \\
+        \\// Draws a labelled field bound to your variable.
+        \\pub fn render(field: Field) void
+        \\
+        \\// The same, kept between renders, so callbacks can take arguments.
+        \\pub fn create(field: Field) *Field
+        \\pub fn onChange(field: *Field, callback: anytype, args: anytype) *Field
+        \\
+        \\var email: []const u8 = "";
+        \\Field.render(.{ .label = "Email", .value = .{ .email = &email } });
+    );
     Vapor.Page(.{ .src = @src() }, render, null);
 }
 
@@ -128,6 +143,42 @@ fn render() void {
             // Field.render(.{ .label = "Phone Number", .value = .{ .number = &phonenumber }, .trans_label = true });
             // Field.render(.{ .label = "Card Number", .value = .{ .number = &cardnumber }, .trans_label = true });
             // Field.render(.{ .label = "Card Number", .value = .{ .number = &cardnumber }, .trans_label = true });
+
+            Docs.sectionTitle("API Reference");
+
+            Docs.exampleLabel("Field");
+            Docs.sectionDesc("Render it every frame with a pointer to your variable.");
+            CodeBox(&hl_api, "Field");
+
+            Docs.exampleLabel("Fields");
+            Docs.ApiBox("Field", &fields);
+
+            Docs.exampleLabel("Behaviour");
+            Docs.sectionDesc("What the field does for you.");
+            Docs.ApiBox("Behaviour", &behaviours);
         });
     });
 }
+
+var hl_api: SyntaxHighlighter = undefined;
+
+const fields = [_]Docs.Field{
+    .{ .name = "label", .type = "?[]const u8", .default = "null", .desc = "Names the field. It sits inside until the field has focus or a value, then rises to the top edge." },
+    .{ .name = "value", .type = "?Value", .default = "null", .desc = "A pointer to your variable, by kind: .string, .password, .email, .telephone, .credit_card, .number, .float, .bool or .date. It must stay put: a global, not a local." },
+    .{ .name = "placeholder", .type = "?DefaultValue", .default = "null", .desc = "Shown while it's empty: .{ .string = \"you@example.com\" }, or .number." },
+    .{ .name = "trans_label", .type = "bool", .default = "false", .desc = "Keeps the label at the top edge always." },
+    .{ .name = "on_change", .type = "?*const fn (evt: *Vapor.Event) void", .default = "null", .desc = "Called as the value changes, after your variable is updated." },
+    .{ .name = "on_enter", .type = "?*const fn (evt: *Vapor.Event) void", .default = "null", .desc = "Called when Enter is pressed in it." },
+    .{ .name = "on_focus", .type = "?*const fn (evt: *Vapor.Event) void", .default = "null", .desc = "Called when it gains focus." },
+    .{ .name = "on_blur", .type = "?*const fn (evt: *Vapor.Event) void", .default = "null", .desc = "Called when it loses focus." },
+    .{ .name = "background", .type = "Color", .default = ".palette(.background)", .desc = "The field's background." },
+    .{ .name = "text_color", .type = "Color", .default = ".palette(.text)", .desc = "The label's colour at rest." },
+    .{ .name = "tint_color", .type = "Color", .default = ".palette(.tint)", .desc = "The label's colour while the field has focus." },
+};
+
+const behaviours = [_]Docs.Field{
+    .{ .name = "Binding", .desc = "Typing writes straight into your variable; read it any time." },
+    .{ .name = "Kinds", .desc = ".password hides what's typed; .credit_card and .telephone group the digits as they're typed; .number and .float take only numbers." },
+    .{ .name = "Focus", .desc = "The border turns the tint colour and glows while it has focus." },
+    .{ .name = "Screen readers", .desc = "The label is tied to the input, so it names it." },
+};

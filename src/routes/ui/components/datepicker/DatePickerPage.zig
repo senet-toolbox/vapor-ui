@@ -47,7 +47,8 @@ const fields = [_]Docs.Field{
     .{ .name = "on_year_select", .type = "?*const fn (year: i32) void", .default = "null", .desc = "Called with the year picked from its menu, 1925 to 2035." },
     .{ .name = "on_next_month", .type = "?*const fn () void", .default = "null", .desc = "Called after the next-month arrow." },
     .{ .name = "on_prev_month", .type = "?*const fn () void", .default = "null", .desc = "Called after the previous-month arrow." },
-    .{ .name = "tint", .type = "Color", .default = ".palette(.tint)", .desc = "The picked day's background, and a faint wash on today." },
+    .{ .name = "tint", .type = "Color", .default = ".palette(.tint)", .desc = "The picked day's fill, and the ring around today." },
+    .{ .name = "selected_text_color", .type = "Color", .default = ".white", .desc = "The picked day's number, on its fill." },
     .{ .name = "text_color", .type = "Color", .default = ".palette(.text)", .desc = "The numbers of this month's days; other months' are grey." },
     .{ .name = "background", .type = "Color", .default = ".palette(.background)", .desc = "The calendar's background." },
 };
