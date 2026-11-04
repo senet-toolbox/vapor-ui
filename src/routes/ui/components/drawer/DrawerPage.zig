@@ -305,6 +305,7 @@ fn render() void {
 
 fn posBtn(label: []const u8, drawer: *Drawer) void {
     Button(Drawer.open, .{drawer})
+        .ref(&drawer.trigger)
         .padding(.xy(16, 10))
         .background(.palette(.tint))
         .border(.round(.palette(.tint), .all(8)))
@@ -318,6 +319,7 @@ var hl_api: SyntaxHighlighter = undefined;
 const fields = [_]Docs.Field{
     .{ .name = "content", .type = "?*const fn (*Sheet) void", .default = "null", .desc = "Draws what's inside. Your buttons can call close." },
     .{ .name = "label", .type = "[]const u8", .default = "\"Drawer\"", .desc = "Names it for screen readers." },
+    .{ .name = "trigger", .type = "Vapor.Element", .default = ".{}", .desc = "Bind your open button to it with .ref(&drawer.trigger), and the focus goes back there when it closes." },
     .{ .name = "size", .type = "f32", .default = "384", .desc = "Its width from the left or right, its height from the top or bottom, in pixels." },
     .{ .name = "max_width", .type = "f32", .default = "512", .desc = "The largest a drag of its handle makes it." },
     .{ .name = "mode", .type = ".overlay or .push", .default = ".overlay", .desc = ".overlay dims and blurs the page behind, and a click there closes it; .push draws no backdrop." },
@@ -325,8 +327,8 @@ const fields = [_]Docs.Field{
 };
 
 const behaviours = [_]Docs.Field{
-    .{ .name = "Opening", .desc = "Slides in from its side." },
-    .{ .name = "Closing", .desc = "Escape, a click on the backdrop, or your call to close." },
+    .{ .name = "Opening", .desc = "Slides in from its side, and the focus moves into it." },
+    .{ .name = "Closing", .desc = "Escape, a click on the backdrop, or your call to close. The focus goes back to its trigger." },
     .{ .name = "Resizing", .desc = "Drag the handle on its inner edge, up to max_width." },
     .{ .name = "Screen readers", .desc = "The panel has role=dialog, aria-modal and its label. The backdrop is a button named Close drawer that Tab skips." },
 };

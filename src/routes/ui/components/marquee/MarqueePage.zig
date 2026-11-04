@@ -284,10 +284,13 @@ const options = [_]Docs.Field{
     .{ .name = "speed_ms", .type = "u32", .default = "8000", .desc = "How long one loop takes, in milliseconds; lower is faster." },
     .{ .name = "gap", .type = "u8", .default = "16", .desc = "Pixels between items." },
     .{ .name = "repeat", .type = "usize", .default = "4", .desc = "How many copies of your items make up the strip, so short content still fills it." },
+    .{ .name = "label", .type = "[]const u8", .default = "\"Scrolling content\"", .desc = "Names it for screen readers." },
 };
 
 const behaviours = [_]Docs.Field{
     .{ .name = "Looping", .desc = "Your items repeat end to end, so the loop has no seam whatever their number or size." },
-    .{ .name = "Hover", .desc = "Pointing at it pauses it; it carries on when the pointer leaves." },
+    .{ .name = "Pausing", .desc = "Pointing at it, or focusing it (it's a tab stop), pauses it; it carries on when the pointer or focus leaves." },
+    .{ .name = "Less motion", .desc = "It stays still for anyone whose system asks for less motion." },
+    .{ .name = "Screen readers", .desc = "A region named by label." },
     .{ .name = "Size", .desc = "It fills its parent; give the parent a height for .up and .down." },
 };

@@ -16,6 +16,8 @@ pub fn init() void {
         .{ .value = Status.err, .label = "Error" },
     });
     combobox.trigger = "Status";
+    // Starts with Pending ticked.
+    combobox.default(.{ .value = Status.pending, .label = "Pending" });
 }
 
 pub fn render() void {

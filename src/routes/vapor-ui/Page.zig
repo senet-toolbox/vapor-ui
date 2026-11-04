@@ -48,6 +48,9 @@ const CarouselPage = @import("../../routes/ui/components/carousel/CarouselPage.z
 const MarqueePage = @import("../../routes/ui/components/marquee/MarqueePage.zig");
 const CheckBoxPage = @import("../../routes/ui/components/checkbox/CheckBoxPage.zig");
 const RadioPage = @import("../../routes/ui/components/radio/RadioPage.zig");
+const MenuPage = @import("../../routes/ui/components/menu/MenuPage.zig");
+const AvatarPage = @import("../../routes/ui/components/avatar/AvatarPage.zig");
+const BadgePage = @import("../../routes/ui/components/badge/BadgePage.zig");
 const TabsPage = @import("../../routes/ui/components/tabs/TabsPage.zig");
 const AuthPage = @import("../../routes/ui/auth/AuthPage.zig");
 const PaymentPage = @import("../../routes/ui/payment/PaymentPage.zig");
@@ -90,6 +93,9 @@ pub fn init() void {
 
     CheckBoxPage.init();
     RadioPage.init();
+    MenuPage.init();
+    AvatarPage.init();
+    BadgePage.init();
     Chat.init();
 
     Vapor.Animation.init("enter")

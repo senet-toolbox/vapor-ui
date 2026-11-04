@@ -537,7 +537,7 @@ const kanbanCardButton = (title, label) => `(() => {
   return null;
 })()`;
 
-const COMPONENT_PAGES = ["accordion", "alert", "button", "carousel", "chart", "checkbox", "combobox", "commandpalette", "datepicker", "dialog", "drawer", "marquee", "progress", "radio", "select", "sidebar", "slider", "switch", "table", "tabs", "textfield", "toasts", "tooltip"].map((n) => `/ui/components/${n}`);
+const COMPONENT_PAGES = ["accordion", "alert", "avatar", "badge", "button", "carousel", "chart", "checkbox", "combobox", "commandpalette", "datepicker", "dialog", "drawer", "marquee", "menu", "progress", "radio", "select", "sidebar", "slider", "switch", "table", "tabs", "textfield", "toasts", "tooltip"].map((n) => `/ui/components/${n}`);
 
 const tests = {
   async "accordion: a header opens its panel and closes it again"(p) {
@@ -613,7 +613,7 @@ const tests = {
       datepicker: ["DatePicker", "start_date"], dialog: ["Item(T)", "value"], progress: ["ProgressBar.Config", "id"],
       radio: ["Group", "name"], select: ["Item", "value"], sidebar: ["SideBar", "groups"], slider: ["Slider", "min"],
       switch: ["Parameters", "aria_label"], table: ["Column(T)", "title"], tabs: ["Tabs", "tag"], tooltip: ["Options", "content"],
-      combobox: ["Item", "value"], drawer: ["Sheet", "content"], marquee: ["Options", "direction"], textfield: ["Field", "label"], toasts: ["Options", "title"],
+      combobox: ["Item", "value"], avatar: ["Options", "name"], badge: ["Options", "text"], drawer: ["Sheet", "content"], marquee: ["Options", "direction"], menu: ["Item", "label"], textfield: ["Field", "label"], toasts: ["Options", "title"],
     };
     for (const [page, [tab, first]] of Object.entries(pages)) {
       await p.goto(`/ui/components/${page}`);
@@ -719,6 +719,109 @@ const tests = {
     const border = await p.evaluate(`(() => { let e = [...document.querySelectorAll("*")].find((x) => x.textContent === "Are you sure?" && !x.children.length); while (e && getComputedStyle(e).borderTopWidth === "0px") e = e.parentElement; return e ? getComputedStyle(e).borderTopColor : null; })()`);
     await p.colorScheme(null);
     assert(border && border !== "rgb(228, 228, 228)", `in dark mode the alert keeps its light border (${border})`);
+  },
+
+  async "menu: opens on its first item; keys move, skip, jump and pick; focus comes back"(p) {
+    await p.goto("/ui/components/menu");
+    const trigger = `[...document.querySelectorAll('button[aria-haspopup=menu]')].find((b) => b.textContent.trim() === "Actions")`;
+    const menu = `document.querySelector('[role=menu][aria-label="Actions"]')`;
+    // An item's name: its text but the shortcut, which is hidden from readers.
+    const focused = `(document.activeElement?.getAttribute("role") === "menuitem" ? [...document.activeElement.children].filter((c) => !c.hasAttribute("aria-hidden")).map((c) => c.textContent).join("").trim() : null)`;
+    assert(await p.evaluate(`${trigger}.getAttribute("aria-expanded")`) === "false", "the menu starts closed");
+    await p.evaluate(`${trigger}.focus()`);
+    await p.press("Enter");
+    await p.waitFor(`!!${menu}`, "Enter to open the menu");
+    assert(await p.evaluate(`${trigger}.getAttribute("aria-expanded")`) === "true", "the button doesn't say it's open");
+    await p.waitFor(`${focused} === "Edit"`, "the focus on the first item");
+    const move = async (key, expect, why) => { await p.press(key); await p.waitFor(`${focused} === ${JSON.stringify(expect)}`, why); };
+    await move("ArrowDown", "Duplicate", "Down to the next item");
+    await move("ArrowDown", "Delete", "Down to skip the disabled Archive");
+    await move("ArrowDown", "Edit", "Down to wrap round");
+    await move("End", "Delete", "End to the last item");
+    await move("Home", "Edit", "Home to the first");
+    await move("d", "Duplicate", "a letter to the next item starting with it");
+    assert(await p.evaluate(`[...${menu}.querySelectorAll("[role=menuitem]")].find((e) => e.textContent.trim() === "Archive").getAttribute("aria-disabled")`) === "true", "Archive isn't marked disabled");
+    assert(await p.evaluate(`[...${menu}.querySelectorAll("[role=menuitem]")].find((e) => e.textContent.startsWith("Edit")).getAttribute("aria-keyshortcuts")`) === "E", "Edit's shortcut isn't given as aria-keyshortcuts");
+    await p.press("Enter");
+    await p.waitText("Picked: Duplicate");
+    await p.waitFor(`!${menu}`, "a pick to close the menu");
+    await p.waitFor(`document.activeElement === ${trigger}`, "the focus back on the button");
+    // Up opens at the last item; Escape closes.
+    await p.press("ArrowUp");
+    await p.waitFor(`${focused} === "Delete"`, "Up to open the menu at its last item");
+    await p.press("Escape");
+    await p.waitFor(`!${menu}`, "Escape to close the menu");
+    await p.waitFor(`document.activeElement === ${trigger}`, "the focus back on the button after Escape");
+    // A disabled item can't be picked; a click outside closes.
+    await p.evaluate(`${trigger}.click()`);
+    await p.waitFor(`!!${menu}`, "a click to open it");
+    await p.clickText("Archive");
+    await sleep(150);
+    assert(await p.evaluate(`!!${menu}`) && await p.evaluate(`document.body.textContent.includes("Picked: Duplicate")`), "clicking the disabled Archive picked it");
+    const out = await p.evaluate(`(() => { const r = ${menu}.getBoundingClientRect(); return { x: Math.max(5, r.left - 60), y: r.top + 10 }; })()`);
+    await p.clickAt(out.x, out.y);
+    await p.waitFor(`!${menu}`, "a click outside to close it");
+  },
+
+  async "menu: an icon-only button is named, and the pointer moves the highlight"(p) {
+    await p.goto("/ui/components/menu");
+    const trigger = `document.querySelector('button[aria-haspopup=menu][aria-label="Account menu"]')`;
+    assert(await p.evaluate(`!!${trigger}`), "the icon button isn't named Account menu");
+    await p.evaluate(`${trigger}.click()`);
+    const menu = `document.querySelector('[role=menu][aria-label="Account menu"]')`;
+    await p.waitFor(`!!${menu}`, "the account menu to open");
+    await p.hoverText("Settings");
+    await p.waitFor(`document.activeElement?.textContent.trim() === "Settings"`, "hovering Settings to highlight it");
+    await p.press("ArrowDown");
+    await p.waitFor(`document.activeElement?.textContent.trim() === "Sign out"`, "the keys to carry on from where the pointer was");
+  },
+
+  async "avatar: named, with initials when the photo is missing, and a group that counts the rest"(p) {
+    await p.goto("/ui/components/avatar");
+    await sleep(300);
+    const got = await p.evaluate(`(() => {
+      const imgs = [...document.querySelectorAll("[role=img][aria-label]")];
+      const byName = (n) => imgs.find((e) => e.getAttribute("aria-label") === n);
+      const shown = (e) => e && [...e.querySelectorAll("*")].filter((c) => !c.children.length && c.textContent.trim()).map((c) => c.textContent.trim()).join("");
+      const g = document.querySelector('[role=group][aria-label="6 people"]');
+      return {
+        names: imgs.map((e) => e.getAttribute("aria-label")),
+        sarah: shown(byName("Sarah Chen")),
+        mike: shown(byName("Mike Johnson")),
+        // Over the missing photo's layer, the initials still have colour behind them.
+        mikeBg: byName("Mike Johnson") && getComputedStyle(byName("Mike Johnson").firstElementChild).backgroundColor,
+        photo: !!byName("John Lennon")?.querySelector('[style*="lenon.webp"]'),
+        group: g ? [...g.querySelectorAll("[role=img]")].map((e) => e.getAttribute("aria-label")) : null,
+      };
+    })()`);
+    for (const n of ["John Lennon", "Sarah Chen", "Mike Johnson", "Emily Davis (online)", "Alex Kim (busy)"])
+      assert(got.names.includes(n), `no avatar named ${JSON.stringify(n)} (have ${JSON.stringify(got.names)})`);
+    assert(got.sarah === "SC", `Sarah Chen's initials read ${JSON.stringify(got.sarah)}`);
+    assert(got.mike === "MJ" && got.mikeBg !== "rgba(0, 0, 0, 0)", `with its photo missing, Mike's avatar shows ${JSON.stringify(got.mike)} on ${got.mikeBg}`);
+    assert(got.photo, "John Lennon's avatar has no photo");
+    assert(got.group && got.group.length === 5 && got.group[4] === "2 more", `the group reads ${JSON.stringify(got.group)}`);
+  },
+
+  async "badge: counts are named in full and cut to 99+; tones read in both themes"(p) {
+    const lum = (rgb) => {
+      const [r, g, b] = rgb.match(/[\d.]+/g).slice(0, 3).map(Number).map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const contrast = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
+    await p.goto("/ui/components/badge");
+    const counts = await p.evaluate(`[...document.querySelectorAll("[role=status][aria-label]")].map((e) => [e.getAttribute("aria-label"), e.textContent.trim()])`);
+    assert(JSON.stringify(counts) === '[["3 unread messages","3"],["150 alerts","99+"]]', `the counts read ${JSON.stringify(counts)}`);
+    // The theme's page colours, as the chart's contrast test has them.
+    for (const [scheme, page] of [["light", "rgb(255, 255, 255)"], ["dark", "rgb(17, 17, 17)"]]) {
+      await p.colorScheme(scheme);
+      await p.goto("/ui/components/badge");
+      const texts = await p.evaluate(`["Draft", "New", "Active", "Pending", "Failed", "v3.8.0"].map((t) => { const e = [...document.querySelectorAll("*")].find((x) => x.textContent === t && !x.children.length); return [t, e ? getComputedStyle(e).color : null]; })`);
+      for (const [t, c] of texts) {
+        assert(c, `no badge reads ${t}`);
+        assert(contrast(c, page) >= 3, `in ${scheme} mode the ${t} badge's text (${c}) barely shows on ${page} (contrast ${contrast(c, page).toFixed(2)})`);
+      }
+    }
+    await p.colorScheme(null);
   },
 
   async "switch: toggles its state and calls back"(p) {
@@ -855,6 +958,19 @@ const tests = {
       await p.press("Escape");
       await p.waitText(content, { gone: true });
     }
+  },
+
+  async "drawer: takes the focus when it opens and gives it back"(p) {
+    await p.goto("/ui/components/drawer");
+    const opener = `[...document.querySelectorAll("button")].find((b) => b.textContent.trim() === "Open Bottom")`;
+    const panel = `[...document.querySelectorAll("[role=dialog]")].find((e) => e.getBoundingClientRect().width > 0)`;
+    await p.evaluate(`${opener}.focus()`);
+    await p.press("Enter");
+    await p.waitText("Simple Drawer Content");
+    await p.waitFor(`!!${panel} && ${panel}.contains(document.activeElement)`, "the focus to move into the drawer");
+    await p.press("Escape");
+    await p.waitText("Simple Drawer Content", { gone: true });
+    await p.waitFor(`document.activeElement === ${opener}`, "the focus to go back to the button that opened it");
   },
 
   async "drawer: the backdrop and the close button close it"(p) {
@@ -1144,7 +1260,8 @@ const tests = {
     await p.clickSelector("[aria-haspopup=listbox]", 0);
     await p.waitText("Pending");
     assert(await p.evaluate(`!!document.querySelector('[role=listbox][aria-multiselectable="true"]')`), "the list allows several choices");
-    await p.clickOption("Pending");
+    // The example starts with Pending ticked, by default().
+    assert(JSON.stringify(await p.evaluate(selected)) === '["Pending"]', `starts with ${JSON.stringify(await p.evaluate(selected))} ticked, not Pending`);
     await p.clickOption("Error");
     await p.waitFor(`JSON.stringify(${selected}) === '["Pending","Error"]'`, "Pending and Error both selected");
     await p.clickOption("Pending");
@@ -1847,7 +1964,28 @@ const tests = {
     assert([30, 80].includes(next), `the circle reads 30 or 80 (${next})`);
   },
 
+  async "marquee: stays still for less motion, and pauses while it has focus"(p) {
+    const group = `[...document.querySelectorAll(".marquee-group")].find((g) => g.getBoundingClientRect().height > 0)`;
+    const state = `getComputedStyle(${group}).animationPlayState`;
+    await p.reducedMotion("reduce");
+    await p.goto("/ui/components/marquee");
+    assert(await p.evaluate(state) === "paused", "a marquee moves for someone who asked for less motion");
+    await p.reducedMotion("no-preference");
+    await p.goto("/ui/components/marquee");
+    assert(await p.evaluate(state) === "running", "a marquee doesn't run on its own");
+    // A keyboard reaches it, named, and focus holds it still.
+    const region = `${group}.closest("[tabindex]")`;
+    const got = await p.evaluate(`(() => { const r = ${region}; return r ? { tab: r.tabIndex, role: r.getAttribute("role"), label: r.getAttribute("aria-label") } : null; })()`);
+    assert(got && got.tab === 0 && got.role === "region" && got.label, `the marquee isn't a named tab stop: ${JSON.stringify(got)}`);
+    await p.evaluate(`${region}.focus()`);
+    await p.waitFor(`${state} === "paused"`, "focus to pause it");
+    await p.evaluate(`${region}.blur()`);
+    await p.waitFor(`${state} === "running"`, "it to carry on when focus leaves");
+    await p.reducedMotion(null);
+  },
+
   async "marquee: scrolls, and pauses while the pointer is over it"(p) {
+    await p.reducedMotion("no-preference");
     await p.goto("/ui/components/marquee");
     const group = `[...document.querySelectorAll(".marquee-group")].find((g) => g.getBoundingClientRect().height > 0)`;
     await p.evaluate(`${group}.scrollIntoView({ block: "center" })`);
@@ -1863,6 +2001,7 @@ const tests = {
     await p.waitFor(`${state} === "paused"`, "hovering to pause it");
     await p.mouseTo(5, 890);
     await p.waitFor(`${state} === "running"`, "leaving to resume it");
+    await p.reducedMotion(null);
   },
 
   async "button: every button has a name; a loading one says it is busy"(p) {

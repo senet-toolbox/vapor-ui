@@ -77,6 +77,8 @@ pub fn init() void {
         \\
         \\// Draws the trigger, and the list while it's open.
         \\pub fn render(combobox: *ComboBox(T)) void
+        \\// Ticks the item with this label, and only it.
+        \\pub fn default(combobox: *ComboBox(T), item: Item) void
         \\pub fn toggle(combobox: *ComboBox(T)) void
         \\pub fn close(combobox: *ComboBox(T)) void
         \\

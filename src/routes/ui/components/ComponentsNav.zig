@@ -25,6 +25,8 @@ fn page(comptime slug: []const u8, comptime label: []const u8) MenuItem {
 pub var items = [_]MenuItem{
     page("accordion", "Accordion"),
     page("alert", "Alert"),
+    page("avatar", "Avatar"),
+    page("badge", "Badge"),
     page("button", "Button"),
     page("carousel", "Carousel"),
     page("chart", "Chart"),
@@ -35,6 +37,7 @@ pub var items = [_]MenuItem{
     page("dialog", "Dialog"),
     page("drawer", "Drawer"),
     page("marquee", "Marquee"),
+    page("menu", "Menu"),
     page("radio", "Radio"),
     page("select", "Select"),
     page("sidebar", "Sidebar"),

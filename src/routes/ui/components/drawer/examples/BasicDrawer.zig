@@ -30,6 +30,8 @@ fn content(_: *Drawer) void {
 
 pub fn render() void {
     Button(Drawer.open, .{&drawer})
+        // Focus comes back here when the drawer closes.
+        .ref(&drawer.trigger)
         .padding(.xy(16, 10))
         .background(.palette(.tint))
         .layout(.center)
