@@ -131,6 +131,8 @@ pub fn render() void {
             });
             CodeBox(&hl_detached, "Detached");
 
+            Docs.sectionDesc("A select chooses a value that stays chosen and shows on its button. For a list of actions, such as Edit or Delete, use a Menu.");
+
             Docs.sectionTitle("API Reference");
 
             Docs.exampleLabel("Select");

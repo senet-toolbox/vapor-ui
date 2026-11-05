@@ -85,6 +85,10 @@ pub fn render() void {
             });
             CodeBox(&hl_icon, "IconMenu");
 
+            Docs.sectionTitle("Menu or Select?");
+            Docs.sectionDesc("A menu does something: each item is an action, run once when picked, and the button keeps its own label. Edit, Duplicate, Delete.");
+            Docs.sectionDesc("A select chooses a value: the choice stays, the button shows it, and a form reads it. A country, a sort order, a size. If the button should show what was picked, use a Select.");
+
             Docs.sectionTitle("API Reference");
 
             Docs.exampleLabel("Menu");

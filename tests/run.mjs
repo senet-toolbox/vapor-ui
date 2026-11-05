@@ -763,6 +763,37 @@ const tests = {
     await p.waitFor(`!${menu}`, "a click outside to close it");
   },
 
+  async "menu: the text beside the button stays beside it, shut and open"(p) {
+    await p.goto("/ui/components/menu");
+    const trigger = `[...document.querySelectorAll('button[aria-haspopup=menu]')].find((b) => b.textContent.trim() === "Actions")`;
+    const picked = `[...document.querySelectorAll("p")].find((e) => e.textContent.startsWith("Picked:"))`;
+    // The text after the button: before it, the page moved when the menu opened.
+    const after = `!!(${trigger}.compareDocumentPosition(${picked}) & Node.DOCUMENT_POSITION_FOLLOWING)`;
+    await p.waitFor(`!!${trigger} && !!${picked}`, "the basic menu");
+    assert(await p.evaluate(after), "the text comes before the button while the menu is shut");
+    // Near the bottom of the window, with no room below, it opens above
+    // rather than over its button.
+    await p.evaluate(`window.scrollTo(0, 0); ${trigger}.scrollIntoView({ block: "end" })`);
+    await p.evaluate(`${trigger}.click()`);
+    await p.waitFor(`!!document.querySelector('[role=menu][aria-label="Actions"]')`, "the menu to open");
+    await sleep(150);
+    const clear = await p.evaluate(`(() => { const b = ${trigger}.getBoundingClientRect(), m = document.querySelector('[role=menu]').getBoundingClientRect(); return m.bottom <= b.top + 1 || m.top >= b.bottom - 1; })()`);
+    assert(clear, "with no room below, the menu covers its button");
+    await p.press("Escape");
+    await p.waitFor(`!document.querySelector('[role=menu][aria-label="Actions"]')`, "the menu to close");
+    // With room below it, as when someone has scrolled to it.
+    await p.evaluate(`${trigger}.scrollIntoView({ block: "center" })`);
+    const before = await p.evaluate(`JSON.stringify(${trigger}.getBoundingClientRect())`);
+    await p.evaluate(`${trigger}.click()`);
+    await p.waitFor(`!!document.querySelector('[role=menu][aria-label="Actions"]')`, "the menu to open");
+    assert(await p.evaluate(after), "the text comes before the button while the menu is open");
+    assert(await p.evaluate(`JSON.stringify(${trigger}.getBoundingClientRect())`) === before, "the button moved when the menu opened");
+    // The menu opens below the row, not over the text.
+    const r = await p.evaluate(`(() => { const t = ${picked}.getBoundingClientRect(), m = document.querySelector('[role=menu]').getBoundingClientRect(); return m.top >= t.bottom || m.right <= t.left || m.left >= t.right; })()`);
+    assert(r, "the open menu covers the text beside the button");
+    await p.press("Escape");
+  },
+
   async "menu: an icon-only button is named, and the pointer moves the highlight"(p) {
     await p.goto("/ui/components/menu");
     const trigger = `document.querySelector('button[aria-haspopup=menu][aria-label="Account menu"]')`;

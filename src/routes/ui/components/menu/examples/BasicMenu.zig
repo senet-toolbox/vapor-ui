@@ -1,6 +1,6 @@
 const Vapor = @import("vapor");
 const TextFmt = Vapor.TextFmt;
-const Stack = Vapor.Stack;
+const Row = Vapor.Row;
 const Menu = @import("opaque-ui").Menu;
 
 const items = [_]Menu.Item{
@@ -23,7 +23,8 @@ pub fn init() void {
 }
 
 pub fn render() void {
-    Stack().spacing(16).layout(.center).children({
+    // Side by side: the menu opens below, over what's under the button.
+    Row().spacing(16).layout(.center).children({
         menu.render();
         TextFmt("Picked: {s}", .{picked})
             .font(14, 300, .palette(.text_color))
