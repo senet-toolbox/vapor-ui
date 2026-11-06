@@ -656,16 +656,16 @@ const tests = {
 
   async "alert: opens on its trigger and Cancel closes it"(p) {
     await p.goto("/ui/components/alert");
-    await p.waitText("Are you sure?", { gone: true });
+    await p.waitText("Delete your account?", { gone: true });
     await p.clickText("Trigger Confirmation");
-    await p.waitText("Are you sure?");
+    await p.waitText("Delete your account?");
     await p.clickText("Cancel");
-    await p.waitText("Are you sure?", { gone: true });
-    // Continue closes it too.
+    await p.waitText("Delete your account?", { gone: true });
+    // The action closes it too.
     await p.clickText("Trigger Confirmation");
-    await p.waitText("Are you sure?");
-    await p.clickText("Continue");
-    await p.waitText("Are you sure?", { gone: true });
+    await p.waitText("Delete your account?");
+    await p.clickText("Delete account");
+    await p.waitText("Delete your account?", { gone: true });
   },
 
   async "alert: a labelled modal dialog that takes the focus and gives it back"(p) {
@@ -674,7 +674,7 @@ const tests = {
     // Opened from the keyboard.
     await p.evaluate(`document.querySelector('[aria-label="open alert"]').focus()`);
     await p.press("Enter");
-    await p.waitText("Are you sure?");
+    await p.waitText("Delete your account?");
     await p.waitFor(`!!${dialog} && ${dialog}.contains(document.activeElement)`, "the focus to move into the alert").catch(() => {});
     const got = await p.evaluate(`(() => {
       const d = ${dialog};
@@ -689,20 +689,20 @@ const tests = {
     assert(got.focusInside, "focus stays behind the alert when it opens");
     assert(got.mute === 0, `${got.mute} unnamed buttons can be tabbed to`);
     await p.press("Escape");
-    await p.waitText("Are you sure?", { gone: true });
+    await p.waitText("Delete your account?", { gone: true });
     await p.waitFor(`document.activeElement?.getAttribute("aria-label") === "open alert"`, "focus to return to the button that opened it");
     await p.waitText("Answer: dismissed");
     // A click outside dismisses it too, and says so. (Each time, the alert
     // finishes leaving before the next click.)
     await sleep(300);
     await p.clickText("Trigger Confirmation");
-    await p.waitText("Are you sure?");
-    await p.clickText("Continue");
+    await p.waitText("Delete your account?");
+    await p.clickText("Delete account");
     await p.waitText("Answer: continued");
-    await p.waitText("Are you sure?", { gone: true });
+    await p.waitText("Delete your account?", { gone: true });
     await sleep(300);
     await p.clickText("Trigger Confirmation");
-    await p.waitText("Are you sure?");
+    await p.waitText("Delete your account?");
     await p.waitFor(`!!${dialog}`, "the alert to open");
     // Beside the panel, on the backdrop.
     const out = await p.evaluate(`(() => { const r = ${dialog}.getBoundingClientRect(); return { x: Math.max(5, r.left - 40), y: r.top + r.height / 2 }; })()`);
@@ -715,10 +715,58 @@ const tests = {
     await p.colorScheme("dark");
     await p.goto("/ui/components/alert");
     await p.clickText("Trigger Confirmation");
-    await p.waitText("Are you sure?");
-    const border = await p.evaluate(`(() => { let e = [...document.querySelectorAll("*")].find((x) => x.textContent === "Are you sure?" && !x.children.length); while (e && getComputedStyle(e).borderTopWidth === "0px") e = e.parentElement; return e ? getComputedStyle(e).borderTopColor : null; })()`);
+    await p.waitText("Delete your account?");
+    const border = await p.evaluate(`(() => { let e = [...document.querySelectorAll("*")].find((x) => x.textContent === "Delete your account?" && !x.children.length); while (e && getComputedStyle(e).borderTopWidth === "0px") e = e.parentElement; return e ? getComputedStyle(e).borderTopColor : null; })()`);
     await p.colorScheme(null);
     assert(border && border !== "rgb(228, 228, 228)", `in dark mode the alert keeps its light border (${border})`);
+  },
+
+  async "alert: its panel has room round its content, and fits a phone"(p) {
+    const panel = `document.querySelector("[role=alertdialog]")`;
+    const measure = `(() => { const e = ${panel}, cs = getComputedStyle(e), r = e.getBoundingClientRect(); return { padding: parseFloat(cs.paddingLeft), left: r.left, right: innerWidth - r.right, width: r.width }; })()`;
+    await p.goto("/ui/components/alert");
+    await p.clickText("Trigger Confirmation");
+    await p.waitFor(`!!${panel}`, "the alert to open");
+    const wide = await p.evaluate(measure);
+    assert(wide.padding >= 16, `the alert's content touches its edge (padding ${wide.padding}px)`);
+    assert(wide.width <= 440, `the alert is ${wide.width}px wide; it stops at 440`);
+    await p.press("Escape");
+    await p.viewport(375, 740, true);
+    try {
+      await p.goto("/ui/components/alert");
+      await p.clickText("Trigger Confirmation");
+      await p.waitFor(`!!${panel}`, "the alert to open on a phone");
+      const phone = await p.evaluate(measure);
+      assert(phone.left >= 15 && phone.right >= 15, `on a phone the alert runs off the screen (${JSON.stringify(phone)})`);
+    } finally {
+      await p.viewport(1440, 900);
+    }
+  },
+
+  async "components: the sidebar marks the page, with a trailing slash too"(p) {
+    const marked = `[...document.querySelectorAll("#components-sidebar li")].filter((li) => getComputedStyle(li).borderRightColor !== "rgba(0, 0, 0, 0)").map((li) => li.textContent.trim())`;
+    for (const path of ["/ui/components/menu", "/ui/components/menu/"]) {
+      await p.goto(path);
+      await p.waitFor(`!!document.getElementById("components-sidebar")`, "the sidebar");
+      { const got = await p.evaluate(marked); assert(JSON.stringify(got) === JSON.stringify(["Menu"]), `the sidebar's marked entry at ${path}` + ": " + JSON.stringify(got)); }
+    }
+  },
+
+  async "components: previous and next links go through the pages, each from its top"(p) {
+    const links = `[...document.querySelectorAll("[role=navigation][aria-label='Previous and next component'] a")].map((a) => a.getAttribute("aria-label"))`;
+    await p.goto("/ui/components/accordion");
+    { const got = await p.evaluate(links); assert(JSON.stringify(got) === JSON.stringify(["Next: Alert"]), "the first page's links" + ": " + JSON.stringify(got)); }
+    await p.goto("/ui/components/progress");
+    { const got = await p.evaluate(links); assert(JSON.stringify(got) === JSON.stringify(["Previous: Tooltip"]), "the last page's links" + ": " + JSON.stringify(got)); }
+    await p.goto("/ui/components/alert");
+    { const got = await p.evaluate(links); assert(JSON.stringify(got) === JSON.stringify(["Previous: Accordion", "Next: Avatar"]), "the alert page's links" + ": " + JSON.stringify(got)); }
+    await p.evaluate(`window.scrollTo(0, document.documentElement.scrollHeight)`);
+    await p.waitFor(`window.scrollY > 300`, "the page scrolled to its foot");
+    await p.evaluate(`document.querySelector("a[aria-label='Next: Avatar']").click()`);
+    await p.waitFor(`location.pathname === "/ui/components/avatar" && document.body.textContent.includes("avatar-ui")`, "the avatar page");
+    await sleep(150);
+    { const got = await p.evaluate(`window.scrollY`); assert(JSON.stringify(got) === JSON.stringify(0), "the next page's scroll position" + ": " + JSON.stringify(got)); }
+    { const got = await p.evaluate(links); assert(JSON.stringify(got) === JSON.stringify(["Previous: Alert", "Next: Badge"]), "the avatar page's links" + ": " + JSON.stringify(got)); }
   },
 
   async "menu: opens on its first item; keys move, skip, jump and pick; focus comes back"(p) {

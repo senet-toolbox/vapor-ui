@@ -39,6 +39,9 @@ const alert_fields = [_]Docs.Field{
     .{ .name = "closed", .type = "bool", .default = "true", .desc = "Whether the alert is hidden. open and close set it." },
     .{ .name = "background", .type = "Color", .default = ".palette(.background)", .desc = "The box's background." },
     .{ .name = "border", .type = "Border", .default = ".round(.palette(.border_color_light), .all(12))", .desc = "The box's border and corners." },
+    .{ .name = "padding", .type = "Padding", .default = ".all(24)", .desc = "Room round your content." },
+    .{ .name = "max_width", .type = "f32", .default = "440", .desc = "The box's widest, in pixels; on a narrow screen it keeps 16px from each edge." },
+    .{ .name = "backdrop", .type = "Color", .default = "black at 40%", .desc = "Over the blurred page behind it." },
     .{ .name = "label", .type = "[]const u8", .default = "\"Alert\"", .desc = "Names it for screen readers: what it asks about." },
     .{ .name = "trigger", .type = "Vapor.Element", .default = ".{}", .desc = "Bind your open button to it with .ref(&alert.trigger), and the focus goes back there when the alert closes." },
     .{ .name = "on_enter", .type = "?*const fn (*Alert) void", .default = "null", .desc = "Called when Enter is pressed while the alert is open. The alert stays open; close it here if the action should." },
@@ -49,7 +52,7 @@ const behaviours = [_]Docs.Field{
     .{ .name = "Closing", .desc = "Escape, a click outside the box, or your call to close." },
     .{ .name = "Keyboard", .desc = "Opening it moves the focus into it; closing gives the focus back to its trigger. While open, Escape closes it and Enter calls on_enter." },
     .{ .name = "Screen readers", .desc = "The box has role=alertdialog, aria-modal and its label. The backdrop is hidden from them and can't be tabbed to." },
-    .{ .name = "Backdrop", .desc = "The page behind is blurred and can't be clicked; the box sits in the middle." },
+    .{ .name = "Backdrop", .desc = "The page behind is blurred, dimmed and can't be clicked; the box sits in the middle." },
     .{ .name = "Animation", .desc = "Fades and grows in, and fades and shrinks out, in 200ms." },
 };
 

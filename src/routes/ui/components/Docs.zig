@@ -34,7 +34,8 @@ pub fn Content() Vapor.Builder(.pure) {
         .width(.percent(50))
         .responsive(.mobile, .{ .size = .w(.percent(92)) })
         .spacing(12)
-        .padding(.{ .bottom = 120 });
+        // The links to the next and previous pages follow, then the foot.
+        .padding(.{ .bottom = 64 });
 }
 
 pub fn sectionTitle(title: []const u8) void {

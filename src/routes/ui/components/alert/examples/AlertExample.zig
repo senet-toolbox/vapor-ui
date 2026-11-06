@@ -52,46 +52,47 @@ pub fn render() void {
 }
 
 fn alertContent(_: *Alert) void {
+    Stack()
+        .width(.percent(100))
+        .spacing(8)
+        .children({
+        Text("Delete your account?")
+            .font(18, 600, .palette(.text_color))
+            .fontFamily("Montserrat")
+            .end();
+
+        Text("This can't be undone. Your account and everything in it will be deleted from our servers.")
+            .font(14, 400, .hex("#71717a"))
+            .fontFamily("Montserrat")
+            .inlineStyle("line-height: 1.5;", .{})
+            .end();
+    });
+
     Row()
         .width(.percent(100))
-        .spacing(16)
-        .direction(.column)
+        .margin(.{ .top = 24 })
+        .spacing(8)
+        .layout(.right_center)
         .children({
-        Text("Are you sure?")
-            .font(22, 700, .palette(.text_color))
-            .fontFamily("Montserrat")
-            .end();
-
-        Text("This action cannot be undone. This will permanently delete your account and remove your data from our servers.")
-            .font(14, 300, .palette(.text_color))
-            .fontFamily("Montserrat")
-            .end();
-
-        Row()
-            .width(.percent(100))
-            .spacing(12)
-            .layout(.right_center)
+        Button(cancel, .{})
+            .cursor(.pointer)
+            .padding(.xy(16, 9))
+            .background(.transparent)
+            .border(.round(.palette(.border_color_light), .all(8)))
+            .hoverBackground(.palette(.highlight_color))
             .children({
-            // Cancel Button
-            Button(cancel, .{})
-                .cursor(.pointer)
-                .padding(.xy(20, 10))
-                .background(.palette(.text_color))
-                .border(.round(.palette(.text_color), .all(8)))
-                .hoverScale()
-                .children({
-                Text("Cancel").fontFamily("Montserrat").font(14, 600, .palette(.background)).end();
-            });
+            Text("Cancel").fontFamily("Montserrat").font(14, 500, .palette(.text_color)).end();
+        });
 
-            // Action Button
-            Button(proceed, .{})
-                .cursor(.pointer)
-                .padding(.xy(20, 10))
-                .border(.round(.palette(.text_color), .all(8)))
-                .hoverScale()
-                .children({
-                Text("Continue").fontFamily("Montserrat").font(14, 600, .palette(.text_color)).end();
-            });
+        // The destructive action, in the warning colour.
+        Button(proceed, .{})
+            .cursor(.pointer)
+            .padding(.xy(16, 9))
+            .background(.hex("#dc2626"))
+            .border(.round(.hex("#dc2626"), .all(8)))
+            .hoverBackground(.hex("#b91c1c"))
+            .children({
+            Text("Delete account").fontFamily("Montserrat").font(14, 500, .white).end();
         });
     });
 }

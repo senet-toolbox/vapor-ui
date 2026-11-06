@@ -56,10 +56,81 @@ pub fn init() void {
 }
 
 /// Wraps every page under /ui/components. The index lists the components
-/// itself, so it goes without the sidebar.
+/// itself, so it goes without the sidebar and the page links.
 fn layout(render_page: *const fn () void) void {
-    if (!std.mem.eql(u8, Vapor.currentPath(), base_path)) Sidebar();
+    const on_index = std.mem.eql(u8, Vapor.currentPath(), base_path);
+    if (!on_index) Sidebar();
     render_page();
+    if (!on_index) PageLinks();
+}
+
+/// The place of the page at `path` in `items`.
+fn indexOf(path: []const u8) ?usize {
+    for (items, 0..) |item, i| {
+        if (std.mem.eql(u8, path, item.value)) return i;
+    }
+    return null;
+}
+
+const Side = enum { previous, next };
+
+/// Links to the pages before and after this one, in sidebar order, at the
+/// foot of the page.
+fn PageLinks() void {
+    const index = indexOf(Vapor.currentPath()) orelse return;
+    Row()
+        .width(.percent(100))
+        .layout(.center)
+        .padding(.{ .bottom = 120 })
+        .children({
+        Row()
+            .a11y(Vapor.Accessibility.init().setRole(.navigation).setLabel("Previous and next component"))
+            .width(.percent(50))
+            .responsive(.mobile, .{ .size = .w(.percent(92)) })
+            .layout(.x_between_center)
+            .spacing(16)
+            .children({
+            if (index > 0) PageLink(.previous, items[index - 1]) else Spacer();
+            if (index + 1 < items.len) PageLink(.next, items[index + 1]) else Spacer();
+        });
+    });
+}
+
+/// Holds the other side's place, so a lone link stays on its own side.
+fn Spacer() void {
+    Row().width(.percent(48)).children({});
+}
+
+fn PageLink(side: Side, item: MenuItem) void {
+    const previous = side == .previous;
+    Link(.{
+        .url = item.value,
+        .aria_label = Vapor.fmtln("{s}: {s}", .{ if (previous) "Previous" else "Next", item.label }),
+    })
+        .width(.percent(48))
+        .direction(.column)
+        .layout(if (previous) .{ .x = .start, .y = .center } else .{ .x = .end, .y = .center })
+        .spacing(8)
+        .padding(.xy(20, 18))
+        .border(.round(.palette(.border_color_light), .all(12)))
+        .textDecoration(.none)
+        .textColor(.palette(.text_color))
+        .duration(120)
+        .hover(.{
+            .border = .round(.palette(.tint), .all(12)),
+            .text_color = .palette(.tint),
+        })
+        .children({
+        Text(if (previous) "← Previous" else "Next →")
+            .font(13, 400, .hex("#71717a"))
+            .fontFamily("IBM Plex Mono,monospace")
+            .end();
+        // The link's colour, so it turns with the border on hover.
+        Text(item.label)
+            .font(18, 500, null)
+            .fontFamily("Montserrat")
+            .end();
+    });
 }
 
 /// The sidebar entry's element id for `path`.
