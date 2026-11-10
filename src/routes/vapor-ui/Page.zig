@@ -54,6 +54,8 @@ const BadgePage = @import("../../routes/ui/components/badge/BadgePage.zig");
 const BreadcrumbPage = @import("../../routes/ui/components/breadcrumb/BreadcrumbPage.zig");
 const PaginationPage = @import("../../routes/ui/components/pagination/PaginationPage.zig");
 const SkeletonPage = @import("../../routes/ui/components/skeleton/SkeletonPage.zig");
+const SegmentedPage = @import("../../routes/ui/components/segmented/SegmentedPage.zig");
+const CodeInputPage = @import("../../routes/ui/components/codeinput/CodeInputPage.zig");
 const TabsPage = @import("../../routes/ui/components/tabs/TabsPage.zig");
 const AuthPage = @import("../../routes/ui/auth/AuthPage.zig");
 const PaymentPage = @import("../../routes/ui/payment/PaymentPage.zig");
@@ -102,6 +104,8 @@ pub fn init() void {
     BreadcrumbPage.init();
     PaginationPage.init();
     SkeletonPage.init();
+    SegmentedPage.init();
+    CodeInputPage.init();
     Chat.init();
 
     Vapor.Animation.init("enter")

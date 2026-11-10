@@ -431,7 +431,7 @@ function makePage(cdp, origin) {
     },
     // `modifiers` as CDP counts them: Alt 1, Ctrl 2, Meta 4, Shift 8.
     async press(key, code = key, modifiers = 0) {
-      const keyCode = { Enter: 13, Escape: 27, ArrowDown: 40, ArrowUp: 38, ArrowLeft: 37, ArrowRight: 39, Home: 36, End: 35, PageUp: 33, PageDown: 34, Tab: 9, " ": 32 }[key] ?? (key.length === 1 ? key.toUpperCase().charCodeAt(0) : 0);
+      const keyCode = { Enter: 13, Escape: 27, ArrowDown: 40, ArrowUp: 38, ArrowLeft: 37, ArrowRight: 39, Home: 36, End: 35, PageUp: 33, PageDown: 34, Backspace: 8, Tab: 9, " ": 32 }[key] ?? (key.length === 1 ? key.toUpperCase().charCodeAt(0) : 0);
       // Keys that type a character carry it, as a real keyboard's do; Chrome
       // activates a focused button on Enter or Space only then.
       const text = modifiers ? undefined : { Enter: "\r", " ": " " }[key];
@@ -537,7 +537,7 @@ const kanbanCardButton = (title, label) => `(() => {
   return null;
 })()`;
 
-const COMPONENT_PAGES = ["accordion", "alert", "avatar", "badge", "breadcrumb", "button", "carousel", "chart", "checkbox", "combobox", "commandpalette", "datepicker", "dialog", "drawer", "marquee", "menu", "pagination", "progress", "radio", "select", "sidebar", "skeleton", "slider", "switch", "table", "tabs", "textfield", "toasts", "tooltip"].map((n) => `/ui/components/${n}`);
+const COMPONENT_PAGES = ["accordion", "alert", "avatar", "badge", "breadcrumb", "button", "carousel", "chart", "checkbox", "codeinput", "combobox", "commandpalette", "datepicker", "dialog", "drawer", "marquee", "menu", "pagination", "progress", "radio", "segmented", "select", "sidebar", "skeleton", "slider", "switch", "table", "tabs", "textfield", "toasts", "tooltip"].map((n) => `/ui/components/${n}`);
 
 const tests = {
   async "table: the arrow keys move a marked active cell; Space selects its row"(p) {
@@ -703,6 +703,57 @@ const tests = {
     assert(await p.evaluate(busy) === "false", "busy after it loaded");
   },
 
+  async "segmented: one tab stop, the arrow keys move the choice and the focus"(p) {
+    await p.goto("/ui/components/segmented");
+    const group = `document.querySelector('[role=radiogroup][aria-label="Period"]')`;
+    const state = () => p.evaluate(`(() => { const g = ${group}; const r = [...g.querySelectorAll("[role=radio]")]; return { checked: r.filter((e) => e.getAttribute("aria-checked") === "true").map((e) => e.textContent.trim()), stops: r.filter((e) => e.tabIndex === 0).length, focused: document.activeElement?.textContent.trim() }; })()`);
+    let s = await state();
+    assert(JSON.stringify(s.checked) === '["Week"]' && s.stops === 1, `Week chosen, one tab stop (${JSON.stringify(s)})`);
+    await p.clickText("Month");
+    await p.waitText("Showing this Month");
+    await p.press("ArrowRight", "ArrowRight");
+    await p.waitText("Showing this Year");
+    await p.waitFor(`document.activeElement?.textContent.trim() === "Year"`, "the focus to follow the choice");
+    await p.press("ArrowRight", "ArrowRight");
+    await p.waitText("Showing this Day");
+    await p.press("End", "End");
+    await p.waitText("Showing this Year");
+    await p.press("ArrowLeft", "ArrowLeft");
+    await p.waitText("Showing this Month");
+    await p.waitFor(`document.activeElement?.textContent.trim() === "Month"`, "the focus to follow ArrowLeft");
+    s = await state();
+    assert(JSON.stringify(s.checked) === '["Month"]' && s.stops === 1 && s.focused === "Month", `Month chosen and focused (${JSON.stringify(s)})`);
+    await p.clickText("Board");
+    await p.waitText("Changed 1 times");
+    await p.clickText("Board");
+    await p.waitText("Changed 1 times");
+  },
+
+  async "code input: typing fills the boxes, a paste is cleaned, on_complete runs once full"(p) {
+    await p.goto("/ui/components/codeinput");
+    const field = `document.querySelector('input[aria-label="Verification code"]')`;
+    const boxes = (label) => `[...document.querySelector('input[aria-label="${label}"]').parentElement.querySelector("[aria-hidden=true]").children].map((b) => b.textContent).join("")`;
+    const attrs = await p.evaluate(`(() => { const f = ${field}; return [f.getAttribute("inputmode"), f.getAttribute("autocomplete"), f.maxLength]; })()`);
+    assert(JSON.stringify(attrs) === '["numeric","one-time-code",-1]', `the field's attributes, and no maxlength to cut a paste (${JSON.stringify(attrs)})`);
+    await p.clickSelector('input[aria-label="Verification code"]');
+    await p.waitFor(`document.activeElement === (${field})`, "a click on the boxes to focus the field");
+    await p.typeKeys("12a3");
+    await p.waitFor(`${boxes("Verification code")} === "123"`, `the digits in the boxes (are ${JSON.stringify(await p.evaluate(boxes("Verification code")))})`);
+    await p.press("Backspace", "Backspace");
+    await p.waitFor(`${boxes("Verification code")} === "12"`, "Backspace to clear the last box");
+    // A pasted code with a space in it, as an email shows it.
+    await p.evaluate(`(${field}).select()`);
+    await p.type("987 654");
+    await p.waitFor(`${boxes("Verification code")} === "987654"`, `the pasted code, cleaned (is ${JSON.stringify(await p.evaluate(boxes("Verification code")))})`);
+    await p.waitText("Code entered");
+    assert(await p.evaluate(`(${field}).value`) === "987654", "the field holds the cleaned code too");
+
+    await p.clickSelector('input[aria-label="Invite code"]');
+    await p.typeKeys("ab-12x");
+    await p.waitFor(`${boxes("Invite code")} === "ab12"`, `letters and digits, four of them (are ${JSON.stringify(await p.evaluate(boxes("Invite code")))})`);
+    await p.waitText("4 of 4");
+  },
+
   async "focus: Tab shows the one ring on every component, a click shows none"(p) {
     const ringOf = (find) => `(() => { const e = ${find}; const s = getComputedStyle(e); return [s.outlineStyle, s.outlineWidth, s.outlineOffset, s.outlineColor].join(" "); })()`;
     const button = (text) => `[...document.querySelectorAll("button")].find((b) => b.textContent.trim() === ${JSON.stringify(text)})`;
@@ -812,7 +863,7 @@ const tests = {
       datepicker: ["DatePicker", "start_date"], dialog: ["Item(T)", "value"], progress: ["ProgressBar.Config", "id"],
       radio: ["Group", "name"], select: ["Item", "value"], sidebar: ["SideBar", "groups"], slider: ["Slider", "min"],
       switch: ["Parameters", "aria_label"], table: ["Column(T)", "title"], tabs: ["Tabs", "tag"], tooltip: ["Options", "content"],
-      combobox: ["Item", "value"], avatar: ["Options", "name"], badge: ["Options", "text"], breadcrumb: ["Crumb", "label"], pagination: ["Options", "label"], skeleton: ["Options", "width"], drawer: ["Sheet", "content"], marquee: ["Options", "direction"], menu: ["Item", "label"], textfield: ["Field", "label"], toasts: ["Options", "title"],
+      combobox: ["Item", "value"], avatar: ["Options", "name"], badge: ["Options", "text"], breadcrumb: ["Crumb", "label"], pagination: ["Options", "label"], skeleton: ["Options", "width"], segmented: ["Options", "label"], codeinput: ["Options", "label"], drawer: ["Sheet", "content"], marquee: ["Options", "direction"], menu: ["Item", "label"], textfield: ["Field", "label"], toasts: ["Options", "title"],
     };
     for (const [page, [tab, first]] of Object.entries(pages)) {
       await p.goto(`/ui/components/${page}`);
