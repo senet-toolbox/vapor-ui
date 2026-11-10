@@ -431,7 +431,7 @@ function makePage(cdp, origin) {
     },
     // `modifiers` as CDP counts them: Alt 1, Ctrl 2, Meta 4, Shift 8.
     async press(key, code = key, modifiers = 0) {
-      const keyCode = { Enter: 13, Escape: 27, ArrowDown: 40, ArrowUp: 38, Tab: 9, " ": 32 }[key] ?? (key.length === 1 ? key.toUpperCase().charCodeAt(0) : 0);
+      const keyCode = { Enter: 13, Escape: 27, ArrowDown: 40, ArrowUp: 38, ArrowLeft: 37, ArrowRight: 39, Home: 36, End: 35, PageUp: 33, PageDown: 34, Tab: 9, " ": 32 }[key] ?? (key.length === 1 ? key.toUpperCase().charCodeAt(0) : 0);
       // Keys that type a character carry it, as a real keyboard's do; Chrome
       // activates a focused button on Enter or Space only then.
       const text = modifiers ? undefined : { Enter: "\r", " ": " " }[key];
@@ -540,6 +540,92 @@ const kanbanCardButton = (title, label) => `(() => {
 const COMPONENT_PAGES = ["accordion", "alert", "avatar", "badge", "button", "carousel", "chart", "checkbox", "combobox", "commandpalette", "datepicker", "dialog", "drawer", "marquee", "menu", "progress", "radio", "select", "sidebar", "slider", "switch", "table", "tabs", "textfield", "toasts", "tooltip"].map((n) => `/ui/components/${n}`);
 
 const tests = {
+  async "table: the arrow keys move a marked active cell; Space selects its row"(p) {
+    await p.goto("/ui/components/table");
+    const grid = `document.querySelector("[role=grid]")`;
+    const active = `(() => { const id = (${grid}).getAttribute("aria-activedescendant"); return id ? document.getElementById(id) : null; })()`;
+    const cell = async () => p.evaluate(`(() => { const c = ${active}; if (!c) return null; return { text: c.textContent.trim(), role: c.getAttribute("role"), marked: getComputedStyle(c).boxShadow !== "none", checkbox: c.querySelector("[role=checkbox]")?.getAttribute("aria-checked") ?? null }; })()`);
+    const expectCell = async (text, what) => {
+      await p.waitFor(`(${active})?.textContent.trim() === ${JSON.stringify(text)}`, `${what}: the active cell to read ${JSON.stringify(text)} (is ${JSON.stringify(await cell())})`);
+      const c = await cell();
+      assert(c.role === "gridcell" && c.marked, `${what}: the active cell is a marked gridcell (${JSON.stringify(c)})`);
+    };
+
+    // Reached from the keyboard: the first row's first column, marked.
+    await p.press("Shift", "ShiftLeft");
+    await p.evaluate(`(${grid}).focus()`);
+    await expectCell("pending", "on focus");
+    await p.press("ArrowRight", "ArrowRight");
+    await expectCell("john@example.com", "ArrowRight");
+    await p.press("ArrowDown", "ArrowDown");
+    await expectCell("jane@example.com", "ArrowDown");
+    await p.press("End", "End");
+    await expectCell("200", "End");
+    await p.press("ArrowRight", "ArrowRight");
+    await expectCell("200", "ArrowRight at the last column");
+    await p.press("Home", "Home");
+    await p.waitFor(`(${active})?.querySelector("[role=checkbox]") != null`, "Home: the checkbox cell");
+    assert((await cell()).checkbox === "false", "row 2 starts unselected");
+    await p.press(" ", "Space");
+    await p.waitFor(`(${active})?.querySelector("[role=checkbox]")?.getAttribute("aria-checked") === "true"`, "Space to select row 2");
+    assert(await p.evaluate(`document.activeElement === (${grid})`), "the focus stays on the grid");
+    await p.press("End", "End", 2);
+    await p.press("ArrowRight", "ArrowRight");
+    await p.press("ArrowRight", "ArrowRight");
+    await expectCell("mary@example.com", "Ctrl+End, then two ArrowRights");
+    await p.press("ArrowDown", "ArrowDown");
+    await expectCell("mary@example.com", "ArrowDown at the last row");
+
+    // Leaving and coming back keeps the cell; a click focuses without the mark.
+    await p.press("Tab", "Tab");
+    assert(await p.evaluate(`document.activeElement !== (${grid})`), "Tab leaves the grid");
+    assert(await p.evaluate(`!(${grid}).hasAttribute("aria-activedescendant")`), "no active cell named while the grid has no focus");
+    await p.clickText("bob@example.com");
+    await p.waitFor(`document.activeElement === (${grid})`, "the click to focus the grid");
+    await sleep(100);
+    assert(!(await cell()).marked, "a click leaves the active cell unmarked");
+    await p.press("ArrowUp", "ArrowUp");
+    await expectCell("bob@example.com", "ArrowUp after the click");
+  },
+
+  async "table: Page Down turns the page, and in a long list scrolls the active row into view"(p) {
+    await p.goto("/ui/components/table");
+    const pagerOf = (g) => `(() => { let a = ${g}; while (a && !a.querySelector("[role=navigation]")) a = a.parentElement; return a?.querySelector("[role=navigation]")?.textContent.trim() ?? null; })()`;
+    const grids = await p.evaluate(`[...document.querySelectorAll("[role=grid]")].map((g) => { let a = g; while (a && !a.querySelector("[role=navigation]")) a = a.parentElement; return a?.querySelector("[role=navigation]")?.textContent.trim() ?? ""; })`);
+    // 10 rows fill one page, not two.
+    assert(grids.filter((t) => t.startsWith("Page 1 of 2")).length === 1, `one table spans two pages (${JSON.stringify(grids)})`);
+    const index = grids.findIndex((t) => t.startsWith("Page 1 of 2"));
+    const grid = `document.querySelectorAll("[role=grid]")[${index}]`;
+    const activeText = `(() => { const id = (${grid}).getAttribute("aria-activedescendant"); return id ? document.getElementById(id)?.textContent.trim() : null; })()`;
+
+    await p.press("Shift", "ShiftLeft");
+    await p.evaluate(`(${grid}).focus()`);
+    await p.press("ArrowDown", "ArrowDown");
+    await p.press("PageDown", "PageDown");
+    await p.waitFor(`${pagerOf(grid)}?.startsWith("Page 2 of 2")`, "Page Down to turn to page 2");
+    await p.press("End", "End");
+    // Row 12 (index 11) of 15: its amount.
+    await p.waitFor(`${activeText} === "1200"`, `the same row of page 2 (is ${JSON.stringify(await p.evaluate(activeText))})`);
+    await p.press("PageDown", "PageDown");
+    await p.waitFor(`${pagerOf(grid)}?.startsWith("Page 2 of 2")`, "no page past the last");
+    await p.press("PageUp", "PageUp");
+    await p.waitFor(`${pagerOf(grid)}?.startsWith("Page 1 of 2")`, "Page Up back to page 1");
+    await p.waitFor(`${activeText} === "200"`, "row 2 again");
+
+    // The virtual list draws only the rows in view.
+    const virtual = `[...document.querySelectorAll("[role=grid]")].find((g) => g.querySelector("ul"))`;
+    const vText = `(() => { const id = (${virtual}).getAttribute("aria-activedescendant"); return id ? document.getElementById(id)?.textContent.trim() : null; })()`;
+    await p.evaluate(`(${virtual}).focus()`);
+    await p.press("End", "End");
+    await p.press("PageDown", "PageDown");
+    await p.waitFor(`${vText} === "2100"`, `Page Down 20 rows to row 21 (is ${JSON.stringify(await p.evaluate(vText))})`);
+    const shown = `(() => { const c = document.getElementById((${virtual}).getAttribute("aria-activedescendant")); const l = (${virtual}).querySelector("ul").getBoundingClientRect(); const r = c.getBoundingClientRect(); return r.top >= l.top - 1 && r.bottom <= l.bottom + 1; })()`;
+    await p.waitFor(shown, "row 21 scrolled into the list's view");
+    await p.press("End", "End", 2);
+    await p.waitFor(`${vText} === "10000"`, "Ctrl+End to the 100th row");
+    await p.waitFor(shown, "the 100th row in view");
+  },
+
   async "focus: Tab shows the one ring on every component, a click shows none"(p) {
     const ringOf = (find) => `(() => { const e = ${find}; const s = getComputedStyle(e); return [s.outlineStyle, s.outlineWidth, s.outlineOffset, s.outlineColor].join(" "); })()`;
     const button = (text) => `[...document.querySelectorAll("button")].find((b) => b.textContent.trim() === ${JSON.stringify(text)})`;
