@@ -537,7 +537,7 @@ const kanbanCardButton = (title, label) => `(() => {
   return null;
 })()`;
 
-const COMPONENT_PAGES = ["accordion", "alert", "avatar", "badge", "button", "carousel", "chart", "checkbox", "combobox", "commandpalette", "datepicker", "dialog", "drawer", "marquee", "menu", "progress", "radio", "select", "sidebar", "slider", "switch", "table", "tabs", "textfield", "toasts", "tooltip"].map((n) => `/ui/components/${n}`);
+const COMPONENT_PAGES = ["accordion", "alert", "avatar", "badge", "breadcrumb", "button", "carousel", "chart", "checkbox", "combobox", "commandpalette", "datepicker", "dialog", "drawer", "marquee", "menu", "pagination", "progress", "radio", "select", "sidebar", "skeleton", "slider", "switch", "table", "tabs", "textfield", "toasts", "tooltip"].map((n) => `/ui/components/${n}`);
 
 const tests = {
   async "table: the arrow keys move a marked active cell; Space selects its row"(p) {
@@ -624,6 +624,83 @@ const tests = {
     await p.press("End", "End", 2);
     await p.waitFor(`${vText} === "10000"`, "Ctrl+End to the 100th row");
     await p.waitFor(shown, "the 100th row in view");
+  },
+
+  async "breadcrumb: links up the trail, the current page last and not a link"(p) {
+    await p.goto("/ui/components/breadcrumb");
+    const got = await p.evaluate(`(() => {
+      const nav = document.querySelector('[role=navigation][aria-label="Breadcrumb"]');
+      if (!nav) return null;
+      const items = [...nav.querySelectorAll("li")];
+      const last = items.at(-1);
+      return {
+        links: [...nav.querySelectorAll("a")].map((a) => a.textContent.trim() + " " + a.getAttribute("href")),
+        current: nav.querySelector("[aria-current=page]")?.textContent.trim() ?? null,
+        currentIsLink: !!last.querySelector("a"),
+        // Separators are hidden; only the crumbs are read.
+        read: items.map((li) => [...li.querySelectorAll("*")].filter((e) => !e.closest("[aria-hidden=true]") && e.children.length === 0).map((e) => e.textContent.trim()).join("")),
+      };
+    })()`);
+    assert(got, "no navigation named Breadcrumb");
+    assert(JSON.stringify(got.links) === JSON.stringify(["Home /", "Components /ui/components"]), `the links (${JSON.stringify(got.links)})`);
+    assert(got.current === "Breadcrumb" && !got.currentIsLink, `the current page (${JSON.stringify(got)})`);
+    assert(JSON.stringify(got.read) === JSON.stringify(["Home", "Components", "Breadcrumb"]), `what a screen reader reads (${JSON.stringify(got.read)})`);
+    await p.clickText("Components");
+    await p.waitFor(`location.pathname === "/ui/components"`, "the link to open the components index");
+  },
+
+  async "pagination: pages turn, the row keeps its width, and fits a phone"(p) {
+    await p.goto("/ui/components/pagination");
+    const nav = `document.querySelectorAll('[role=navigation][aria-label="Pagination"]')[0]`;
+    const row = () => p.evaluate(`[...(${nav}).querySelectorAll("li")].map((li) => li.textContent.trim()).join(" ")`);
+    const state = () => p.evaluate(`(() => { const n = ${nav}; return { current: n.querySelector("[aria-current=page]")?.getAttribute("aria-label"), prev: n.querySelector('[aria-label="Previous page"]').getAttribute("aria-disabled"), width: n.getBoundingClientRect().width }; })()`);
+    assert(await row() === "‹ 1 2 3 4 5 … 12 ›", `the first page's row (${await row()})`);
+    const first = await state();
+    assert(first.current === "Page 1" && first.prev === "true", `page 1 current, previous disabled (${JSON.stringify(first)})`);
+    await p.clickLabel("Page 5");
+    await p.waitText("Showing page 5 of 12");
+    assert(await row() === "‹ 1 … 4 5 6 … 12 ›", `page 5's row (${await row()})`);
+    const fifth = await state();
+    assert(fifth.current === "Page 5" && fifth.prev !== "true", `page 5 current, previous enabled (${JSON.stringify(fifth)})`);
+    assert(Math.abs(fifth.width - first.width) < 1, `the row changed width: ${first.width} to ${fifth.width}`);
+    await p.clickLabel("Next page");
+    await p.waitText("Showing page 6 of 12");
+    await p.clickLabel("Page 12");
+    await p.waitText("Showing page 12 of 12");
+    assert((await state()).current === "Page 12", "the last page current");
+    assert(await p.evaluate(`(${nav}).querySelector('[aria-label="Next page"]').getAttribute("aria-disabled")`) === "true", "next disabled on the last page");
+    // The callback runs once per turn of the page.
+    await p.clickLabel("Page 11", 1);
+    await p.waitText("Rows 201–220 of 1000, fetched 1 times");
+    await p.viewport(375, 740, true);
+    await p.goto("/ui/components/pagination");
+    const lines = await p.evaluate(`[...document.querySelectorAll('[role=navigation][aria-label="Pagination"]')].map((n) => { const tops = new Set([...n.querySelectorAll("li")].map((li) => Math.round(li.getBoundingClientRect().top))); return tops.size; })`);
+    assert(lines.every((n) => n === 1), `on a phone a row wraps (${JSON.stringify(lines)} lines)`);
+    await p.viewport(1440, 900);
+  },
+
+  async "skeleton: hidden from screen readers, pulses unless motion is reduced, stands in while loading"(p) {
+    const pulse = `(() => { const s = [...document.querySelectorAll("[data-skeleton]")]; return { count: s.length, hidden: s.every((e) => e.closest("[aria-hidden=true]")), animation: getComputedStyle(s[0]).animationName, sizes: new Set(s.map((e) => e.getBoundingClientRect().width + "x" + e.getBoundingClientRect().height)).size }; })()`;
+    await p.reducedMotion("no-preference");
+    await p.goto("/ui/components/skeleton");
+    const moving = await p.evaluate(pulse);
+    assert(moving.count >= 5 && moving.hidden, `skeletons, all hidden from screen readers (${JSON.stringify(moving)})`);
+    assert(moving.animation === "opaque-skeleton-pulse", `the pulse (${moving.animation})`);
+    // Each keeps its own size.
+    assert(moving.sizes >= 4, `skeletons share one size (${moving.sizes} sizes)`);
+    await p.reducedMotion("reduce");
+    await p.goto("/ui/components/skeleton");
+    assert((await p.evaluate(pulse)).animation === "none", "still pulsing with reduced motion asked for");
+    await p.reducedMotion(null);
+
+    const busy = `document.querySelector("[aria-busy]").getAttribute("aria-busy")`;
+    await p.waitText("Sarah Chen");
+    assert(await p.evaluate(busy) === "false", "busy before it loads");
+    await p.clickText("Reload");
+    await p.waitText("Sarah Chen", { gone: true });
+    assert(await p.evaluate(busy) === "true", "not busy while it loads");
+    await p.waitText("Sarah Chen", { timeout: 3000 });
+    assert(await p.evaluate(busy) === "false", "busy after it loaded");
   },
 
   async "focus: Tab shows the one ring on every component, a click shows none"(p) {
@@ -735,7 +812,7 @@ const tests = {
       datepicker: ["DatePicker", "start_date"], dialog: ["Item(T)", "value"], progress: ["ProgressBar.Config", "id"],
       radio: ["Group", "name"], select: ["Item", "value"], sidebar: ["SideBar", "groups"], slider: ["Slider", "min"],
       switch: ["Parameters", "aria_label"], table: ["Column(T)", "title"], tabs: ["Tabs", "tag"], tooltip: ["Options", "content"],
-      combobox: ["Item", "value"], avatar: ["Options", "name"], badge: ["Options", "text"], drawer: ["Sheet", "content"], marquee: ["Options", "direction"], menu: ["Item", "label"], textfield: ["Field", "label"], toasts: ["Options", "title"],
+      combobox: ["Item", "value"], avatar: ["Options", "name"], badge: ["Options", "text"], breadcrumb: ["Crumb", "label"], pagination: ["Options", "label"], skeleton: ["Options", "width"], drawer: ["Sheet", "content"], marquee: ["Options", "direction"], menu: ["Item", "label"], textfield: ["Field", "label"], toasts: ["Options", "title"],
     };
     for (const [page, [tab, first]] of Object.entries(pages)) {
       await p.goto(`/ui/components/${page}`);
