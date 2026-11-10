@@ -540,6 +540,42 @@ const kanbanCardButton = (title, label) => `(() => {
 const COMPONENT_PAGES = ["accordion", "alert", "avatar", "badge", "button", "carousel", "chart", "checkbox", "combobox", "commandpalette", "datepicker", "dialog", "drawer", "marquee", "menu", "progress", "radio", "select", "sidebar", "slider", "switch", "table", "tabs", "textfield", "toasts", "tooltip"].map((n) => `/ui/components/${n}`);
 
 const tests = {
+  async "focus: Tab shows the one ring on every component, a click shows none"(p) {
+    const ringOf = (find) => `(() => { const e = ${find}; const s = getComputedStyle(e); return [s.outlineStyle, s.outlineWidth, s.outlineOffset, s.outlineColor].join(" "); })()`;
+    const button = (text) => `[...document.querySelectorAll("button")].find((b) => b.textContent.trim() === ${JSON.stringify(text)})`;
+    // A ring outside the control, or just inside one that fills a list.
+    const controls = [
+      ["accordion", `[...document.querySelectorAll("button")].find((b) => b.textContent.includes("Product Information"))`, "2px"],
+      ["tabs", `document.querySelector("[role=tab]")`, "-2px"],
+      ["checkbox", `document.querySelector("[role=checkbox]")`, "2px"],
+      ["menu", button("Actions"), "2px"],
+      ["sidebar", button("Dashboard"), "-2px"],
+      // The site's own, from the template's rule.
+      ["button", button("Secondary"), "2px"],
+    ];
+    // The theme's text colour, without the body's colour transition.
+    const textColor = `(() => { const e = document.createElement("i"); e.style.color = "rgb(var(--text_color))"; document.body.append(e); const c = getComputedStyle(e).color; e.remove(); return c; })()`;
+    for (const scheme of ["light", "dark"]) {
+      await p.colorScheme(scheme);
+      for (const [page, find, offset] of controls) {
+        await p.goto("/ui/components/" + page);
+        await p.press("Shift", "ShiftLeft");
+        await p.evaluate(`(${find}).focus()`);
+        const want = `solid 2px ${offset} ${await p.evaluate(textColor)}`;
+        // Past the outline's transition, where a control has one.
+        await p.waitFor(`${ringOf(find)} === ${JSON.stringify(want)}`, `${scheme} ${page}: the ring "${want}" (is "${await p.evaluate(ringOf(find))}")`);
+      }
+    }
+    await p.colorScheme("light");
+    await p.goto("/ui/components/accordion");
+    await p.clickText("Product Information");
+    const trigger = controls[0][1];
+    await p.waitFor(`document.activeElement === (${trigger})`, "the click to focus the trigger");
+    await sleep(200);
+    const ring = await p.evaluate(ringOf(trigger));
+    assert(!ring.startsWith("solid"), `a click left a ring on the trigger (${ring})`);
+  },
+
   async "accordion: a header opens its panel and closes it again"(p) {
     await p.goto("/ui/components/accordion");
     const body = "We stand behind our products with a 30-day return policy. If you're not satisfied, simply return the item in its original condition for a full refund.";
