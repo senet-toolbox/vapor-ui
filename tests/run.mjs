@@ -764,15 +764,20 @@ const tests = {
       ["checkbox", `document.querySelector("[role=checkbox]")`, "2px"],
       ["menu", button("Actions"), "2px"],
       ["sidebar", button("Dashboard"), "-2px"],
+      ["switch", `document.querySelector("[role=switch]")`, "2px"],
+      ["combobox", `document.querySelector("[aria-haspopup=listbox]")`, "2px"],
       // The site's own, from the template's rule.
       ["button", button("Secondary"), "2px"],
     ];
+    const dropSiteRing = `(() => { for (const sheet of document.styleSheets) { let rules; try { rules = sheet.cssRules; } catch { continue; } for (let i = rules.length - 1; i >= 0; i--) if (rules[i].selectorText === ":focus-visible") sheet.deleteRule(i); } })()`;
     // The theme's text colour, without the body's colour transition.
     const textColor = `(() => { const e = document.createElement("i"); e.style.color = "rgb(var(--text_color))"; document.body.append(e); const c = getComputedStyle(e).color; e.remove(); return c; })()`;
     for (const scheme of ["light", "dark"]) {
       await p.colorScheme(scheme);
       for (const [page, find, offset] of controls) {
         await p.goto("/ui/components/" + page);
+        // Without the template's own ring, so each component must draw its own.
+        if (page !== "button") await p.evaluate(dropSiteRing);
         await p.press("Shift", "ShiftLeft");
         await p.evaluate(`(${find}).focus()`);
         const want = `solid 2px ${offset} ${await p.evaluate(textColor)}`;
